@@ -1,0 +1,80 @@
+{
+ "Files" : [
+  {
+   "Path" : "D:/prg/cal_soc/calsoc/src/addrdecode.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "D:/prg/cal_soc/calsoc/src/calsoc.sv",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "D:/prg/cal_soc/calsoc/src/gpio_defines.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "D:/prg/cal_soc/calsoc/src/gpio_top.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "D:/prg/cal_soc/calsoc/src/picorv32.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "D:/prg/cal_soc/calsoc/src/ram_wb.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "D:/prg/cal_soc/calsoc/src/ram_wb_defines.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "D:/prg/cal_soc/calsoc/src/rxuart.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "D:/prg/cal_soc/calsoc/src/rxuartlite.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "D:/prg/cal_soc/calsoc/src/skidbuffer.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "D:/prg/cal_soc/calsoc/src/txuart.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "D:/prg/cal_soc/calsoc/src/txuartlite.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "D:/prg/cal_soc/calsoc/src/ufifo.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "D:/prg/cal_soc/calsoc/src/wb_ram_sc_sw.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "D:/prg/cal_soc/calsoc/src/wbuart.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "D:/prg/cal_soc/calsoc/src/wbxbar.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "D:/prg/cal_soc/calsoc/src/gpo.v",
+   "Type" : "verilog"
+  }
+ ],
+ "IncludePath" : [
+
+ ],
+ "LoopLimit" : 2000,
+ "ResultFile" : "D:/prg/cal_soc/calsoc/impl/temp/rtl_parser.result",
+ "Top" : "calsoc",
+ "VerilogStd" : "sysv",
+ "VhdlStd" : "vhdl_93"
+}

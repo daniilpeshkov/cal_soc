@@ -1,0 +1,14 @@
+Analysis & Synthesis Status : Successful - Sat Jan 22 01:10:20 2022
+Quartus Prime Version : 20.1.1 Build 720 11/11/2020 SJ Lite Edition
+Revision Name : calsoc
+Top-level Entity Name : db
+Family : Cyclone IV E
+Total logic elements : 8,492
+    Total combinational functions : 7,862
+    Dedicated logic registers : 2,544
+Total registers : 2544
+Total pins : 35
+Total virtual pins : 0
+Total memory bits : 59,392
+Embedded Multiplier 9-bit elements : 0
+Total PLLs : 0

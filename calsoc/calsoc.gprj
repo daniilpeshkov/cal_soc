@@ -1,0 +1,29 @@
+<?xml version="1" encoding="UTF-8"?>
+<!DOCTYPE gowin-fpga-project>
+<Project>
+    <Template>FPGA</Template>
+    <Version>5</Version>
+    <Device name="GW1NR-9" pn="GW1NR-LV9QN88PC6/I5">gw1nr9-012</Device>
+    <FileList>
+        <File path="src/addrdecode.v" type="file.verilog" enable="1"/>
+        <File path="src/calsoc.sv" type="file.verilog" enable="1"/>
+        <File path="src/gpio_defines.v" type="file.verilog" enable="1"/>
+        <File path="src/gpio_top.v" type="file.verilog" enable="1"/>
+        <File path="src/gpo.v" type="file.verilog" enable="1"/>
+        <File path="src/picorv32.v" type="file.verilog" enable="1"/>
+        <File path="src/ram_wb.v" type="file.verilog" enable="1"/>
+        <File path="src/ram_wb_defines.v" type="file.verilog" enable="1"/>
+        <File path="src/rxuart.v" type="file.verilog" enable="1"/>
+        <File path="src/rxuartlite.v" type="file.verilog" enable="1"/>
+        <File path="src/skidbuffer.v" type="file.verilog" enable="1"/>
+        <File path="src/txuart.v" type="file.verilog" enable="1"/>
+        <File path="src/txuartlite.v" type="file.verilog" enable="1"/>
+        <File path="src/ufifo.v" type="file.verilog" enable="1"/>
+        <File path="src/wb_ram_sc_sw.v" type="file.verilog" enable="1"/>
+        <File path="src/wbuart.v" type="file.verilog" enable="1"/>
+        <File path="src/wbxbar.v" type="file.verilog" enable="1"/>
+        <File path="src/test_soc.cst" type="file.cst" enable="1"/>
+        <File path="src/test_soc.sdc" type="file.sdc" enable="1"/>
+        <File path="src/calsoc.rao" type="file.gao" enable="0"/>
+    </FileList>
+</Project>

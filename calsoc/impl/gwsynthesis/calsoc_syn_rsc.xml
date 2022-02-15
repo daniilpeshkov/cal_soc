@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Module name="calsoc" Register="1" Lut="5" Bsram="8">
+    <SubModule name="wbbus" Register="163" Lut="201">
+        <SubModule name="DECODE_REQUEST[0].iskid" Register="68" Lut="53"/>
+        <SubModule name="DECODE_REQUEST[0].adcd" Register="57" Lut="30"/>
+    </SubModule>
+    <SubModule name="gpioa" Register="283" Lut="207"/>
+    <SubModule name="ram" Register="1" Lut="35">
+        <SubModule name="ram0" Bsram="4"/>
+    </SubModule>
+    <SubModule name="uart1" Register="80" Lut="87">
+        <SubModule name="rx" Register="118" Alu="50" Lut="228"/>
+        <SubModule name="rxfifo" Register="54" Alu="68" Lut="75" Bsram="2"/>
+        <SubModule name="txfifo" Register="54" Alu="48" Lut="79" Bsram="2"/>
+        <SubModule name="tx" Register="73" Lut="225"/>
+    </SubModule>
+    <SubModule name="pico" Register="103" Lut="17">
+        <SubModule name="picorv32_core" Register="626" Alu="314" Lut="1314" Bsram="2">
+            <SubModule name="pcpi_mul" Register="255" Alu="134" Lut="249"/>
+            <SubModule name="pcpi_div" Register="200" Alu="64" Lut="356"/>
+        </SubModule>
+    </SubModule>
+</Module>

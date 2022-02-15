@@ -1,0 +1,29 @@
+D:/prg/cal_soc/calsoc/src/ufifo.v {1 {vlog -work work -stats=none D:/prg/cal_soc/calsoc/src/ufifo.v
+Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+-- Compiling module ufifo
+
+Top level modules:
+	ufifo
+
+} {} {}} D:/prg/cal_soc/calsoc/src/rxuart.v {1 {vlog -work work -stats=none D:/prg/cal_soc/calsoc/src/rxuart.v
+Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+-- Compiling module rxuart
+
+Top level modules:
+	rxuart
+
+} {} {}} D:/prg/cal_soc/modelsim/tb.sv {1 {vlog -work work -sv -stats=none {D:\prg\cal_soc\modelsim\tb.sv}
+Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+-- Compiling module tb
+
+Top level modules:
+	tb
+
+} {} {}} D:/prg/cal_soc/calsoc/src/txuart.v {1 {vlog -work work -stats=none D:/prg/cal_soc/calsoc/src/txuart.v
+Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+-- Compiling module txuart
+
+Top level modules:
+	txuart
+
+} {} {}}

@@ -1,0 +1,2 @@
+0x00000000 .. 0x00000FFF | Internal SRAM
+0x01000000 .. 0x01FFFFFF | Extarnal Serial Flash

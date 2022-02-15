@@ -1,0 +1,32 @@
+//Copyright (C)2014-2021 Gowin Semiconductor Corporation.
+//All rights reserved. 
+//File Title: Physical Constraints file
+//GOWIN Version: 1.9.8
+//Part Number: GW1NR-LV9QN88PC6/I5
+//Device: GW1NR-9
+//Created Time: Sat 01 22 01:46:00 2022
+
+IO_LOC "uart1_tx" 37;
+IO_PORT "uart1_tx" IO_TYPE=LVTTL33 PULL_MODE=UP DRIVE=8;
+IO_LOC "gpioa_o[7]" 79;
+IO_PORT "gpioa_o[7]" PULL_MODE=UP DRIVE=8;
+IO_LOC "gpioa_o[6]" 80;
+IO_PORT "gpioa_o[6]" PULL_MODE=UP DRIVE=8;
+IO_LOC "gpioa_o[5]" 81;
+IO_PORT "gpioa_o[5]" PULL_MODE=UP DRIVE=8;
+IO_LOC "gpioa_o[4]" 82;
+IO_PORT "gpioa_o[4]" PULL_MODE=UP DRIVE=8;
+IO_LOC "gpioa_o[3]" 83;
+IO_PORT "gpioa_o[3]" PULL_MODE=UP DRIVE=8;
+IO_LOC "gpioa_o[2]" 84;
+IO_PORT "gpioa_o[2]" PULL_MODE=UP DRIVE=8;
+IO_LOC "gpioa_o[1]" 85;
+IO_PORT "gpioa_o[1]" PULL_MODE=UP DRIVE=8;
+IO_LOC "gpioa_o[0]" 86;
+IO_PORT "gpioa_o[0]" PULL_MODE=UP DRIVE=8;
+IO_LOC "uart1_rx" 16;
+IO_PORT "uart1_rx" PULL_MODE=UP;
+IO_LOC "rst" 77;
+IO_PORT "rst" PULL_MODE=UP;
+IO_LOC "clk" 35;
+IO_PORT "clk" PULL_MODE=UP;
