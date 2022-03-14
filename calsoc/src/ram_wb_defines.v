@@ -1,3 +1,0 @@
-`define RAM_WB_ADR_WIDTH 12
-`define RAM_WB_MEM_SIZE 4096
-`define RAM_WB_DAT_WIDTH 32

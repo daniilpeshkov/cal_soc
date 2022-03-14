@@ -10,7 +10,7 @@ module wb_ram #(
 //wb signals
 	input  wire	[31:0]	wb_dat_i,   
 	output wire	[31:0]	wb_dat_o,
-	input  wire	[31:0] 	wb_adr_i,
+	input  wire	[31:2] 	wb_adr_i,
 	input  wire	 		wb_we_i,
 	input  wire	[3:0] 	wb_sel_i,
 	input  wire	 		wb_cyc_i,
@@ -37,7 +37,7 @@ module wb_ram #(
 	) ram0 (
 		.dat_i(wr_data),
 		.dat_o(wb_dat_o),
-		.adr_i(wb_adr_i>>2), 
+		.adr_i(wb_adr_i), 
 		.we_i(wb_we_i & wb_ack_o),
 		.clk(clk_i)
 	);

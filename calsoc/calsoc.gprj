@@ -11,7 +11,6 @@
         <File path="src/gpio_top.v" type="file.verilog" enable="1"/>
         <File path="src/gpo.v" type="file.verilog" enable="1"/>
         <File path="src/picorv32.v" type="file.verilog" enable="1"/>
-        <File path="src/ram_wb_defines.v" type="file.verilog" enable="1"/>
         <File path="src/rxuart.v" type="file.verilog" enable="1"/>
         <File path="src/rxuartlite.v" type="file.verilog" enable="1"/>
         <File path="src/skidbuffer.v" type="file.verilog" enable="1"/>
@@ -25,6 +24,6 @@
         <File path="src/wbxbar.v" type="file.verilog" enable="1"/>
         <File path="src/test_soc.cst" type="file.cst" enable="1"/>
         <File path="src/test_soc.sdc" type="file.sdc" enable="1"/>
-        <File path="src/calsoc.rao" type="file.gao" enable="1"/>
+        <File path="src/calsoc.rao" type="file.gao" enable="0"/>
     </FileList>
 </Project>

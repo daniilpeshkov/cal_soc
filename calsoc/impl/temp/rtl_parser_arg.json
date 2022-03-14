@@ -25,10 +25,6 @@
    "Type" : "verilog"
   },
   {
-   "Path" : "D:/prg/cal_soc/calsoc/src/ram_wb_defines.v",
-   "Type" : "verilog"
-  },
-  {
    "Path" : "D:/prg/cal_soc/calsoc/src/rxuart.v",
    "Type" : "verilog"
   },
