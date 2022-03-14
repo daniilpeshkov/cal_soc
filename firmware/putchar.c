@@ -1,5 +1,5 @@
 #include "printf.h"
-#include "reg_def.h"
+#include "periph.h"
 
 #define PRINTF_UART UART1
 

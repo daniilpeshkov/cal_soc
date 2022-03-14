@@ -11,26 +11,26 @@
   <GOWIN Version>: V1.9.8
   <Part Number>: GW1NR-LV9QN88PC6/I5
   <Device>: GW1NR-9
-  <Created Time>:Tue Jan 25 01:35:14 2022
+  <Created Time>:Mon Mar 14 18:38:58 2022
 
 
 2. PnR Details
 
   Running placement:
     Placement Phase 0: CPU time = 0h 0m 2s, Elapsed time = 0h 0m 2s
-    Placement Phase 1: CPU time = 0h 0m 0.249s, Elapsed time = 0h 0m 0.25s
+    Placement Phase 1: CPU time = 0h 0m 0.237s, Elapsed time = 0h 0m 0.236s
     Placement Phase 2: CPU time = 0h 0m 3s, Elapsed time = 0h 0m 3s
     Placement Phase 3: CPU time = 0h 0m 3s, Elapsed time = 0h 0m 3s
     Total Placement: CPU time = 0h 0m 8s, Elapsed time = 0h 0m 8s
  Running routing:
-    Routing Phase 0: CPU time = 0h 0m 0.003s, Elapsed time = 0h 0m 0.002s
-    Routing Phase 1: CPU time = 0h 0m 0.233s, Elapsed time = 0h 0m 0.234s
+    Routing Phase 0: CPU time = 0h 0m 0.003s, Elapsed time = 0h 0m 0.003s
+    Routing Phase 1: CPU time = 0h 0m 0.254s, Elapsed time = 0h 0m 0.254s
     Routing Phase 2: CPU time = 0h 0m 4s, Elapsed time = 0h 0m 4s
     Total Routing: CPU time = 0h 0m 4s, Elapsed time = 0h 0m 4s
  Generate output files:
     CPU time = 0h 0m 3s, Elapsed time = 0h 0m 3s
 
- Total Time and Memory Usage: CPU time = 0h 0m 15s, Elapsed time = 0h 0m 15s, Peak memory usage = 218MB
+ Total Time and Memory Usage: CPU time = 0h 0m 15s, Elapsed time = 0h 0m 15s, Peak memory usage = 322MB
 
 
 3. Resource Usage Summary
@@ -38,25 +38,25 @@
   ----------------------------------------------------------
   Resources                   | Usage
   ----------------------------------------------------------
-  Logic                       | 3821/8640  44%
-    --LUT,ALU,ROM16           | 3821(3143 LUT, 678 ALU, 0 ROM16)
-    --SSRAM(RAM16)            | 0
-  Register                    | 2136/6693  31%
+  Logic                       | 4214/8640  48%
+    --LUT,ALU,ROM16           | 4208(3520 LUT, 688 ALU, 0 ROM16)
+    --SSRAM(RAM16)            | 1
+  Register                    | 2502/6693  37%
     --Logic Register as Latch | 0/6480  0%
-    --Logic Register as FF    | 2103/6480  32%
+    --Logic Register as FF    | 2469/6480  38%
     --I/O Register as Latch   | 0/213  0%
     --I/O Register as FF      | 33/213  15%
-  CLS                         | 2774/4320  64%
-  I/O Port                    | 36
-  I/O Buf                     | 36
-    --Input Buf               | 3
-    --Output Buf              | 33
+  CLS                         | 3066/4320  70%
+  I/O Port                    | 40
+  I/O Buf                     | 40
+    --Input Buf               | 6
+    --Output Buf              | 34
     --Inout Buf               | 0
   IOLOGIC                     | 0%
-  BSRAM                       | 69%
-    --SDPB                    | 7
-    --SDPX9B                  | 3
-    --pROM                    | 8
+  BSRAM                       | 73%
+    --SP                      | 2
+    --SDPB                    | 16
+    --pROM                    | 1
   DSP                         | 0%
   PLL                         | 0/2  0%
   DCS                         | 0/8  0%
@@ -77,7 +77,7 @@
   -----------------------
   bank 1   | 18/25(72%)  
   bank 2   | 2/23(8%)    
-  bank 3   | 16/49(32%)  
+  bank 3   | 20/49(40%)  
   =======================
 
 
@@ -86,7 +86,7 @@
   -------------------------------
   Global Clock  | Usage       
   -------------------------------
-  PRIMARY       | 1/8(12%)
+  PRIMARY       | 3/8(37%)
   SECONDARY     | 8/8(100%)
   GCLK_PIN      | 3/4(75%)
   PLL           | 0/2(0%)
@@ -101,13 +101,15 @@
   Signal         | Global Clock   | Location
   -------------------------------------------
   clk_d          | PRIMARY        |  TR TL BR BL
+  control0[0]    | PRIMARY        |  TL BR BL
+  divisor_30_8   | PRIMARY        |  BR
   rst_d          | SECONDARY      |  -
   LOGIC.r_valid  | SECONDARY      |  -
+  gao_jtag_reset | SECONDARY      |  -
   tx_busy        | SECONDARY      |  -
   n3558_3        | SECONDARY      |  -
   cpu_state.cpu_state_fetch| SECONDARY      |  -
   n819_4         | SECONDARY      |  -
-  divisor_30_8   | SECONDARY      |  -
   n1783_5        | SECONDARY      |  -
   ===========================================
 
@@ -120,6 +122,9 @@ Port Name    | Diff Pair | Loc./Bank | Constraint | Dir.  | Site     | IO Type  
 clk          |           | 35/2      | Y          | in    | IOB29[A] | LVCMOS18   | NA    | UP        | NA        | NONE       | NA         | NA        | NA         | NA              | NA            | 3.3       
 rst          |           | 77/1      | Y          | in    | IOT37[A] | LVCMOS18   | NA    | UP        | NA        | NONE       | NA         | NA        | NA         | OFF             | NA            | 1.8       
 uart1_rx     |           | 16/3      | Y          | in    | IOL26[B] | LVCMOS18   | NA    | UP        | NA        | NONE       | NA         | NA        | NA         | OFF             | NA            | 1.8       
+tms_pad_i    |           | 5/3       | N          | in    | IOL11[A] | LVCMOS18   | NA    | UP        | NA        | NONE       | NA         | NA        | NA         | OFF             | NA            | 1.8       
+tck_pad_i    |           | 6/3       | N          | in    | IOL11[B] | LVCMOS18   | NA    | UP        | NA        | NONE       | NA         | NA        | NA         | OFF             | NA            | 1.8       
+tdi_pad_i    |           | 7/3       | N          | in    | IOL12[B] | LVCMOS18   | NA    | UP        | NA        | NONE       | NA         | NA        | NA         | OFF             | NA            | 1.8       
 gpioa_o[0]   |           | 86/3      | Y          | out   | IOT8[A]  | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
 gpioa_o[1]   |           | 85/3      | Y          | out   | IOT8[B]  | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
 gpioa_o[2]   |           | 84/3      | Y          | out   | IOT10[A] | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
@@ -128,31 +133,32 @@ gpioa_o[4]   |           | 82/3      | Y          | out   | IOT11[A] | LVCMOS18 
 gpioa_o[5]   |           | 81/3      | Y          | out   | IOT11[B] | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
 gpioa_o[6]   |           | 80/3      | Y          | out   | IOT12[A] | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
 gpioa_o[7]   |           | 79/3      | Y          | out   | IOT12[B] | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
-gpioa_o[8]   |           | 49/1      | N          | out   | IOR24[A] | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
-gpioa_o[9]   |           | 48/1      | N          | out   | IOR24[B] | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
-gpioa_o[10]  |           | 51/1      | N          | out   | IOR17[B] | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
-gpioa_o[11]  |           | 50/1      | N          | out   | IOR22[B] | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
-gpioa_o[12]  |           | 53/1      | N          | out   | IOR15[B] | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
-gpioa_o[13]  |           | 52/1      | N          | out   | IOR17[A] | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
-gpioa_o[14]  |           | 63/1      | N          | out   | IOR5[A]  | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
-gpioa_o[15]  |           | 54/1      | N          | out   | IOR15[A] | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
-gpioa_o[16]  |           | 69/1      | N          | out   | IOT42[A] | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
-gpioa_o[17]  |           | 68/1      | N          | out   | IOT42[B] | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
-gpioa_o[18]  |           | 71/1      | N          | out   | IOT41[A] | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
-gpioa_o[19]  |           | 70/1      | N          | out   | IOT41[B] | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
-gpioa_o[20]  |           | 73/1      | N          | out   | IOT39[A] | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
-gpioa_o[21]  |           | 72/1      | N          | out   | IOT39[B] | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
-gpioa_o[22]  |           | 75/1      | N          | out   | IOT38[A] | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
-gpioa_o[23]  |           | 74/1      | N          | out   | IOT38[B] | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
-gpioa_o[24]  |           | 3/3       | N          | out   | IOT2[A]  | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
-gpioa_o[25]  |           | 76/1      | N          | out   | IOT37[B] | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
-gpioa_o[26]  |           | 10/3      | N          | out   | IOL15[A] | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
-gpioa_o[27]  |           | 4/3       | N          | out   | IOL5[A]  | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
-gpioa_o[28]  |           | 13/3      | N          | out   | IOL21[B] | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
-gpioa_o[29]  |           | 11/3      | N          | out   | IOL16[B] | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
-gpioa_o[30]  |           | 14/3      | N          | out   | IOL22[B] | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
-gpioa_o[31]  |           | 15/3      | N          | out   | IOL25[B] | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
+gpioa_o[8]   |           | 50/1      | N          | out   | IOR22[B] | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
+gpioa_o[9]   |           | 49/1      | N          | out   | IOR24[A] | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
+gpioa_o[10]  |           | 52/1      | N          | out   | IOR17[A] | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
+gpioa_o[11]  |           | 51/1      | N          | out   | IOR17[B] | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
+gpioa_o[12]  |           | 54/1      | N          | out   | IOR15[A] | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
+gpioa_o[13]  |           | 53/1      | N          | out   | IOR15[B] | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
+gpioa_o[14]  |           | 68/1      | N          | out   | IOT42[B] | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
+gpioa_o[15]  |           | 63/1      | N          | out   | IOR5[A]  | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
+gpioa_o[16]  |           | 70/1      | N          | out   | IOT41[B] | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
+gpioa_o[17]  |           | 69/1      | N          | out   | IOT42[A] | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
+gpioa_o[18]  |           | 72/1      | N          | out   | IOT39[B] | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
+gpioa_o[19]  |           | 71/1      | N          | out   | IOT41[A] | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
+gpioa_o[20]  |           | 74/1      | N          | out   | IOT38[B] | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
+gpioa_o[21]  |           | 73/1      | N          | out   | IOT39[A] | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
+gpioa_o[22]  |           | 76/1      | N          | out   | IOT37[B] | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
+gpioa_o[23]  |           | 75/1      | N          | out   | IOT38[A] | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
+gpioa_o[24]  |           | 4/3       | N          | out   | IOL5[A]  | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
+gpioa_o[25]  |           | 3/3       | N          | out   | IOT2[A]  | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
+gpioa_o[26]  |           | 11/3      | N          | out   | IOL16[B] | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
+gpioa_o[27]  |           | 10/3      | N          | out   | IOL15[A] | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
+gpioa_o[28]  |           | 14/3      | N          | out   | IOL22[B] | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
+gpioa_o[29]  |           | 13/3      | N          | out   | IOL21[B] | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
+gpioa_o[30]  |           | 15/3      | N          | out   | IOL25[B] | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
+gpioa_o[31]  |           | 48/1      | N          | out   | IOR24[B] | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
 uart1_tx     |           | 37/2      | Y          | out   | IOB31[A] | LVTTL33    | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | NA              | NA            | 3.3       
+tdo_pad_o    |           | 8/3       | N          | out   | IOL13[A] | LVCMOS18   | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8       
 ====================================================================================================================================================================================================================
 
 
@@ -163,7 +169,7 @@ uart1_tx     |           | 37/2      | Y          | out   | IOB31[A] | LVTTL33  
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 Loc./Bank| Signal       | Dir.  | Site     | IO Type  | Drive | Pull Mode | PCI Clamp | Hysteresis | Open Drain | Slew Rate | Vref       | Single Resistor | Diff Resistor | Bank Vccio
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-3/3      | gpioa_o[24]  | out   | IOT2[A]  | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
+3/3      | gpioa_o[25]  | out   | IOT2[A]  | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
 88/3     | -            | in    | IOT5[A]  | LVCMOS18 | NA    | UP        | NA        | NONE       | NA         | NA        | NA         | NA              | NA            | 1.8  
 87/3     | -            | in    | IOT6[B]  | LVCMOS18 | NA    | UP        | NA        | NONE       | NA         | NA        | NA         | NA              | NA            | 1.8  
 86/3     | gpioa_o[0]   | out   | IOT8[A]  | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
@@ -175,15 +181,15 @@ Loc./Bank| Signal       | Dir.  | Site     | IO Type  | Drive | Pull Mode | PCI 
 80/3     | gpioa_o[6]   | out   | IOT12[A] | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
 79/3     | gpioa_o[7]   | out   | IOT12[B] | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
 77/1     | rst          | in    | IOT37[A] | LVCMOS18 | NA    | UP        | NA        | NONE       | NA         | NA        | NA         | OFF             | NA            | 1.8  
-76/1     | gpioa_o[25]  | out   | IOT37[B] | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
-75/1     | gpioa_o[22]  | out   | IOT38[A] | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
-74/1     | gpioa_o[23]  | out   | IOT38[B] | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
-73/1     | gpioa_o[20]  | out   | IOT39[A] | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
-72/1     | gpioa_o[21]  | out   | IOT39[B] | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
-71/1     | gpioa_o[18]  | out   | IOT41[A] | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
-70/1     | gpioa_o[19]  | out   | IOT41[B] | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
-69/1     | gpioa_o[16]  | out   | IOT42[A] | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
-68/1     | gpioa_o[17]  | out   | IOT42[B] | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
+76/1     | gpioa_o[22]  | out   | IOT37[B] | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
+75/1     | gpioa_o[23]  | out   | IOT38[A] | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
+74/1     | gpioa_o[20]  | out   | IOT38[B] | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
+73/1     | gpioa_o[21]  | out   | IOT39[A] | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
+72/1     | gpioa_o[18]  | out   | IOT39[B] | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
+71/1     | gpioa_o[19]  | out   | IOT41[A] | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
+70/1     | gpioa_o[16]  | out   | IOT41[B] | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
+69/1     | gpioa_o[17]  | out   | IOT42[A] | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
+68/1     | gpioa_o[14]  | out   | IOT42[B] | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 17/2     | -            | in    | IOB2[A]  | LVCMOS18 | NA    | UP        | NA        | NONE       | NA         | NA        | NA         | NA              | NA            | 3.3  
 18/2     | -            | in    | IOB2[B]  | LVCMOS18 | NA    | UP        | NA        | NONE       | NA         | NA        | NA         | NA              | NA            | 3.3  
@@ -209,20 +215,20 @@ Loc./Bank| Signal       | Dir.  | Site     | IO Type  | Drive | Pull Mode | PCI 
 42/2     | -            | in    | IOB41[B] | LVCMOS18 | NA    | UP        | NA        | NONE       | NA         | NA        | NA         | NA              | NA            | 3.3  
 47/2     | -            | in    | IOB43[B] | LVCMOS18 | NA    | UP        | NA        | NONE       | NA         | NA        | NA         | NA              | NA            | 3.3  
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-4/3      | gpioa_o[27]  | out   | IOL5[A]  | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
-5/3      | -            | in    | IOL11[A] | LVCMOS18 | NA    | UP        | NA        | NONE       | NA         | NA        | NA         | NA              | NA            | 1.8  
-6/3      | -            | in    | IOL11[B] | LVCMOS18 | NA    | UP        | NA        | NONE       | NA         | NA        | NA         | NA              | NA            | 1.8  
-7/3      | -            | in    | IOL12[B] | LVCMOS18 | NA    | UP        | NA        | NONE       | NA         | NA        | NA         | NA              | NA            | 1.8  
-8/3      | -            | out   | IOL13[A] | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | NA              | NA            | 1.8  
+4/3      | gpioa_o[24]  | out   | IOL5[A]  | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
+5/3      | tms_pad_i    | in    | IOL11[A] | LVCMOS18 | NA    | UP        | NA        | NONE       | NA         | NA        | NA         | OFF             | NA            | 1.8  
+6/3      | tck_pad_i    | in    | IOL11[B] | LVCMOS18 | NA    | UP        | NA        | NONE       | NA         | NA        | NA         | OFF             | NA            | 1.8  
+7/3      | tdi_pad_i    | in    | IOL12[B] | LVCMOS18 | NA    | UP        | NA        | NONE       | NA         | NA        | NA         | OFF             | NA            | 1.8  
+8/3      | tdo_pad_o    | out   | IOL13[A] | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
 9/3      | -            | in    | IOL13[B] | LVCMOS18 | NA    | UP        | NA        | NONE       | NA         | NA        | NA         | NA              | NA            | 1.8  
-10/3     | gpioa_o[26]  | out   | IOL15[A] | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
-11/3     | gpioa_o[29]  | out   | IOL16[B] | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
-13/3     | gpioa_o[28]  | out   | IOL21[B] | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
-14/3     | gpioa_o[30]  | out   | IOL22[B] | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
-15/3     | gpioa_o[31]  | out   | IOL25[B] | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
+10/3     | gpioa_o[27]  | out   | IOL15[A] | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
+11/3     | gpioa_o[26]  | out   | IOL16[B] | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
+13/3     | gpioa_o[29]  | out   | IOL21[B] | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
+14/3     | gpioa_o[28]  | out   | IOL22[B] | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
+15/3     | gpioa_o[30]  | out   | IOL25[B] | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
 16/3     | uart1_rx     | in    | IOL26[B] | LVCMOS18 | NA    | UP        | NA        | NONE       | NA         | NA        | NA         | OFF             | NA            | 1.8  
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-63/1     | gpioa_o[14]  | out   | IOR5[A]  | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
+63/1     | gpioa_o[15]  | out   | IOR5[A]  | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
 62/1     | -            | in    | IOR11[A] | LVCMOS18 | NA    | UP        | NA        | NONE       | NA         | NA        | NA         | NA              | NA            | 1.8  
 61/1     | -            | in    | IOR11[B] | LVCMOS18 | NA    | UP        | NA        | NONE       | NA         | NA        | NA         | NA              | NA            | 1.8  
 60/1     | -            | in    | IOR12[A] | LVCMOS18 | NA    | UP        | NA        | NONE       | NA         | NA        | NA         | NA              | NA            | 1.8  
@@ -230,13 +236,13 @@ Loc./Bank| Signal       | Dir.  | Site     | IO Type  | Drive | Pull Mode | PCI 
 57/1     | -            | in    | IOR13[A] | LVCMOS18 | NA    | UP        | NA        | NONE       | NA         | NA        | NA         | NA              | NA            | 1.8  
 56/1     | -            | in    | IOR14[A] | LVCMOS18 | NA    | UP        | NA        | NONE       | NA         | NA        | NA         | NA              | NA            | 1.8  
 55/1     | -            | in    | IOR14[B] | LVCMOS18 | NA    | UP        | NA        | NONE       | NA         | NA        | NA         | NA              | NA            | 1.8  
-54/1     | gpioa_o[15]  | out   | IOR15[A] | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
-53/1     | gpioa_o[12]  | out   | IOR15[B] | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
-52/1     | gpioa_o[13]  | out   | IOR17[A] | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
-51/1     | gpioa_o[10]  | out   | IOR17[B] | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
-50/1     | gpioa_o[11]  | out   | IOR22[B] | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
-49/1     | gpioa_o[8]   | out   | IOR24[A] | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
-48/1     | gpioa_o[9]   | out   | IOR24[B] | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
+54/1     | gpioa_o[12]  | out   | IOR15[A] | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
+53/1     | gpioa_o[13]  | out   | IOR15[B] | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
+52/1     | gpioa_o[10]  | out   | IOR17[A] | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
+51/1     | gpioa_o[11]  | out   | IOR17[B] | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
+50/1     | gpioa_o[8]   | out   | IOR22[B] | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
+49/1     | gpioa_o[9]   | out   | IOR24[A] | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
+48/1     | gpioa_o[31]  | out   | IOR24[B] | LVCMOS18 | 8     | UP        | NA        | NA         | OFF        | FAST      | NA         | OFF             | NA            | 1.8  
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 =========================================================================================================================================================================================
 

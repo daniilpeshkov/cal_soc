@@ -1,1 +1,7 @@
 /.vscode
+/quartus
+/modelsim
+.bak
+.o
+.hex
+.bin

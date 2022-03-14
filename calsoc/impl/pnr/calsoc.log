@@ -7,6 +7,8 @@ Running placement......
 [10%] Placement Phase 0 completed
 [20%] Placement Phase 1 completed
 [30%] Placement Phase 2 completed
+WARN  (TA1117) : Can't calculate clocks' relationship between: "gw_gao_inst_0/u_gw_jtag/tck_pad_i" and "clk"
+WARN  (TA1117) : Can't calculate clocks' relationship between: "clk" and "gw_gao_inst_0/u_gw_jtag/tck_pad_i"
 [50%] Placement Phase 3 completed
 Running routing......
 [60%] Routing Phase 0 completed
@@ -25,5 +27,5 @@ Generate file "D:\prg\cal_soc\calsoc\impl\pnr\calsoc.pin.html" completed
 Generate file "D:\prg\cal_soc\calsoc\impl\pnr\calsoc.rpt.html" completed
 Generate file "D:\prg\cal_soc\calsoc\impl\pnr\calsoc.rpt.txt" completed
 Generate file "D:\prg\cal_soc\calsoc\impl\pnr\calsoc.tr.html" completed
-Tue Jan 25 01:35:15 2022
+Mon Mar 14 18:38:58 2022
 

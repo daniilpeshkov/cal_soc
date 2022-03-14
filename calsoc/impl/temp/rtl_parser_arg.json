@@ -17,11 +17,11 @@
    "Type" : "verilog"
   },
   {
-   "Path" : "D:/prg/cal_soc/calsoc/src/picorv32.v",
+   "Path" : "D:/prg/cal_soc/calsoc/src/gpo.v",
    "Type" : "verilog"
   },
   {
-   "Path" : "D:/prg/cal_soc/calsoc/src/ram_wb.v",
+   "Path" : "D:/prg/cal_soc/calsoc/src/picorv32.v",
    "Type" : "verilog"
   },
   {
@@ -65,7 +65,11 @@
    "Type" : "verilog"
   },
   {
-   "Path" : "D:/prg/cal_soc/calsoc/src/gpo.v",
+   "Path" : "D:/prg/cal_soc/calsoc/src/wb_rom.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "D:/prg/cal_soc/calsoc/src/wb_ram.v",
    "Type" : "verilog"
   }
  ],

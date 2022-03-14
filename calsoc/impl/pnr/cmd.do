@@ -4,8 +4,10 @@
 -cst D:\prg\cal_soc\calsoc\src\test_soc.cst
 -cfg D:\prg\cal_soc\calsoc\impl\pnr\device.cfg
 -sdc D:\prg\cal_soc\calsoc\src\test_soc.sdc
+-gao_crc 0011111001000001
 -bit
 -tr
 -ph
 -timing
 -cst_error
+-rtl_gao

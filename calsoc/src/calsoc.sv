@@ -1,5 +1,3 @@
-`include "ram_wb_defines.v"
-
 `define DEFINE_WB_SLAVE_WIRE(prefix)\
 wire [31:0]		``prefix``_wb_adr_i;\
 wire [31:0]		``prefix``_wb_dat_i;\
@@ -12,10 +10,10 @@ wire 			``prefix``_wb_cyc_i;\
 wire			``prefix``_wb_err_o;\
 wire			``prefix``_wb_stall_o;
 
+`define bootloader_path "../../firmware/bootloader/bootloader.hex"
+`define RAM_WB_MEM_SIZE 'h100
 
-module calsoc #(
-	parameter PROG_PATH = "../../firmware/test.hex"
-) (
+module calsoc (
     input 	wire			clk,
     input	wire			rst,
 	output	wire [31:0]  	gpioa_o,
@@ -25,20 +23,6 @@ module calsoc #(
 );
 	wire wb_rst_i;
 	assign wb_rst_i = ~rst;
-	
-	reg [31:0] data [0:'h2000];
-	
-	//progmem inputs/outputs
-	wire [31:0]		flash_wb_adr_i;
-	wire [31:0]		flash_wb_dat_i;
-	reg  [31:0]		flash_wb_dat_o;
-	wire 			flash_wb_we_i;
-	wire [3:0] 		flash_wb_sel_i;
-	wire 			flash_wb_stb_i;
-	reg 			flash_wb_ack_o;
-	wire 			flash_wb_cyc_i;
-	wire			flash_wb_err_o;
-	wire			flash_wb_stall_o;
 	
 	//picorv32_wb wb
 	wire [31:0] 	wbm_adr_o;
@@ -57,6 +41,8 @@ module calsoc #(
 	`DEFINE_WB_SLAVE_WIRE(gpioa)
 	//uart1	wb
 	`DEFINE_WB_SLAVE_WIRE(uart1)
+	//bootloader ROM
+	`DEFINE_WB_SLAVE_WIRE(bootrom)
 	
 		
 	wbxbar #(
@@ -77,16 +63,16 @@ module calsoc #(
 		.o_mdata	(wbm_dat_i),
 		.o_mstall	(wbm_stall_i),
 
-		.o_scyc		({flash_wb_cyc_i, ram_wb_cyc_i, gpioa_wb_cyc_i, uart1_wb_cyc_i}),
-		.o_sstb		({flash_wb_stb_i, ram_wb_stb_i, gpioa_wb_stb_i, uart1_wb_stb_i}),
-		.o_swe		({flash_wb_we_i,  ram_wb_we_i,  gpioa_wb_we_i,	uart1_wb_we_i}),
-		.o_saddr	({flash_wb_adr_i, ram_wb_adr_i, gpioa_wb_adr_i, uart1_wb_adr_i}),
-		.o_sdata	({flash_wb_dat_i, ram_wb_dat_i, gpioa_wb_dat_i, uart1_wb_dat_i}),
-		.o_ssel		({flash_wb_sel_i, ram_wb_sel_i, gpioa_wb_sel_i, uart1_wb_sel_i}),
-		.i_sack		({flash_wb_ack_o, ram_wb_ack_o, gpioa_wb_ack_o, uart1_wb_ack_o}),
-		.i_sdata	({flash_wb_dat_o, ram_wb_dat_o, gpioa_wb_dat_o, uart1_wb_dat_o}),
-		.i_serr		({flash_wb_err_o, ram_wb_err_o, gpioa_wb_err_o, uart1_wb_err_o}),
-		.i_sstall	({flash_wb_stall_o, ram_wb_stall_o, gpioa_wb_stall_o, uart1_wb_stall_o})
+		.o_scyc		({bootrom_wb_cyc_i, ram_wb_cyc_i, gpioa_wb_cyc_i, uart1_wb_cyc_i}),
+		.o_sstb		({bootrom_wb_stb_i, ram_wb_stb_i, gpioa_wb_stb_i, uart1_wb_stb_i}),
+		.o_swe		({bootrom_wb_we_i,  ram_wb_we_i,  gpioa_wb_we_i,	uart1_wb_we_i}),
+		.o_saddr	({bootrom_wb_adr_i, ram_wb_adr_i, gpioa_wb_adr_i, uart1_wb_adr_i}),
+		.o_sdata	({bootrom_wb_dat_i, ram_wb_dat_i, gpioa_wb_dat_i, uart1_wb_dat_i}),
+		.o_ssel		({bootrom_wb_sel_i, ram_wb_sel_i, gpioa_wb_sel_i, uart1_wb_sel_i}),
+		.i_sack		({bootrom_wb_ack_o, ram_wb_ack_o, gpioa_wb_ack_o, uart1_wb_ack_o}),
+		.i_sdata	({bootrom_wb_dat_o, ram_wb_dat_o, gpioa_wb_dat_o, uart1_wb_dat_o}),
+		.i_serr		({bootrom_wb_err_o, ram_wb_err_o, gpioa_wb_err_o, uart1_wb_err_o}),
+		.i_sstall	({bootrom_wb_stall_o, ram_wb_stall_o, gpioa_wb_stall_o, uart1_wb_stall_o})
 	);
 	
 	
@@ -104,20 +90,24 @@ module calsoc #(
 		.ext_pad_o	(gpioa_o)
 	);
 	
-	ram_wb ram (
-		.clk_i	(clk),
-		.rst_i	(wb_rst_i),
-		.cyc_i	(ram_wb_cyc_i),
-		.adr_i	(ram_wb_adr_i),
-		.dat_i	(ram_wb_dat_i),
-		.sel_i	(ram_wb_sel_i), 
-		.we_i	(ram_wb_we_i),
-		.stb_i	(ram_wb_stb_i),
-		.dat_o	(ram_wb_dat_o), 
-		.ack_o	(ram_wb_ack_o)
+	wb_ram #(
+		.WORD_COUNT(`RAM_WB_MEM_SIZE)
+	) ram (
+		.clk_i		(clk),
+		.rst_i		(wb_rst_i),
+		.wb_cyc_i	(ram_wb_cyc_i),
+		.wb_adr_i	(ram_wb_adr_i),
+		.wb_dat_i	(ram_wb_dat_i),
+		.wb_sel_i	(ram_wb_sel_i), 
+		.wb_we_i	(ram_wb_we_i),
+		.wb_stb_i	(ram_wb_stb_i),
+		.wb_dat_o	(ram_wb_dat_o), 
+		.wb_ack_o	(ram_wb_ack_o)
 	);
 
-	wbuart uart1 (
+	wbuart #(
+		.LGFLEN('ha)
+	) uart1 (
 		.i_clk		(clk),
 		.i_rst		(wb_rst_i),
 		.i_wb_cyc	(uart1_wb_cyc_i),
@@ -131,26 +121,24 @@ module calsoc #(
 		.o_uart_tx	(uart1_tx),
 		.o_wb_stall	(uart1_wb_stall_o)
 	);
-	defparam uart1.LGFLEN = 'ha;
-//********************************************
-//					will be moved to external flash
-	initial
-		$readmemh(PROG_PATH, data);
-	
-	wire [31:0]	addr;
-	assign addr = {8'h0, flash_wb_adr_i[23:0]};
-	
-	always @(posedge clk) begin
-		if (flash_wb_stb_i == 1 && flash_wb_we_i== 0) begin
-			flash_wb_dat_o <= data[addr>>2];
-			flash_wb_ack_o <= 1;
-		end else if (flash_wb_cyc_i == 0) begin 
-			flash_wb_dat_o  <= 0;
-			flash_wb_ack_o  <= 0;
-		end
-	end
 
-//********************************************
+	wb_rom #(
+		.mem_init_file(`bootloader_path),
+		.word_count('h200)
+	) bootloader_rom (
+		.clk_i		(clk),
+		.rst_i		(wb_rst_i),
+		.wb_cyc_i	(bootrom_wb_cyc_i),
+		.wb_adr_i	(bootrom_wb_adr_i),
+		.wb_dat_i	(bootrom_wb_dat_i),
+		.wb_sel_i	(bootrom_wb_sel_i), 
+		.wb_we_i	(bootrom_wb_we_i),
+		.wb_stb_i	(bootrom_wb_stb_i),
+		.wb_dat_o	(bootrom_wb_dat_o), 
+		.wb_ack_o	(bootrom_wb_ack_o)
+	);
+
+
 	reg        		pcpi_valid;
 	reg [31:0] 		pcpi_insn;
 	reg [31:0] 		pcpi_rs1;
@@ -171,10 +159,9 @@ module calsoc #(
 	
 	picorv32_wb #(
 		.PROGADDR_RESET	('h01000000),
-		.STACKADDR		(`RAM_WB_MEM_SIZE),
+		.STACKADDR		(`RAM_WB_MEM_SIZE*4),
 		.ENABLE_MUL		(1),
 		.ENABLE_DIV 	(1)
 	) pico (.*);
-	 
 	 
 endmodule

@@ -9,7 +9,7 @@
   "SubInsts" : [
    {
     "InstFile" : "D:/prg/cal_soc/calsoc/src/calsoc.sv",
-    "InstLine" : 67,
+    "InstLine" : 53,
     "InstName" : "wbbus",
     "ModuleFile" : "D:/prg/cal_soc/calsoc/src/wbxbar.v",
     "ModuleLine" : 77,
@@ -35,7 +35,7 @@
    },
    {
     "InstFile" : "D:/prg/cal_soc/calsoc/src/calsoc.sv",
-    "InstLine" : 93,
+    "InstLine" : 79,
     "InstName" : "gpioa",
     "ModuleFile" : "D:/prg/cal_soc/calsoc/src/gpio_top.v",
     "ModuleLine" : 116,
@@ -43,15 +43,15 @@
    },
    {
     "InstFile" : "D:/prg/cal_soc/calsoc/src/calsoc.sv",
-    "InstLine" : 107,
+    "InstLine" : 95,
     "InstName" : "ram",
-    "ModuleFile" : "D:/prg/cal_soc/calsoc/src/ram_wb.v",
-    "ModuleLine" : 5,
-    "ModuleName" : "ram_wb",
+    "ModuleFile" : "D:/prg/cal_soc/calsoc/src/wb_ram.v",
+    "ModuleLine" : 4,
+    "ModuleName" : "wb_ram",
     "SubInsts" : [
      {
-      "InstFile" : "D:/prg/cal_soc/calsoc/src/ram_wb.v",
-      "InstLine" : 42,
+      "InstFile" : "D:/prg/cal_soc/calsoc/src/wb_ram.v",
+      "InstLine" : 37,
       "InstName" : "ram0",
       "ModuleFile" : "D:/prg/cal_soc/calsoc/src/wb_ram_sc_sw.v",
       "ModuleLine" : 1,
@@ -61,7 +61,7 @@
    },
    {
     "InstFile" : "D:/prg/cal_soc/calsoc/src/calsoc.sv",
-    "InstLine" : 120,
+    "InstLine" : 110,
     "InstName" : "uart1",
     "ModuleFile" : "D:/prg/cal_soc/calsoc/src/wbuart.v",
     "ModuleLine" : 49,
@@ -103,7 +103,15 @@
    },
    {
     "InstFile" : "D:/prg/cal_soc/calsoc/src/calsoc.sv",
-    "InstLine" : 177,
+    "InstLine" : 128,
+    "InstName" : "bootloader_rom",
+    "ModuleFile" : "D:/prg/cal_soc/calsoc/src/wb_rom.v",
+    "ModuleLine" : 3,
+    "ModuleName" : "wb_rom"
+   },
+   {
+    "InstFile" : "D:/prg/cal_soc/calsoc/src/calsoc.sv",
+    "InstLine" : 165,
     "InstName" : "pico",
     "ModuleFile" : "D:/prg/cal_soc/calsoc/src/picorv32.v",
     "ModuleLine" : 2810,
@@ -138,6 +146,14 @@
     ]
    }
   ]
+ },
+ {
+  "InstFile" : "D:/prg/cal_soc/calsoc/src/gpo.v",
+  "InstLine" : 2,
+  "InstName" : "gpo",
+  "ModuleFile" : "D:/prg/cal_soc/calsoc/src/gpo.v",
+  "ModuleLine" : 2,
+  "ModuleName" : "gpo"
  },
  {
   "InstFile" : "D:/prg/cal_soc/calsoc/src/picorv32.v",
@@ -188,13 +204,5 @@
   "ModuleFile" : "D:/prg/cal_soc/calsoc/src/txuartlite.v",
   "ModuleLine" : 66,
   "ModuleName" : "txuartlite"
- },
- {
-  "InstFile" : "D:/prg/cal_soc/calsoc/src/gpo.v",
-  "InstLine" : 2,
-  "InstName" : "gpo",
-  "ModuleFile" : "D:/prg/cal_soc/calsoc/src/gpo.v",
-  "ModuleLine" : 2,
-  "ModuleName" : "gpo"
  }
 ]

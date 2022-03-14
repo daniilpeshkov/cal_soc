@@ -106,30 +106,12 @@ set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[7] -t
 set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[9] -to auto_signaltap_0|gnd -section_id auto_signaltap_0
 set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[12] -to auto_signaltap_0|vcc -section_id auto_signaltap_0
 set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[13] -to auto_signaltap_0|vcc -section_id auto_signaltap_0
-set_global_assignment -name QSYS_FILE issp.qsys
-set_global_assignment -name VERILOG_FILE ../calsoc/src/wbxbar.v
-set_global_assignment -name VERILOG_FILE ../calsoc/src/wbuart.v
-set_global_assignment -name VERILOG_FILE ../calsoc/src/wb_ram_sc_sw.v
-set_global_assignment -name VERILOG_FILE ../calsoc/src/ufifo.v
-set_global_assignment -name VERILOG_FILE ../calsoc/src/txuart.v
-set_global_assignment -name VERILOG_FILE ../calsoc/src/skidbuffer.v
-set_global_assignment -name VERILOG_FILE ../calsoc/src/rxuart.v
-set_global_assignment -name VERILOG_FILE ../calsoc/src/ram_wb_defines.v
-set_global_assignment -name VERILOG_FILE ../calsoc/src/ram_wb.v
-set_global_assignment -name VERILOG_FILE ../calsoc/src/picorv32.v
-set_global_assignment -name VERILOG_FILE ../calsoc/src/gpio_top.v
-set_global_assignment -name VERILOG_FILE ../calsoc/src/gpio_defines.v
-set_global_assignment -name SYSTEMVERILOG_FILE ../calsoc/src/calsoc.sv
-set_global_assignment -name VERILOG_FILE ../calsoc/src/addrdecode.v
-set_global_assignment -name SIGNALTAP_FILE stp1.stp
-set_global_assignment -name SYSTEMVERILOG_FILE output_files/db.sv
 set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 200 LFPM AIRFLOW"
 set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
 set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
 set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
 set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
 set_location_assignment PIN_E16 -to clk
-set_global_assignment -name SOURCE_FILE output_files/Spf1.spf
 set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[20] -to auto_signaltap_0|vcc -section_id auto_signaltap_0
 set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[27] -to auto_signaltap_0|vcc -section_id auto_signaltap_0
 set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[28] -to auto_signaltap_0|gnd -section_id auto_signaltap_0
@@ -144,5 +126,27 @@ set_location_assignment PIN_D12 -to gpioa_o[0]
 set_location_assignment PIN_C11 -to gpioa_o[1]
 set_location_assignment PIN_B10 -to gpioa_o[2]
 set_location_assignment PIN_B7 -to gpioa_o[3]
+set_global_assignment -name VERILOG_FILE ../calsoc/src/wbxbar.v
+set_global_assignment -name VERILOG_FILE ../calsoc/src/wbuart.v
+set_global_assignment -name VERILOG_FILE ../calsoc/src/wb_rom.v
+set_global_assignment -name VERILOG_FILE ../calsoc/src/wb_ram_sc_sw.v
+set_global_assignment -name VERILOG_FILE ../calsoc/src/wb_ram.v
+set_global_assignment -name VERILOG_FILE ../calsoc/src/ufifo.v
+set_global_assignment -name VERILOG_FILE ../calsoc/src/txuartlite.v
+set_global_assignment -name VERILOG_FILE ../calsoc/src/txuart.v
+set_global_assignment -name VERILOG_FILE ../calsoc/src/skidbuffer.v
+set_global_assignment -name VERILOG_FILE ../calsoc/src/rxuartlite.v
+set_global_assignment -name VERILOG_FILE ../calsoc/src/rxuart.v
+set_global_assignment -name VERILOG_FILE ../calsoc/src/ram_wb_defines.v
+set_global_assignment -name VERILOG_FILE ../calsoc/src/picorv32.v
+set_global_assignment -name VERILOG_FILE ../calsoc/src/gpo.v
+set_global_assignment -name VERILOG_FILE ../calsoc/src/gpio_top.v
+set_global_assignment -name VERILOG_FILE ../calsoc/src/gpio_defines.v
+set_global_assignment -name SYSTEMVERILOG_FILE ../calsoc/src/calsoc.sv
+set_global_assignment -name VERILOG_FILE ../calsoc/src/addrdecode.v
+set_global_assignment -name QSYS_FILE issp.qsys
+set_global_assignment -name SIGNALTAP_FILE stp1.stp
+set_global_assignment -name SYSTEMVERILOG_FILE output_files/db.sv
+set_global_assignment -name SOURCE_FILE output_files/Spf1.spf
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
 set_global_assignment -name SLD_FILE db/stp1_auto_stripped.stp

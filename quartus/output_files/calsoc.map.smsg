@@ -1,5 +1,4 @@
 Warning (10268): Verilog HDL information at wbxbar.v(870): always construct contains both blocking and non-blocking assignments File: D:/prg/cal_soc/calsoc/src/wbxbar.v Line: 870
-Info (10281): Verilog HDL Declaration information at wbuart.v(74): object "UART_SETUP" differs only in case from object "uart_setup" in the same scope File: D:/prg/cal_soc/calsoc/src/wbuart.v Line: 74
 Warning (10273): Verilog HDL warning at picorv32.v(300): extended using "x" or "z" File: D:/prg/cal_soc/calsoc/src/picorv32.v Line: 300
 Warning (10273): Verilog HDL warning at picorv32.v(320): extended using "x" or "z" File: D:/prg/cal_soc/calsoc/src/picorv32.v Line: 320
 Warning (10273): Verilog HDL warning at picorv32.v(327): extended using "x" or "z" File: D:/prg/cal_soc/calsoc/src/picorv32.v Line: 327
