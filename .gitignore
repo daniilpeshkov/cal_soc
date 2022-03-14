@@ -1,8 +1,8 @@
 /.vscode
 /quartus
 /modelsim
-.bak
-.o
-.hex
-.bin
-.elf
+*.bak
+*.o
+*.hex
+*.bin
+*.elf
