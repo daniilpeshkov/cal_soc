@@ -1,24 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Module name="calsoc" Lut="1">
-    <SubModule name="wbbus" Register="156" Lut="201">
-        <SubModule name="DECODE_REQUEST[0].iskid" Register="68" Lut="48"/>
-        <SubModule name="DECODE_REQUEST[0].adcd" Register="52" Lut="32"/>
+    <SubModule name="wbbus" Register="208" Lut="215">
+        <SubModule name="DECODE_REQUEST[0].iskid" Register="68" Lut="49"/>
+        <SubModule name="DECODE_REQUEST[0].adcd" Register="54" Lut="39"/>
     </SubModule>
     <SubModule name="gpioa" Register="283" Lut="207"/>
     <SubModule name="ram" Register="1" Lut="33">
         <SubModule name="ram0" Lut="1" Bsram="4"/>
     </SubModule>
+    <SubModule name="prg_ram" Register="1" Lut="33">
+        <SubModule name="ram0" Lut="1" Bsram="8"/>
+    </SubModule>
     <SubModule name="uart1" Register="80" Lut="87">
-        <SubModule name="rx" Register="118" Alu="50" Lut="228"/>
+        <SubModule name="rx" Register="118" Alu="50" Lut="231"/>
         <SubModule name="rxfifo" Register="54" Alu="68" Lut="78" Bsram="2"/>
-        <SubModule name="txfifo" Register="54" Alu="48" Lut="78" Bsram="2"/>
+        <SubModule name="txfifo" Register="54" Alu="48" Lut="80" Bsram="2"/>
         <SubModule name="tx" Register="73" Lut="232"/>
     </SubModule>
-    <SubModule name="bootloader_rom" Register="1" Lut="2" Bsram="1"/>
-    <SubModule name="pico" Register="103" Lut="17">
-        <SubModule name="picorv32_core" Register="626" Alu="314" Lut="1319" Bsram="2">
-            <SubModule name="pcpi_mul" Register="255" Alu="134" Lut="249"/>
-            <SubModule name="pcpi_div" Register="200" Alu="64" Lut="354"/>
+    <SubModule name="bootloader_rom" Register="2" Lut="2" Bsram="1"/>
+    <SubModule name="pico" Register="103" Lut="19">
+        <SubModule name="picorv32_core" Register="626" Alu="314" Lut="1312" Bsram="2">
+            <SubModule name="pcpi_mul" Register="255" Alu="134" Lut="250"/>
+            <SubModule name="pcpi_div" Register="200" Alu="64" Lut="351"/>
         </SubModule>
     </SubModule>
 </Module>

@@ -1,9 +1,3 @@
-
-unsigned int delay(unsigned int n) {
-	while (n > 0) n--;
-	return n;
-}
-
 #define F_CPU 	12000000L
 #define BAUD 	9600
 
@@ -55,14 +49,15 @@ void main(void) {
 					cur_addr = 0;
 					GPIO_OUT = 1;
 					for (int i = 0; i < 4; i++) { //get 4 bytes of address
-						cur_addr |= (getchar_() << (i*8));
+						cur_addr |= ((unsigned int)getchar_() << (i*8));
 					}
 					GPIO_OUT = 2;
 					state = LOAD_STATE;
-					break;
+					continue;
 
 				case EXIT:
 					GPIO_OUT = 0xff;
+					__asm__("li ra, 0x04000000; ret");
 					while(1);
 
 				default: //ignore
@@ -75,8 +70,8 @@ void main(void) {
 			break;
 
 		case LOAD_STATE:
-			GPIO_OUT = 3;
-			// *cur_addr = getchar_();	
+			*(unsigned char*)cur_addr = in;
+			GPIO_OUT = in;
 			cur_addr += 1;
 			break;
 		}

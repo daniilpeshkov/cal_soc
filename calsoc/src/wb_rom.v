@@ -5,8 +5,8 @@ module wb_rom #(
 	parameter mem_init_file = "",
 	parameter word_count = 0
 ) (
-	input clk_i,
-	input rst_i,			
+	input wire clk_i,
+	input wire rst_i,			
 //wb signals
 	input  wire	[31:0]	wb_dat_i,   
 	output reg	[31:0]	wb_dat_o,

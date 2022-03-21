@@ -5,8 +5,8 @@ module wb_ram #(
 	parameter DATA_WIDTH = 32,
 	parameter WORD_COUNT = 32
 ) (
-	input clk_i,
-	input rst_i,			
+	input wire clk_i,
+	input wire rst_i,			
 //wb signals
 	input  wire	[31:0]	wb_dat_i,   
 	output wire	[31:0]	wb_dat_o,

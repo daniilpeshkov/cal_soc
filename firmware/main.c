@@ -15,6 +15,8 @@ void main(void) {
 	GPIOA->oe = 0xffffffff;
 	GPIOA->out = 0xaa;
 
+	while(1);
+
 	uart_init(UART1, 9600L);
 	tmp = 1;
 

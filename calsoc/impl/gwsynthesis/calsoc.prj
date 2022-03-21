@@ -16,11 +16,12 @@
         <File path="D:\prg\cal_soc\calsoc\src\txuart.v" type="verilog"/>
         <File path="D:\prg\cal_soc\calsoc\src\txuartlite.v" type="verilog"/>
         <File path="D:\prg\cal_soc\calsoc\src\ufifo.v" type="verilog"/>
+        <File path="D:\prg\cal_soc\calsoc\src\wb_ram.v" type="verilog"/>
         <File path="D:\prg\cal_soc\calsoc\src\wb_ram_sc_sw.v" type="verilog"/>
+        <File path="D:\prg\cal_soc\calsoc\src\wb_rom.v" type="verilog"/>
         <File path="D:\prg\cal_soc\calsoc\src\wbuart.v" type="verilog"/>
         <File path="D:\prg\cal_soc\calsoc\src\wbxbar.v" type="verilog"/>
-        <File path="D:\prg\cal_soc\calsoc\src\wb_rom.v" type="verilog"/>
-        <File path="D:\prg\cal_soc\calsoc\src\wb_ram.v" type="verilog"/>
+        <File path="D:\prg\cal_soc\calsoc\src\mem.gsc" type="gsc"/>
     </FileList>
     <OptionList>
         <Option type="disable_insert_pad" value="0"/>

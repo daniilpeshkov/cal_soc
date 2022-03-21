@@ -43,13 +43,14 @@ module calsoc (
 	`DEFINE_WB_SLAVE_WIRE(uart1)
 	//bootloader ROM
 	`DEFINE_WB_SLAVE_WIRE(bootrom)
-	
+	//temporary program memory (in RAM)
+	`DEFINE_WB_SLAVE_WIRE(prg_ram)
 		
 	wbxbar #(
 		.NM			(1),
-		.NS			(4),
-		.SLAVE_ADDR	({32'h01000000, 32'h00000000, 32'h02000000, 32'h03000000}), 
-		.SLAVE_MASK	({32'hff000000, 32'hff000000, 32'hffffffC0, 32'hfffffff0})
+		.NS			(5),
+		.SLAVE_ADDR	({32'h01000000, 32'h00000000, 32'h02000000, 32'h03000000, 32'h04000000}), 
+		.SLAVE_MASK	({32'hff000000, 32'hff000000, 32'hffffffC0, 32'hfffffff0, 32'hff000000})
 	) wbbus (
 		.i_clk		(clk),
 		.i_reset	(wb_rst_i),
@@ -63,16 +64,16 @@ module calsoc (
 		.o_mdata	(wbm_dat_i),
 		.o_mstall	(wbm_stall_i),
 
-		.o_scyc		({bootrom_wb_cyc_i, ram_wb_cyc_i, gpioa_wb_cyc_i, uart1_wb_cyc_i}),
-		.o_sstb		({bootrom_wb_stb_i, ram_wb_stb_i, gpioa_wb_stb_i, uart1_wb_stb_i}),
-		.o_swe		({bootrom_wb_we_i,  ram_wb_we_i,  gpioa_wb_we_i,	uart1_wb_we_i}),
-		.o_saddr	({bootrom_wb_adr_i, ram_wb_adr_i, gpioa_wb_adr_i, uart1_wb_adr_i}),
-		.o_sdata	({bootrom_wb_dat_i, ram_wb_dat_i, gpioa_wb_dat_i, uart1_wb_dat_i}),
-		.o_ssel		({bootrom_wb_sel_i, ram_wb_sel_i, gpioa_wb_sel_i, uart1_wb_sel_i}),
-		.i_sack		({bootrom_wb_ack_o, ram_wb_ack_o, gpioa_wb_ack_o, uart1_wb_ack_o}),
-		.i_sdata	({bootrom_wb_dat_o, ram_wb_dat_o, gpioa_wb_dat_o, uart1_wb_dat_o}),
-		.i_serr		({bootrom_wb_err_o, ram_wb_err_o, gpioa_wb_err_o, uart1_wb_err_o}),
-		.i_sstall	({bootrom_wb_stall_o, ram_wb_stall_o, gpioa_wb_stall_o, uart1_wb_stall_o})
+		.o_scyc		({bootrom_wb_cyc_i, ram_wb_cyc_i, gpioa_wb_cyc_i,uart1_wb_cyc_i, prg_ram_wb_cyc_i}),
+		.o_sstb		({bootrom_wb_stb_i, ram_wb_stb_i, gpioa_wb_stb_i, uart1_wb_stb_i, prg_ram_wb_stb_i }),
+		.o_swe		({bootrom_wb_we_i,  ram_wb_we_i,  gpioa_wb_we_i, uart1_wb_we_i, prg_ram_wb_we_i}),
+		.o_saddr	({bootrom_wb_adr_i, ram_wb_adr_i, gpioa_wb_adr_i, uart1_wb_adr_i, prg_ram_wb_adr_i}),
+		.o_sdata	({bootrom_wb_dat_i, ram_wb_dat_i, gpioa_wb_dat_i, uart1_wb_dat_i, prg_ram_wb_dat_i}),
+		.o_ssel		({bootrom_wb_sel_i, ram_wb_sel_i, gpioa_wb_sel_i, uart1_wb_sel_i, prg_ram_wb_sel_i}),
+		.i_sack		({bootrom_wb_ack_o, ram_wb_ack_o, gpioa_wb_ack_o, uart1_wb_ack_o, prg_ram_wb_ack_o}),
+		.i_sdata	({bootrom_wb_dat_o, ram_wb_dat_o, gpioa_wb_dat_o, uart1_wb_dat_o, prg_ram_wb_dat_o}),
+		.i_serr		({bootrom_wb_err_o, ram_wb_err_o, gpioa_wb_err_o, uart1_wb_err_o, prg_ram_wb_err_o}),
+		.i_sstall	({bootrom_wb_stall_o, ram_wb_stall_o, gpioa_wb_stall_o, uart1_wb_stall_o, prg_ram_wb_stall_o})
 	);
 	
 	
@@ -105,6 +106,21 @@ module calsoc (
 		.wb_ack_o	(ram_wb_ack_o)
 	);
 
+	wb_ram #(
+		.WORD_COUNT('h1000)
+	) prg_ram (
+		.clk_i		(clk),
+		.rst_i		(wb_rst_i),
+		.wb_cyc_i	(prg_ram_wb_cyc_i),
+		.wb_adr_i	(prg_ram_wb_adr_i),
+		.wb_dat_i	(prg_ram_wb_dat_i),
+		.wb_sel_i	(prg_ram_wb_sel_i), 
+		.wb_we_i	(prg_ram_wb_we_i),
+		.wb_stb_i	(prg_ram_wb_stb_i),
+		.wb_dat_o	(prg_ram_wb_dat_o), 
+		.wb_ack_o	(prg_ram_wb_ack_o)
+	);
+
 	wbuart #(
 		.LGFLEN('ha)
 	) uart1 (
@@ -124,7 +140,7 @@ module calsoc (
 
 	wb_rom #(
 		.mem_init_file(`bootloader_path),
-		.word_count('h200)
+		.word_count('h300)
 	) bootloader_rom (
 		.clk_i		(clk),
 		.rst_i		(wb_rst_i),

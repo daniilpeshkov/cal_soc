@@ -49,7 +49,15 @@
    "Type" : "verilog"
   },
   {
+   "Path" : "D:/prg/cal_soc/calsoc/src/wb_ram.v",
+   "Type" : "verilog"
+  },
+  {
    "Path" : "D:/prg/cal_soc/calsoc/src/wb_ram_sc_sw.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "D:/prg/cal_soc/calsoc/src/wb_rom.v",
    "Type" : "verilog"
   },
   {
@@ -58,14 +66,6 @@
   },
   {
    "Path" : "D:/prg/cal_soc/calsoc/src/wbxbar.v",
-   "Type" : "verilog"
-  },
-  {
-   "Path" : "D:/prg/cal_soc/calsoc/src/wb_rom.v",
-   "Type" : "verilog"
-  },
-  {
-   "Path" : "D:/prg/cal_soc/calsoc/src/wb_ram.v",
    "Type" : "verilog"
   }
  ],

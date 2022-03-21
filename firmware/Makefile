@@ -4,10 +4,11 @@ TOOLCHAIN_PREFIX=/opt/riscv32i/bin/riscv32-unknown-elf-
 
 OBJ= 	uart.o \
 		main.o \
-		printf.o \
-		putchar.o
+		putchar.o \
+		# printf.o 
 
 all: test.hex
+
 
 %.o: %.c
 	$(TOOLCHAIN_PREFIX)gcc -c -march=rv32im$(subst C,c,$(COMPRESSED_ISA)) -o $@ $<

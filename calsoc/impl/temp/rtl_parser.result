@@ -9,7 +9,7 @@
   "SubInsts" : [
    {
     "InstFile" : "D:/prg/cal_soc/calsoc/src/calsoc.sv",
-    "InstLine" : 53,
+    "InstLine" : 54,
     "InstName" : "wbbus",
     "ModuleFile" : "D:/prg/cal_soc/calsoc/src/wbxbar.v",
     "ModuleLine" : 77,
@@ -35,7 +35,7 @@
    },
    {
     "InstFile" : "D:/prg/cal_soc/calsoc/src/calsoc.sv",
-    "InstLine" : 79,
+    "InstLine" : 80,
     "InstName" : "gpioa",
     "ModuleFile" : "D:/prg/cal_soc/calsoc/src/gpio_top.v",
     "ModuleLine" : 116,
@@ -43,7 +43,7 @@
    },
    {
     "InstFile" : "D:/prg/cal_soc/calsoc/src/calsoc.sv",
-    "InstLine" : 95,
+    "InstLine" : 96,
     "InstName" : "ram",
     "ModuleFile" : "D:/prg/cal_soc/calsoc/src/wb_ram.v",
     "ModuleLine" : 4,
@@ -61,7 +61,25 @@
    },
    {
     "InstFile" : "D:/prg/cal_soc/calsoc/src/calsoc.sv",
-    "InstLine" : 110,
+    "InstLine" : 111,
+    "InstName" : "prg_ram",
+    "ModuleFile" : "D:/prg/cal_soc/calsoc/src/wb_ram.v",
+    "ModuleLine" : 4,
+    "ModuleName" : "wb_ram",
+    "SubInsts" : [
+     {
+      "InstFile" : "D:/prg/cal_soc/calsoc/src/wb_ram.v",
+      "InstLine" : 37,
+      "InstName" : "ram0",
+      "ModuleFile" : "D:/prg/cal_soc/calsoc/src/wb_ram_sc_sw.v",
+      "ModuleLine" : 1,
+      "ModuleName" : "ram"
+     }
+    ]
+   },
+   {
+    "InstFile" : "D:/prg/cal_soc/calsoc/src/calsoc.sv",
+    "InstLine" : 126,
     "InstName" : "uart1",
     "ModuleFile" : "D:/prg/cal_soc/calsoc/src/wbuart.v",
     "ModuleLine" : 49,
@@ -103,7 +121,7 @@
    },
    {
     "InstFile" : "D:/prg/cal_soc/calsoc/src/calsoc.sv",
-    "InstLine" : 128,
+    "InstLine" : 144,
     "InstName" : "bootloader_rom",
     "ModuleFile" : "D:/prg/cal_soc/calsoc/src/wb_rom.v",
     "ModuleLine" : 3,
@@ -111,7 +129,7 @@
    },
    {
     "InstFile" : "D:/prg/cal_soc/calsoc/src/calsoc.sv",
-    "InstLine" : 165,
+    "InstLine" : 181,
     "InstName" : "pico",
     "ModuleFile" : "D:/prg/cal_soc/calsoc/src/picorv32.v",
     "ModuleLine" : 2810,
