@@ -5,26 +5,25 @@
     <Version>5</Version>
     <Device name="GW1NR-9" pn="GW1NR-LV9QN88PC6/I5">gw1nr9-012</Device>
     <FileList>
-        <File path="src/addrdecode.v" type="file.verilog" enable="1"/>
-        <File path="src/calsoc.sv" type="file.verilog" enable="1"/>
-        <File path="src/gpio_defines.v" type="file.verilog" enable="1"/>
-        <File path="src/gpio_top.v" type="file.verilog" enable="1"/>
-        <File path="src/gpo.v" type="file.verilog" enable="1"/>
-        <File path="src/picorv32.v" type="file.verilog" enable="1"/>
-        <File path="src/rxuart.v" type="file.verilog" enable="1"/>
-        <File path="src/rxuartlite.v" type="file.verilog" enable="1"/>
-        <File path="src/skidbuffer.v" type="file.verilog" enable="1"/>
-        <File path="src/txuart.v" type="file.verilog" enable="1"/>
-        <File path="src/txuartlite.v" type="file.verilog" enable="1"/>
-        <File path="src/ufifo.v" type="file.verilog" enable="1"/>
-        <File path="src/wb_ram.v" type="file.verilog" enable="1"/>
-        <File path="src/wb_ram_sc_sw.v" type="file.verilog" enable="1"/>
-        <File path="src/wb_rom.v" type="file.verilog" enable="1"/>
-        <File path="src/wbuart.v" type="file.verilog" enable="1"/>
-        <File path="src/wbxbar.v" type="file.verilog" enable="1"/>
-        <File path="src/test_soc.cst" type="file.cst" enable="1"/>
-        <File path="src/test_soc.sdc" type="file.sdc" enable="1"/>
+        <File path="src/calsoc_top.sv" type="file.verilog" enable="1"/>
+        <File path="src/gpio/gpio_defines.v" type="file.verilog" enable="1"/>
+        <File path="src/gpio/gpio_top.v" type="file.verilog" enable="1"/>
+        <File path="src/gpio/gpo.v" type="file.verilog" enable="1"/>
+        <File path="src/mem/wb_ram.v" type="file.verilog" enable="1"/>
+        <File path="src/mem/wb_ram_sc_sw.v" type="file.verilog" enable="1"/>
+        <File path="src/mem/wb_rom.v" type="file.verilog" enable="1"/>
+        <File path="src/picorv/picorv32.v" type="file.verilog" enable="1"/>
+        <File path="src/wbuart/rxuart.v" type="file.verilog" enable="1"/>
+        <File path="src/wbuart/rxuartlite.v" type="file.verilog" enable="1"/>
+        <File path="src/wbuart/txuart.v" type="file.verilog" enable="1"/>
+        <File path="src/wbuart/txuartlite.v" type="file.verilog" enable="1"/>
+        <File path="src/wbuart/ufifo.v" type="file.verilog" enable="1"/>
+        <File path="src/wbuart/wbuart.v" type="file.verilog" enable="1"/>
+        <File path="src/wbxbar/addrdecode.v" type="file.verilog" enable="1"/>
+        <File path="src/wbxbar/skidbuffer.v" type="file.verilog" enable="1"/>
+        <File path="src/wbxbar/wbxbar.v" type="file.verilog" enable="1"/>
+        <File path="src/syn/calsoc.cst" type="file.cst" enable="1"/>
+        <File path="src/syn/calsoc.sdc" type="file.sdc" enable="1"/>
         <File path="src/calsoc.rao" type="file.gao" enable="0"/>
-        <File path="src/mem.gsc" type="file.gsc" enable="1"/>
     </FileList>
 </Project>

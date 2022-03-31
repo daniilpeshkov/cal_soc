@@ -112,7 +112,7 @@
 //`include "timescale.v"
 // synopsys translate_on
 `include "gpio_defines.v"
-
+`default_nettype wire
 module gpio_top(
 	// WISHBONE Interface
 	wb_clk_i, wb_rst_i, wb_cyc_i, wb_adr_i, wb_dat_i, wb_sel_i, wb_we_i, wb_stb_i,
