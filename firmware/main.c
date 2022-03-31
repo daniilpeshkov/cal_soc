@@ -13,7 +13,7 @@ void main(void) {
 	unsigned int tmp;	
 
 	GPIOA->oe = 0xffffffff;
-	GPIOA->out = 0xaa;
+	GPIOA->out = 0x8a;
 
 	while(1);
 
