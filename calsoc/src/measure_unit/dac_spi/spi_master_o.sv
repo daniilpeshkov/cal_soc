@@ -35,7 +35,7 @@ module spi_master_o #(
 	logic [$clog2(DATA_WIDTH) : 0] bit_cnt;
 
 	assign rdy = (state == IDLE);
-	assign mosi = shift_reg[DATA_WIDTH-1];
+	assign mosi = shift_reg[DATA_WIDTH];
 
 	always_ff @(posedge clk_i, posedge arst_i) begin
 		if (arst_i) begin
