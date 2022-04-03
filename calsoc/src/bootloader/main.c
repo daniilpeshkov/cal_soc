@@ -87,9 +87,6 @@ void main(void) {
 			data |= ((unsigned int)in) << ((b_cnt++)*8);
 
 			if (b_cnt == 4) {
-
-				write_uint(data);
-				write_uint(cur_addr);	
 				*(unsigned int *)cur_addr = data;
 				data = 0;
 				b_cnt = 0;
