@@ -140,7 +140,7 @@ module calsoc (
 
 	wb_rom #(
 		.mem_init_file(`bootloader_path),
-		.word_count('h300)
+		.word_count('h400)
 	) bootloader_rom (
 		.clk_i		(clk),
 		.rst_i		(wb_rst_i),

@@ -15,6 +15,7 @@ def write_data(ser, start_addr : int, data):
         if byte in escape_list:
             ser.write(b'\x7e')
         ser.write(byte)
+        print(byte)
     ser.write(b'\x00')
 
 

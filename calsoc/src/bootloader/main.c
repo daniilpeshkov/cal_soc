@@ -17,6 +17,17 @@ char getchar_() {
 	}
 }
 
+void _putchar(char character) {
+    while (!(UART1_FIFO & (1<<16))) {}
+    UART1_TX_DATA = character & 0xff;
+}
+
+void write_uint(unsigned int n) {
+	for (int i = 0 ; i < 4; i++) {
+		_putchar((unsigned char)(n>>(i*8)));
+	}
+}
+
 typedef enum {
 	IDLE_STATE, LOAD_STATE
 } b_state;
@@ -27,6 +38,8 @@ typedef enum {
 
 void main(void) {
 	unsigned int cur_addr;	
+	unsigned int data = 0, b_cnt = 0;
+
 	b_state state = IDLE_STATE;
 
 	// TODO check bootmode
@@ -49,7 +62,8 @@ void main(void) {
 					cur_addr = 0;
 					GPIO_OUT = 1;
 					for (int i = 0; i < 4; i++) { //get 4 bytes of address
-						cur_addr |= ((unsigned int)getchar_() << (i*8));
+					 	cur_addr <<= 8;
+						cur_addr |= ((unsigned int)getchar_());
 					}
 					GPIO_OUT = 2;
 					state = LOAD_STATE;
@@ -70,9 +84,18 @@ void main(void) {
 			break;
 
 		case LOAD_STATE:
-			*(unsigned char*)cur_addr = in;
-			GPIO_OUT = in;
-			cur_addr += 1;
+			data |= ((unsigned int)in) << ((b_cnt++)*8);
+
+			if (b_cnt == 4) {
+
+				write_uint(data);
+				write_uint(cur_addr);	
+				*(unsigned int *)cur_addr = data;
+				data = 0;
+				b_cnt = 0;
+				cur_addr += 4;
+				GPIO_OUT += 1;
+			}
 			break;
 		}
 	}
