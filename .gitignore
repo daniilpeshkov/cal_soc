@@ -11,3 +11,8 @@
 *work
 *.ini
 *.wlf
+*.vvp
+*.vcd
+*.lxt
+*.lx2
+*.gtkw
