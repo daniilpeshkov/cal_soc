@@ -1,5 +1,5 @@
 /.vscode
-/calsoc/impl
+*/impl
 /quartus
 /modelsim
 *.bak

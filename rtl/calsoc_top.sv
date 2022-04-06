@@ -10,7 +10,7 @@ wire 			``prefix``_wb_cyc_i;\
 wire			``prefix``_wb_err_o;\
 wire			``prefix``_wb_stall_o;
 
-`define bootloader_path "./bootloader/bootloader.hex"
+`define bootloader_path "../bootloader/bootloader.hex"
 `define RAM_WB_MEM_SIZE 'h100
 
 module calsoc (
