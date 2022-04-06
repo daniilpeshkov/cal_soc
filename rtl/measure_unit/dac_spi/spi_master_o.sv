@@ -2,13 +2,14 @@
 //write only
 module spi_master_o #(
 	parameter DATA_WIDTH = 8,
-	parameter CLK_DIV = 3
+	parameter CLK_DIV = 3,
+	parameter WAIT_CYCLES = 3
 ) (
 	input   clk_i,
 	input   arst_i,
 
 	input   [DATA_WIDTH-1:0] data_i,
-	input                    wre_i,
+	input        wre_i,
 
 	output       rdy,
 
@@ -27,14 +28,14 @@ module spi_master_o #(
 		.negedge_o(sclk_neg)
 	);
 ////////////////////////////////////////////////////////////////////////////
-	typedef enum  logic [1:0] {IDLE, SEND} spi_master_state;
+	typedef enum  logic [1:0] {IDLE, SEND, WAIT} spi_master_state;
 
 	spi_master_state state;
 	logic [DATA_WIDTH:0] shift_reg;
 	logic [$clog2(DATA_WIDTH) : 0] bit_cnt;
 
 	assign rdy = (state == IDLE);
-	assign mosi = shift_reg[DATA_WIDTH-1];
+	assign mosi = shift_reg[DATA_WIDTH];
 
 	always_ff @(posedge clk_i, posedge arst_i) begin
 		if (arst_i) begin
@@ -59,9 +60,16 @@ module spi_master_o #(
 						bit_cnt <= bit_cnt - 1;
 						if (bit_cnt == 0) begin
 							sync <= 1;
-							state = IDLE;
+							state = WAIT;
+							bit_cnt <= WAIT_CYCLES - 1;
 						end
 					end
+				end
+				WAIT: begin 
+					bit_cnt <= bit_cnt - 1;
+					if (bit_cnt == 0) begin 
+						state <= IDLE;
+					end		
 				end
 			endcase	
 		end

@@ -1,5 +1,5 @@
 /.vscode
-/calsoc/impl
+*/impl
 /quartus
 /modelsim
 *.bak
@@ -8,3 +8,11 @@
 *.bin
 *.elf
 *.user
+*work
+*.ini
+*.wlf
+*.vvp
+*.vcd
+*.lxt
+*.lx2
+*.gtkw
