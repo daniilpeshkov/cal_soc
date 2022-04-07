@@ -27,6 +27,9 @@ add_file -type verilog "../rtl/wbxbar/wbxbar.v"
 add_file -type verilog "../rtl/gpio/gpio_defines.v"
 add_file -type verilog "../rtl/gpio/gpio_top.v"
 
+# PLL
+add_file -type verilog "../rtl/gowin_rpll/gowin_rpll.v"
+
 # Pins
 add_file -type cst "./calsoc.cst"
 

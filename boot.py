@@ -1,8 +1,4 @@
 from turtle import st
-import pyftdi.serialext
-import os
-import time
-import random
 import serial
 
 escape_list = [b'\x00',b'\x7e', b'\x01']
@@ -15,7 +11,6 @@ def write_data(ser, start_addr : int, data):
         if byte in escape_list:
             ser.write(b'\x7e')
         ser.write(byte)
-        print(byte)
     ser.write(b'\x00')
 
 
