@@ -22,8 +22,14 @@ module calsoc (
 	output 	wire 			uart1_tx
 );
 	wire wb_rst_i;
+	wire wb_clk_i;
 	assign wb_rst_i = ~rst;
-	
+	// assign wb_clk_i = clk;
+	Gowin_rPLL your_instance_name(
+        .clkout(wb_clk_i), //output clkout
+        .clkin(clk) //input clkin
+    );
+
 	//picorv32_wb wb
 	wire [31:0] 	wbm_adr_o;
 	wire [31:0] 	wbm_dat_o;
@@ -52,7 +58,7 @@ module calsoc (
 		.SLAVE_ADDR	({32'h01000000, 32'h00000000, 32'h02000000, 32'h03000000, 32'h04000000}), 
 		.SLAVE_MASK	({32'hff000000, 32'hff000000, 32'hffffffC0, 32'hfffffff0, 32'hff000000})
 	) wbbus (
-		.i_clk		(clk),
+		.i_clk		(wb_clk_i),
 		.i_reset	(wb_rst_i),
 		.i_mcyc		(wbm_cyc_o),
 		.i_mstb		(wbm_stb_o),
@@ -78,7 +84,7 @@ module calsoc (
 	
 	
 	gpio_top gpioa (
-		.wb_clk_i	(clk),
+		.wb_clk_i	(wb_clk_i),
 		.wb_rst_i	(wb_rst_i),
 		.wb_cyc_i	(gpioa_wb_cyc_i),
 		.wb_adr_i	(gpioa_wb_adr_i[5:0]),
@@ -94,7 +100,7 @@ module calsoc (
 	wb_ram #(
 		.WORD_COUNT(`RAM_WB_MEM_SIZE)
 	) ram (
-		.clk_i		(clk),
+		.clk_i		(wb_clk_i),
 		.rst_i		(wb_rst_i),
 		.wb_cyc_i	(ram_wb_cyc_i),
 		.wb_adr_i	(ram_wb_adr_i),
@@ -109,7 +115,7 @@ module calsoc (
 	wb_ram #(
 		.WORD_COUNT('h1000)
 	) prg_ram (
-		.clk_i		(clk),
+		.clk_i		(wb_clk_i),
 		.rst_i		(wb_rst_i),
 		.wb_cyc_i	(prg_ram_wb_cyc_i),
 		.wb_adr_i	(prg_ram_wb_adr_i),
@@ -124,7 +130,7 @@ module calsoc (
 	wbuart #(
 		.LGFLEN('ha)
 	) uart1 (
-		.i_clk		(clk),
+		.i_clk		(wb_clk_i),
 		.i_rst		(wb_rst_i),
 		.i_wb_cyc	(uart1_wb_cyc_i),
 		.i_wb_addr	(uart1_wb_adr_i[5:2]), // костыль из-за того, что у юарта адреса не выровнены по 4 байтам
@@ -142,7 +148,7 @@ module calsoc (
 		.mem_init_file(`bootloader_path),
 		.word_count('h400)
 	) bootloader_rom (
-		.clk_i		(clk),
+		.clk_i		(wb_clk_i),
 		.rst_i		(wb_rst_i),
 		.wb_cyc_i	(bootrom_wb_cyc_i),
 		.wb_adr_i	(bootrom_wb_adr_i),
@@ -170,14 +176,14 @@ module calsoc (
 	reg [35:0] 		trace_data;
 	reg 			mem_instr;
 
-	wire wb_clk_i;
-	assign wb_clk_i = clk;	
 	
 	picorv32_wb #(
 		.PROGADDR_RESET	('h01000000),
 		.STACKADDR		(`RAM_WB_MEM_SIZE*4),
 		.ENABLE_MUL		(1),
 		.ENABLE_DIV 	(1)
-	) pico (.*);
+	) pico (
+		.*
+	);
 	 
 endmodule
