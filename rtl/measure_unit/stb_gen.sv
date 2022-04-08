@@ -8,17 +8,18 @@
 
 module stb_gen #(
    parameter ZERO_HOLD_CYCLES = 5,
-   parameter T_CNT_WIDTH = 32
+   parameter T_CNT_WIDTH = 32,
+   parameter OFFSET = 20
 ) (
    input wire clk_i,
    input wire arst_i,
 
    input wire sig_i,
-   input wire freq_det_i,
+   input wire run_det_i,
    input wire oe_i,
 
    output logic err_o = 0,
-   output logic rdy,
+   output logic rdy_o,
    output logic stb_o
 );
    logic int_stb = 1;
@@ -28,7 +29,7 @@ module stb_gen #(
 
    stb_gen_state state = GEN;
 
-   assign rdy = state == GEN;
+   assign rdy_o = state == GEN;
    logic prev_sig; //edge detect
 
    logic [T_CNT_WIDTH-1 : 0] t_cnt;
@@ -45,7 +46,7 @@ module stb_gen #(
          t_cnt <= t_cnt + 1;
          case (state) 
          GEN: begin
-            if (freq_det_i) begin 
+            if (run_det_i) begin 
                state <= FIND_FIRST_EDGE;
                int_stb <= 0;
                err_o <= 0;

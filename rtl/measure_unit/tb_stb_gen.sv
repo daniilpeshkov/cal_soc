@@ -14,10 +14,10 @@ module tb_stb_gen();
     logic comp_out = 0;
     logic arst_i = 0;
     logic stb_o;
-    logic freq_det_i = 1;
+    logic run_det_i = 1;
     logic err_o;
     logic oe_i = 1;
-    logic rdy;
+    logic rdy_o;
 
     stb_gen dut(
         .sig_i (comp_out),
@@ -27,10 +27,10 @@ module tb_stb_gen();
     initial begin 
         int t;
         foreach (freqs[i]) begin
-            freq_det_i = 1;
+            run_det_i = 1;
             #2 arst_i = 1;
             #2 arst_i = 0;
-            #(`CLK_T*2) freq_det_i = 0;
+            #(`CLK_T*2) run_det_i = 0;
             fork
                 begin
                     repeat (4) begin

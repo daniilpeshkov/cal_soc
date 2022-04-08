@@ -19,6 +19,8 @@ module ch_measure_ctl #(
 	output logic mosi_o,
 	output logic sclk_o,
 	output logic sync_o,
+    
+    //
 
     //delay line
     output logic [9:0] d_code_o = 0
