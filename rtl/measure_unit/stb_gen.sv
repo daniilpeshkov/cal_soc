@@ -6,30 +6,32 @@
 //------------------------------------------------------
 
 
-module stb_gen (
+module stb_gen #(
+   parameter ZERO_HOLD_CYCLES = 5,
+   parameter T_CNT_WIDTH = 32,
+   parameter OFFSET = 20
+) (
    input wire clk_i,
    input wire arst_i,
 
    input wire sig_i,
-   input wire freq_det_i,
+   input wire run_det_i,
    input wire oe_i,
 
    output logic err_o = 0,
+   output logic rdy_o,
    output logic stb_o
 );
    logic int_stb = 1;
-   // assign stb_o = (int_stb & oe_i & !freq_det_i & !err_o) | !oe_i;
    assign stb_o = (int_stb & oe_i);
 
    typedef enum logic[1:0] {GEN, FIND_FIRST_EDGE, FIND_SECOND_EDGE} stb_gen_state;
 
    stb_gen_state state = GEN;
 
+   assign rdy_o = state == GEN;
    logic prev_sig; //edge detect
 
-   localparam ZERO_HOLD_CYCLES = 5;
-
-   localparam T_CNT_WIDTH = 32;
    logic [T_CNT_WIDTH-1 : 0] t_cnt;
    logic [T_CNT_WIDTH-1 : 0] t_end;
    logic [T_CNT_WIDTH-1 : 0] t_stb_pos;
@@ -44,7 +46,7 @@ module stb_gen (
          t_cnt <= t_cnt + 1;
          case (state) 
          GEN: begin
-            if (freq_det_i) begin 
+            if (run_det_i) begin 
                state <= FIND_FIRST_EDGE;
                int_stb <= 0;
                err_o <= 0;
@@ -60,7 +62,7 @@ module stb_gen (
          FIND_FIRST_EDGE: begin
             if (prev_sig == 0 && sig_i == 1) begin 
                state <= FIND_SECOND_EDGE;
-               t_cnt <= 1;
+               t_cnt <= 0;
             end
          end
          FIND_SECOND_EDGE: begin 
@@ -69,7 +71,7 @@ module stb_gen (
                t_cnt <= t_cnt; //make offset
                t_end <= t_cnt;
             end else if (t_cnt == 0) begin
-               err_o <= 1;
+               err_o <= 1; //overflow
             end
          end
          endcase
