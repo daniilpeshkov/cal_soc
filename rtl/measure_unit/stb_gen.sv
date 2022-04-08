@@ -70,7 +70,7 @@ module stb_gen #(
                t_cnt <= t_cnt; //make offset
                t_end <= t_cnt;
             end else if (t_cnt == 0) begin
-               err_o <= 1;
+               err_o <= 1; //overflow
             end
          end
          endcase
