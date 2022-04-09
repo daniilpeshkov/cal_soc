@@ -15,12 +15,10 @@ module ch_measure_ctl #(
     input logic [9:0] d_code_delta_i,
     input logic d_code_delta_wr_i,
 
-    //dac (threshold)
-	output logic mosi_o,
-	output logic sclk_o,
-	output logic sync_o,
-    
-    //
+    //dac (threshold) output
+    output logic [23:0] dac_dat_o,
+    output logic dac_wre_o,
+    input logic dac_rdy_i,
 
     //delay line
     output logic [9:0] d_code_o = 0

@@ -11,7 +11,7 @@ module spi_master_o #(
 	input   [DATA_WIDTH-1:0] data_i,
 	input        wre_i,
 
-	output       rdy,
+	output       rdy_o,
 
 	output logic mosi,
 	output logic sclk,
