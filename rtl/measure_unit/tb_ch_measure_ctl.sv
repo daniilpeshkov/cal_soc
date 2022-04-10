@@ -10,9 +10,11 @@ module tb_ch_measure_ctl();
 	parameter real PI_2 = 3.14159265359 * 2;
 	parameter  CLK_T =  8; // clk period
 
+	parameter DAC_RDY_DELAY = 20;
+
 	int sig;
 	logic clk_i = 0;
-	logic arst_i;
+	logic arst_i = 0;
 
 	always begin
 		#1 sig = (SIG_MAX * $sin($time/1000000000.0 * PI_2 * SIG_FREQ) + SIG_MAX) / 2;
@@ -27,7 +29,9 @@ module tb_ch_measure_ctl();
 
 	assign stb_gen_sig_i = sig >= SIG_MAX/2;
 
-	stb_gen stb_gen_inst(
+	stb_gen #(
+		.ZERO_HOLD_CYCLES(20)
+	) stb_gen_inst(
 		.clk_i		(clk_i),
 		.arst_i		(arst_i),
 		.sig_i		(stb_gen_sig_i),
@@ -39,60 +43,75 @@ module tb_ch_measure_ctl();
 	);
 
 
-	logic [23:0] spi_data;
-	logic spi_rdy;
-	logic spi_wre;
-	logic mosi;
-	logic sclk;
-	logic sync;
+	logic threshold_rdy = 0;
+	logic threshold_wre;
 
-//////////////////////////////////////////////////////////////
-// SPI for threshold DAC
-//////////////////////////////////////////////////////////////
-	spi_master_o #(
-		.DATA_WIDTH(24)
-	) spi_inst (
-		.clk_i		(clk_i),
-		.arst_i		(arst_i),
-		.wre_i		(spi_wre),
-		.rdy_o		(spi_rdy),
-		.data_i		(spi_data),
-		.mosi		(mosi),
-		.sclk		(sclk),
-		.sync		(sync)
-	);
-//////////////////////////////////////////////////////////////
-
-	logic comp_out;
-	logic [15:0] threshold_delta_i;
-	logic threshold_delta_wr_i;
-	logic [9:0] d_code_delta_i;
-	logic d_code_delta_wr_i;
+	logic cmp_out = 0;
+	logic [15:0] threshold_delta_i = 0;
+	logic threshold_delta_wr_i = 0;
+	logic [9:0] d_code_delta_i = 0;
+	logic d_code_delta_wr_i = 0;
 	logic [9:0] d_code_o;
+	logic run_i = 0;
+    output logic point_rdy_o;
+    output logic [15:0] point_v_o;
+    output logic [9:0] point_t_o;
 
+	logic [15:0] dut_threshold_o;
 	ch_measure_ctl dut (
 		.clk_i				(clk_i),
 		.arst_i				(arst_i),
-		.stb_i				(comp_out),
-		.dac_dat_o			(spi_data),
-		.dac_wre_o			(spi_wre),
-		.dac_rdy_i			(spi_rdy),
+		.stb_i				(cmp_out),
+		.threshold_o		(dut_threshold_o),
+		.threshold_wre_o	(threshold_wre),
+		.threshold_rdy_i	(threshold_rdy),
+		.cmp_out_i			(cmp_out),
 		.*
 	);
 
 //////////////////////////////////////////////////////////////
-// DAC and CMP Logic
+// DAC, CMP and delay line logic 
 //////////////////////////////////////////////////////////////
-logic [15:0] threshold;
 
-assign comp_out = sig > threshold;
+	logic [15:0] threshold = 0;
+
+	logic stb_delayed = 0;
+
+	always @(stb_gen_stb_o) begin
+		stb_delayed <= #(d_code_o) stb_gen_stb_o;
+	end
+	
+	always @(threshold, sig) begin
+		// stb_delayed signal is a latch for comparator
+		if (!stb_delayed) begin 
+			cmp_out = sig > threshold;
+		end
 
 
+	end
+
+	always begin 
+		@(posedge threshold_wre);
+		threshold_rdy = 0;
+		#(DAC_RDY_DELAY);
+		threshold_rdy = 1;
+		threshold = dut_threshold_o;
+	end
 
 //////////////////////////////////////////////////////////////
+
+	initial begin
+		#10
+		@(posedge stb_gen_rdy_o);
+		run_i = 1;
+	end
+
+	always @(posedge point_rdy_o)
+		$display("point T: %d V: %d", point_t_o, point_v_o);
+
 	initial begin 
 `ifdef DUMPVARS
-		$dumpfile("dump.vcd");
+		$dumpfile("dump.lxt");
 		$dumpvars(0, tb_ch_measure_ctl);
 `endif
 	end
@@ -105,7 +124,10 @@ assign comp_out = sig > threshold;
 		#(CLK_T) stb_gen_run_det_i = 0;
 	end
 
-	initial #100000 $finish;
+	initial begin
+		@(posedge d_code_o[8]);
+		$finish;
+	end
 
 	always #(CLK_T/2) clk_i = ~clk_i;
 
