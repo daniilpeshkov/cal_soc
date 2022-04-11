@@ -1,20 +1,23 @@
 `timescale 1ns/1ns
 
 module tb_ch_measure_ctl();
-`define DUMPVARS
-// `undef DUMPVARS    
 
-	parameter int SIG_MAX = 255;
-	parameter int SIG_FREQ = 100000; //Hz
+`define DUMPVARS
+`undef DUMPVARS    
+
+	parameter int SIG_MAX = 'h7FF;
+	parameter int SIG_FREQ = 1000000; //Hz
 	parameter real PI_2 = 3.14159265359 * 2;
 	parameter  CLK_T =  8; // clk period
 
+	parameter DAC_RDY_DELAY = 20;
+
 	int sig;
 	logic clk_i = 0;
-	logic arst_i;
+	logic arst_i = 0;
 
 	always begin
-		#1 sig = SIG_MAX * $sin($time/1000000000.0 * PI_2 * SIG_FREQ);
+		#1 sig = (SIG_MAX * $sin($time/1000000000.0 * PI_2 * SIG_FREQ) + SIG_MAX) / 2;
 	end
 
 	logic stb_gen_sig_i;
@@ -23,9 +26,12 @@ module tb_ch_measure_ctl();
 	logic stb_gen_oe_i = 1;    
 	logic stb_gen_err_o;
 	logic stb_gen_stb_o;
-	assign stb_gen_sig_i = sig >= SIG_MAX/2;
 
-	stb_gen stb_gen_inst(
+	assign stb_gen_sig_i = sig >= SIG_MAX / 2;
+
+	stb_gen #(
+		.ZERO_HOLD_CYCLES(2)
+	) stb_gen_inst(
 		.clk_i		(clk_i),
 		.arst_i		(arst_i),
 		.sig_i		(stb_gen_sig_i),
@@ -36,36 +42,87 @@ module tb_ch_measure_ctl();
    		.stb_o		(stb_gen_stb_o)
 	);
 
-	initial begin
-		#1 arst_i = 1; //global reset
-		#1 arst_i = 0;
-		stb_gen_run_det_i = 1;
-		#(CLK_T) stb_gen_run_det_i = 0;
+
+	logic threshold_rdy = 0;
+	logic threshold_wre;
+
+	logic cmp_out = 0;
+	logic [15:0] threshold_delta_i = 0;
+	logic threshold_delta_wr_i = 0;
+	logic [9:0] d_code_delta_i = 0;
+	logic d_code_delta_wr_i = 0;
+	logic [9:0] d_code_o;
+	logic run_i = 0;
+    output logic point_rdy_o;
+    output logic [15:0] point_v_o;
+    output logic [9:0] point_t_o;
+
+	logic [15:0] dut_threshold_o;
+	ch_measure_ctl dut (
+		.clk_i				(clk_i),
+		.arst_i				(arst_i),
+		.stb_i				(stb_delayed),
+		.threshold_o		(dut_threshold_o),
+		.threshold_wre_o	(threshold_wre),
+		.threshold_rdy_i	(threshold_rdy),
+		.cmp_out_i			(cmp_out),
+		.*
+	);
+
+//////////////////////////////////////////////////////////////
+// DAC, CMP and delay line logic 
+//////////////////////////////////////////////////////////////
+
+	logic [15:0] threshold = 0;
+
+	logic stb_delayed = 0;
+
+	always @(stb_gen_stb_o) begin
+		stb_delayed <= #(d_code_o) stb_gen_stb_o;
+	end
+	
+	always @(threshold, sig) begin
+		// stb_delayed signal is a latch for comparator
+		if (!stb_delayed) begin 
+			cmp_out = sig > threshold;
+		end
+
+
 	end
 
+	always begin 
+		@(posedge threshold_wre);
+		threshold_rdy = 0;
+		#(DAC_RDY_DELAY);
+		threshold_rdy = 1;
+		threshold = dut_threshold_o;
+	end
 
+//////////////////////////////////////////////////////////////
 
-	logic stb_i;
-	logic [15:0] threshold_delta_i;
-	logic threshold_delta_wr_i;
-	logic [9:0] d_code_delta_i;
-	logic d_code_delta_wr_i;
-	logic mosi_o;
-	logic sclk_o;
-	logic sync_o;
-	logic [9:0] d_code_o;
+	initial begin
+		#10
+		@(posedge stb_gen_rdy_o);
+		run_i = 1;
+	end
 
-	ch_measure_ctl dut (.*);
-
+	always @(posedge point_rdy_o)
+		$display( "%d", point_v_o);
 
 	initial begin 
 `ifdef DUMPVARS
-		$dumpfile("dump.vcd");
+		$dumpfile("dump.lxt", "w");
 		$dumpvars(0, tb_ch_measure_ctl);
 `endif
 	end
 
-	initial #100000 $finish;
+	initial begin
+		#1 arst_i = 1; //global reset
+		#1 arst_i = 0;
+		//run strobe generator
+		stb_gen_run_det_i = 1;
+		#(CLK_T) stb_gen_run_det_i = 0;
+	end
 
 	always #(CLK_T/2) clk_i = ~clk_i;
 
