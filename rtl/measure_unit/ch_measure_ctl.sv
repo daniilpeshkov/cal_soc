@@ -58,7 +58,7 @@ module ch_measure_ctl #(
     logic stb_prev;
 
     assign stb_posedge = (stb_prev == 0 && stb_i == 1);
-
+    // TODO may be used to make latency after stb posedge
     always_ff @(posedge clk_i, posedge arst_i) begin
         if (arst_i) begin
             stb_prev = 0;
@@ -68,18 +68,18 @@ module ch_measure_ctl #(
     end
 
 ////////////////////////////////////////////////////////////////////////////////////
-
-    logic cmp_out_posedge;
+    
+    //previously lathed data 
     logic cmp_out_prev = 0;
 
-    assign cmp_out_posedge = (cmp_out_prev == 0 && cmp_out_i == 1);
+    logic cmp_out_posedge;
+    assign cmp_out_posedge = cmp_out_i == 0 && cmp_out_prev == 1;
 
     always_ff @(posedge clk_i, posedge arst_i) begin
         if (arst_i) begin
             cmp_out_prev = 0;
         end else begin
-            // cmp_out_posedge <= (cmp_out_prev == 0 && cmp_out_i == 1);
-            cmp_out_prev <= cmp_out_i;
+            if (stb_posedge && threshold_rdy_i) cmp_out_prev <= cmp_out_i;
         end
     end
 
@@ -97,16 +97,17 @@ module ch_measure_ctl #(
             end
 
             if (state == RUN) begin
-                if (stb_posedge && cmp_out_posedge && threshold_rdy_i) begin
-                    point_rdy_o <= 1;
-                    point_t_o <= d_code_o;
-                    point_v_o <= threshold_o;
-                    threshold_o <= 0;
-                    d_code_o <= d_code_o + 1;
-                end else begin
-                    threshold_o <= threshold_o + 1; 
-
-                    threshold_wre_o <= 1;
+                if (stb_posedge && threshold_rdy_i) begin 
+                    if (cmp_out_posedge) begin
+                        point_rdy_o <= 1;
+                        point_t_o <= d_code_o;
+                        point_v_o <= threshold_o;
+                        threshold_o <= 0;
+                        d_code_o <= d_code_o + d_code_delta;
+                    end else begin
+                        threshold_o <= threshold_o + threshold_delta; 
+                        threshold_wre_o <= 1;
+                    end
                 end
             end
         end

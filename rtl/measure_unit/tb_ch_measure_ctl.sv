@@ -3,10 +3,10 @@
 module tb_ch_measure_ctl();
 
 `define DUMPVARS
-// `undef DUMPVARS    
+`undef DUMPVARS    
 
-	parameter int SIG_MAX = 'hFFFF;
-	parameter int SIG_FREQ = 100000; //Hz
+	parameter int SIG_MAX = 'h7FF;
+	parameter int SIG_FREQ = 1000000; //Hz
 	parameter real PI_2 = 3.14159265359 * 2;
 	parameter  CLK_T =  8; // clk period
 
@@ -27,10 +27,10 @@ module tb_ch_measure_ctl();
 	logic stb_gen_err_o;
 	logic stb_gen_stb_o;
 
-	assign stb_gen_sig_i = sig >= SIG_MAX/2;
+	assign stb_gen_sig_i = sig >= SIG_MAX / 2;
 
 	stb_gen #(
-		.ZERO_HOLD_CYCLES(20)
+		.ZERO_HOLD_CYCLES(2)
 	) stb_gen_inst(
 		.clk_i		(clk_i),
 		.arst_i		(arst_i),
@@ -61,7 +61,7 @@ module tb_ch_measure_ctl();
 	ch_measure_ctl dut (
 		.clk_i				(clk_i),
 		.arst_i				(arst_i),
-		.stb_i				(cmp_out),
+		.stb_i				(stb_delayed),
 		.threshold_o		(dut_threshold_o),
 		.threshold_wre_o	(threshold_wre),
 		.threshold_rdy_i	(threshold_rdy),
@@ -107,11 +107,11 @@ module tb_ch_measure_ctl();
 	end
 
 	always @(posedge point_rdy_o)
-		$display("point T: %d V: %d", point_t_o, point_v_o);
+		$display( "%d", point_v_o);
 
 	initial begin 
 `ifdef DUMPVARS
-		$dumpfile("dump.lxt");
+		$dumpfile("dump.lxt", "w");
 		$dumpvars(0, tb_ch_measure_ctl);
 `endif
 	end
@@ -122,11 +122,6 @@ module tb_ch_measure_ctl();
 		//run strobe generator
 		stb_gen_run_det_i = 1;
 		#(CLK_T) stb_gen_run_det_i = 0;
-	end
-
-	initial begin
-		@(posedge d_code_o[8]);
-		$finish;
 	end
 
 	always #(CLK_T/2) clk_i = ~clk_i;

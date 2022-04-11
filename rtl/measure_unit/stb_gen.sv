@@ -70,7 +70,7 @@ module stb_gen #(
                state <= GEN;
                t_cnt <= t_cnt; //make offset
                t_end <= t_cnt;
-            end else if (t_cnt == 0) begin
+            end else if (t_cnt == {(T_CNT_WIDTH){1'b1}}) begin
                err_o <= 1; //overflow
             end
          end
