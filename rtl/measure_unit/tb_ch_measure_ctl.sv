@@ -53,9 +53,9 @@ module tb_ch_measure_ctl();
 	logic d_code_delta_wr_i = 0;
 	logic [9:0] d_code_o;
 	logic run_i = 0;
-    output logic point_rdy_o;
-    output logic [15:0] point_v_o;
-    output logic [9:0] point_t_o;
+    logic point_rdy_o;
+    logic [15:0] point_v_o;
+    logic [9:0] point_t_o;
 
 	logic [15:0] dut_threshold_o;
 	ch_measure_ctl dut (
