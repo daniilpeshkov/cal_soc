@@ -8,9 +8,9 @@ module tb();
 	logic [DATA_WIDTH-1:0] data_i = 8'haa;
 	logic wre_i = 0;
 	logic rdy;
-	logic mosi;
-	logic sclk;
-	logic sync;
+	logic sdi_o;
+	logic sclk_o;
+	logic sync_o;
 
     spi_master_o #(.DATA_WIDTH(DATA_WIDTH), .WAIT_CYCLES(5)) dut (.*);
     initial begin 

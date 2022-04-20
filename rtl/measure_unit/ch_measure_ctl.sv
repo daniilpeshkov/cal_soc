@@ -14,9 +14,7 @@ module ch_measure_ctl #(
 
     //control threshold and delay delta
     input logic [15:0] threshold_delta_i,
-    input logic threshold_delta_wr_i,
     input logic [9:0] d_code_delta_i,
-    input logic d_code_delta_wr_i,
 
     //dac (threshold) output
     output logic [15:0] threshold_o = 0,
@@ -38,21 +36,6 @@ module ch_measure_ctl #(
     typedef enum logic[1:0] { IDLE, RUN  } ctl_state_t;
     ctl_state_t state = IDLE;
 
-////////////////////////////////////////////////////////////////////////////////////
-
-    logic [15:0] threshold_delta;
-    logic [9:0] d_code_delta;
-
-    always_ff @(posedge clk_i, posedge arst_i) begin
-        if (arst_i) begin
-            threshold_delta = DEFAULT_THRESHOLD_DELTA;
-            d_code_delta = DEFAULT_D_CODE_DELTA;
-        end else if (state == IDLE) begin
-            if (d_code_delta_wr_i) d_code_delta <= d_code_delta_i;
-            if (threshold_delta_wr_i) threshold_delta <= threshold_delta_i;
-        end
-    end
-    
 ////////////////////////////////////////////////////////////////////////////////////
     logic stb_posedge;
     logic stb_prev;
@@ -112,10 +95,10 @@ module ch_measure_ctl #(
                                 point_t_o <= d_code_o;
                                 point_v_o <= threshold_o;
 
-                                d_code_o <= d_code_o + d_code_delta;
+                                d_code_o <= d_code_o + d_code_delta_i;
                                 measure_state <= FIND_DIRECTION;
                             end else begin
-                                threshold_o <= threshold_o + (dir == UP ? 1 : -1);
+                                threshold_o <= threshold_o + (dir == UP ? threshold_delta_i : -threshold_delta_i);
                                 threshold_wre_o <= 1;
                             end
                         end

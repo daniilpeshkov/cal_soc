@@ -16,10 +16,6 @@ module tb_ch_measure_ctl();
 	logic clk_i = 0;
 	logic arst_i = 0;
 
-	initial begin
-		// #50000 $finish;
-	end
-
 	always begin
 		#1 sig = (SIG_MAX * $sin($time/1000000000.0 * PI_2 * SIG_FREQ) + SIG_MAX) / 2 + 10;
 	end
@@ -46,15 +42,12 @@ module tb_ch_measure_ctl();
    		.stb_o		(stb_gen_stb_o)
 	);
 
-
 	logic threshold_rdy = 0;
 	logic threshold_wre;
 
 	logic cmp_out = 0;
-	logic [15:0] threshold_delta_i = 0;
-	logic threshold_delta_wr_i = 0;
-	logic [9:0] d_code_delta_i = 0;
-	logic d_code_delta_wr_i = 0;
+	logic [15:0] threshold_delta_i = 1;
+	logic [9:0] d_code_delta_i = 1;
 	logic [9:0] d_code_o;
 	logic run_i = 0;
     logic point_rdy_o;
