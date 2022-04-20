@@ -72,23 +72,23 @@ module ch_measure_ctl #(
     //previously latched data 
     logic cmp_out_prev = 0;
 
-    logic cmp_out_posedge;
-    assign cmp_out_posedge = cmp_out_i == 0 && cmp_out_prev == 1;
+    typedef enum logic [1:0] { FIND_DIRECTION, FIND_VAL } measure_state_t;
+    typedef enum logic {UP, DOWN} direction_t;
+
+    measure_state_t measure_state = FIND_VAL;
+    direction_t dir = UP;
 
     always_ff @(posedge clk_i, posedge arst_i) begin
         if (arst_i) begin
-            cmp_out_prev = 0;
+            cmp_out_prev <= 1;
         end else begin
             if (stb_posedge && threshold_rdy_i) cmp_out_prev <= cmp_out_i;
         end
     end
 
-    logic initial_cmp_ok = 0;
-
 
     always_ff @(posedge clk_i, posedge arst_i) begin
         if (arst_i) begin
-            initial_cmp_ok = 0;
             state = IDLE;
         end else begin
             threshold_wre_o <= 0;
@@ -98,21 +98,37 @@ module ch_measure_ctl #(
                 threshold_o <= 0;
                 d_code_o <= 0;
                 threshold_wre_o <= 1;
+
+                measure_state <= FIND_VAL;
+                dir <= UP;
             end
 
             if (state == RUN) begin
-                if (stb_posedge && threshold_rdy_i) begin 
-                    threshold_wre_o <= 1;
-                    if (cmp_out_posedge) begin
-                        point_rdy_o <= 1;
-                        point_t_o <= d_code_o;
-                        point_v_o <= threshold_o;
-                        threshold_o <= 0;
-                        d_code_o <= d_code_o + d_code_delta;
-                    end else begin
-                        threshold_o <= threshold_o + threshold_delta; 
+                case (measure_state)
+                    FIND_VAL: begin
+                        if (stb_posedge && threshold_rdy_i) begin
+                            if (cmp_out_i != cmp_out_prev) begin
+                                point_rdy_o <= 1;
+                                point_t_o <= d_code_o;
+                                point_v_o <= threshold_o;
+
+                                d_code_o <= d_code_o + d_code_delta;
+                                measure_state <= FIND_DIRECTION;
+                            end else begin
+                                threshold_o <= threshold_o + (dir == UP ? 1 : -1);
+                                threshold_wre_o <= 1;
+                            end
+                        end
                     end
-                end
+                    FIND_DIRECTION: begin
+                        if (stb_posedge && threshold_rdy_i) begin
+                            if (cmp_out_i == 1 && cmp_out_prev == 0) dir <= UP;
+                            else if (cmp_out_i == 0 && cmp_out_prev == 1) dir <= DOWN;
+                            else dir <= !dir;
+                            measure_state <= FIND_VAL;
+                        end
+                    end 
+                endcase
             end
         end
     end

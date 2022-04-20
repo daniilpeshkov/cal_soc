@@ -47,36 +47,37 @@ module stb_gen #(
       end else begin 
          t_cnt <= t_cnt + 1;
          case (state) 
-         GEN: begin
-            if (run_det_i) begin 
-               state <= FREQ_DET;
-               int_stb <= 0;
-               err_o <= 0;
-               edge_num <= 0;
-            end else if (!err_o) begin 
-               if (t_cnt == t_end) begin 
-                  int_stb <= 1;
-                  t_cnt <= 0;
-               end else if (t_cnt == t_end - ZERO_HOLD_CYCLES) begin
+            GEN: begin
+               if (run_det_i) begin 
+                  state <= FREQ_DET;
                   int_stb <= 0;
+                  err_o <= 0;
+                  edge_num <= 0;
+               end else if (!err_o) begin 
+                  if (t_cnt == t_end) begin 
+                     int_stb <= 1;
+                     t_cnt <= 0;
+                  end else if (t_cnt == t_end - ZERO_HOLD_CYCLES) begin
+                     int_stb <= 0;
+                  end
                end
             end
-         end
-         FREQ_DET: begin
-            if (prev_sig == 0 && sig_i == 1) begin 
-               if (edge_num == 0) begin //find first edge
-                  edge_num += 1;
-                  t_cnt <= 0;
-               end else if (edge_num == 1) begin 
-                  state <= GEN;
-                  t_cnt <= 0;//t_cnt - t_cnt / 8; //make offset
-                  t_end <= t_cnt;
-               end else if (t_cnt == {(T_CNT_WIDTH){1'b1}}) begin
-                  err_o <= 1; //overflow
-                  state <= GEN;
+
+            FREQ_DET: begin
+               if (prev_sig == 0 && sig_i == 1) begin 
+                  if (edge_num == 0) begin //find first edge
+                     edge_num += 1;
+                     t_cnt <= 0;
+                  end else if (edge_num == 1) begin 
+                     state <= GEN;
+                     t_cnt <= 0;//t_cnt - t_cnt / 8; //make offset
+                     t_end <= t_cnt;
+                  end else if (t_cnt == {(T_CNT_WIDTH){1'b1}}) begin
+                     err_o <= 1; //overflow
+                     state <= GEN;
+                  end
                end
             end
-         end
          endcase
       end
    end

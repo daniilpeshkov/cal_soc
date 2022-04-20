@@ -6,13 +6,13 @@ module tb_ch_measure_ctl();
 // `undef DUMPVARS    
 
 	parameter int SIG_MAX = 'hFF;
-	parameter int SIG_FREQ = 5000000; //Hz
+	parameter int SIG_FREQ = 500000; //Hz
 	parameter real PI_2 = 3.14159265359 * 2;
 	parameter  CLK_T =  8; // clk period
 
 	parameter DAC_RDY_DELAY = 20;
 
-	int sig;
+	real sig;
 	logic clk_i = 0;
 	logic arst_i = 0;
 
@@ -88,7 +88,7 @@ module tb_ch_measure_ctl();
 	always @(threshold, sig) begin
 		// stb_delayed signal is a latch for comparator
 		if (!stb_delayed) begin 
-			cmp_out = sig > threshold;
+			cmp_out = sig >= threshold;
 		end
 
 
@@ -109,14 +109,19 @@ module tb_ch_measure_ctl();
 		@(posedge stb_gen_rdy_o);
 		run_i = 1;
 	end
+	int f;
+	initial f = $fopen("points.csv", "w");
 
-	always @(posedge point_rdy_o)
+	always @(posedge point_rdy_o) begin
 		$display( "%d", point_v_o);
+		$fwrite(f, "%d,%d\n",point_t_o, point_v_o);
+		if (point_t_o == 1023) $finish;
+	end
 
 	initial begin 
 `ifdef DUMPVARS
 		$dumpfile("dump.vcd");
-		$dumpvars(1, tb_ch_measure_ctl);
+		$dumpvars(0, tb_ch_measure_ctl);
 `endif
 	end
 
