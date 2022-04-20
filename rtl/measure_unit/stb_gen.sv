@@ -25,7 +25,7 @@ module stb_gen #(
    logic int_stb = 1;
    assign stb_o = (int_stb & oe_i);
 
-   typedef enum logic[1:0] {GEN, FIND_FIRST_EDGE, FIND_SECOND_EDGE} stb_gen_state;
+   typedef enum logic[1:0] {GEN, FREQ_DET} stb_gen_state;
 
    stb_gen_state state = GEN;
 
@@ -37,6 +37,8 @@ module stb_gen #(
    logic [T_CNT_WIDTH-1 : 0] t_stb_pos;
    logic [T_CNT_WIDTH-1 : 0] t_end_neg;
 
+   logic edge_num = 0;
+
    always_ff @(posedge clk_i, posedge arst_i) begin
       if (arst_i) begin 
          t_cnt = 0;
@@ -47,10 +49,11 @@ module stb_gen #(
          case (state) 
          GEN: begin
             if (run_det_i) begin 
-               state <= FIND_FIRST_EDGE;
+               state <= FREQ_DET;
                int_stb <= 0;
                err_o <= 0;
-            end else begin 
+               edge_num <= 0;
+            end else if (!err_o) begin 
                if (t_cnt == t_end) begin 
                   int_stb <= 1;
                   t_cnt <= 0;
@@ -59,19 +62,19 @@ module stb_gen #(
                end
             end
          end
-         FIND_FIRST_EDGE: begin
+         FREQ_DET: begin
             if (prev_sig == 0 && sig_i == 1) begin 
-               state <= FIND_SECOND_EDGE;
-               t_cnt <= 0;
-            end
-         end
-         FIND_SECOND_EDGE: begin 
-            if (prev_sig == 0 && sig_i == 1) begin 
-               state <= GEN;
-               t_cnt <= t_cnt; //make offset
-               t_end <= t_cnt;
-            end else if (t_cnt == {(T_CNT_WIDTH){1'b1}}) begin
-               err_o <= 1; //overflow
+               if (edge_num == 0) begin //find first edge
+                  edge_num += 1;
+                  t_cnt <= 0;
+               end else if (edge_num == 1) begin 
+                  state <= GEN;
+                  t_cnt <= 0;//t_cnt - t_cnt / 8; //make offset
+                  t_end <= t_cnt;
+               end else if (t_cnt == {(T_CNT_WIDTH){1'b1}}) begin
+                  err_o <= 1; //overflow
+                  state <= GEN;
+               end
             end
          end
          endcase

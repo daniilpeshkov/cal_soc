@@ -8,7 +8,7 @@ module tb_stb_gen();
 `define DUMPVARS
 `undef DUMPVARS    
 
-    int freqs[] = {10000, 20000, 1000000, 2000000, 1333333, 10000000};
+    int freqs[] = {10000, 20000, 1000000, 2000000, 1333333};
 
     logic clk_i = 0;
     logic comp_out = 0;

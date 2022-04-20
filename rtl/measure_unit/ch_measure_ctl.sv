@@ -69,7 +69,7 @@ module ch_measure_ctl #(
 
 ////////////////////////////////////////////////////////////////////////////////////
     
-    //previously lathed data 
+    //previously latched data 
     logic cmp_out_prev = 0;
 
     logic cmp_out_posedge;
@@ -83,8 +83,12 @@ module ch_measure_ctl #(
         end
     end
 
+    logic initial_cmp_ok = 0;
+
+
     always_ff @(posedge clk_i, posedge arst_i) begin
         if (arst_i) begin
+            initial_cmp_ok = 0;
             state = IDLE;
         end else begin
             threshold_wre_o <= 0;
@@ -98,6 +102,7 @@ module ch_measure_ctl #(
 
             if (state == RUN) begin
                 if (stb_posedge && threshold_rdy_i) begin 
+                    threshold_wre_o <= 1;
                     if (cmp_out_posedge) begin
                         point_rdy_o <= 1;
                         point_t_o <= d_code_o;
@@ -106,7 +111,6 @@ module ch_measure_ctl #(
                         d_code_o <= d_code_o + d_code_delta;
                     end else begin
                         threshold_o <= threshold_o + threshold_delta; 
-                        threshold_wre_o <= 1;
                     end
                 end
             end

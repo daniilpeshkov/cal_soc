@@ -3,10 +3,10 @@
 module tb_ch_measure_ctl();
 
 `define DUMPVARS
-`undef DUMPVARS    
+// `undef DUMPVARS    
 
-	parameter int SIG_MAX = 'h7FF;
-	parameter int SIG_FREQ = 1000000; //Hz
+	parameter int SIG_MAX = 'hFF;
+	parameter int SIG_FREQ = 5000000; //Hz
 	parameter real PI_2 = 3.14159265359 * 2;
 	parameter  CLK_T =  8; // clk period
 
@@ -16,8 +16,12 @@ module tb_ch_measure_ctl();
 	logic clk_i = 0;
 	logic arst_i = 0;
 
+	initial begin
+		// #50000 $finish;
+	end
+
 	always begin
-		#1 sig = (SIG_MAX * $sin($time/1000000000.0 * PI_2 * SIG_FREQ) + SIG_MAX) / 2;
+		#1 sig = (SIG_MAX * $sin($time/1000000000.0 * PI_2 * SIG_FREQ) + SIG_MAX) / 2 + 10;
 	end
 
 	logic stb_gen_sig_i;
@@ -27,7 +31,7 @@ module tb_ch_measure_ctl();
 	logic stb_gen_err_o;
 	logic stb_gen_stb_o;
 
-	assign stb_gen_sig_i = sig >= SIG_MAX / 2;
+	assign stb_gen_sig_i = sig >= 11;
 
 	stb_gen #(
 		.ZERO_HOLD_CYCLES(2)
@@ -111,8 +115,8 @@ module tb_ch_measure_ctl();
 
 	initial begin 
 `ifdef DUMPVARS
-		$dumpfile("dump.lxt", "w");
-		$dumpvars(0, tb_ch_measure_ctl);
+		$dumpfile("dump.vcd");
+		$dumpvars(1, tb_ch_measure_ctl);
 `endif
 	end
 
