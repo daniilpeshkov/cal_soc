@@ -18,7 +18,7 @@ module stb_gen #(
    input wire run_det_i,
    input wire oe_i,
 
-   output logic err_o = 0,
+   output logic err_o,
    output logic rdy_o,
    output logic stb_o
 );
@@ -43,7 +43,8 @@ module stb_gen #(
       if (arst_i) begin 
          t_cnt = 0;
          t_end = 0;
-         int_stb <= 1;
+         int_stb = 1;
+         err_o = 0;
       end else begin 
          t_cnt <= t_cnt + 1;
          case (state) 

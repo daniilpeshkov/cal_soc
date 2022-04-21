@@ -17,12 +17,12 @@ module ch_measure_ctl #(
     input logic [9:0] d_code_delta_i,
 
     //dac (threshold) output
-    output logic [15:0] threshold_o = 0,
-    output logic threshold_wre_o = 0,
+    output logic [15:0] threshold_o,
+    output logic threshold_wre_o,
     input logic threshold_rdy_i,
 
     //delay line
-    output logic [9:0] d_code_o = 0,
+    output logic [9:0] d_code_o,
 
     //ctl
     input logic run_i,
@@ -107,7 +107,10 @@ module ch_measure_ctl #(
                         if (stb_posedge && threshold_rdy_i) begin
                             if (cmp_out_i == 1 && cmp_out_prev == 0) dir <= UP;
                             else if (cmp_out_i == 0 && cmp_out_prev == 1) dir <= DOWN;
-                            else dir <= !dir;
+                            else begin 
+                                if (dir == UP) dir <= DOWN;
+                                else dir <= UP;
+                            end
                             measure_state <= FIND_VAL;
                         end
                     end 

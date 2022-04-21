@@ -41,8 +41,8 @@ module measure_unit #(
 
 	logic [25:0] ch_ctl_delta_reg;
 
-    logic [15:0] ctl_threshold_delta;
-    logic [9:0] ctl_d_code_delta;
+	logic [15:0] ctl_threshold_delta;
+	logic [9:0] ctl_d_code_delta;
 
 	assign ctl_threshold_delta = ch_ctl_delta_reg[15:0];
 	assign ctl_d_code_delta = ch_ctl_delta_reg[25:16];
@@ -85,35 +85,35 @@ module measure_unit #(
 	ch_measure_ctl ch_ctl1_inst(
 		.clk_i 					(wb_clk_i),
 		.arst_i					(wb_rst_i),
-    	.stb_i					(internal_stb),
-    	.cmp_out_i				(cmp1_out_i),
-    	.threshold_delta_i 		(ctl_threshold_delta),
-    	.d_code_delta_i			(ctl_d_code_delta),
-    	.threshold_o			(ctl1_dac_code),
-    	.threshold_wre_o		(ctl1_dac_wre),
-    	.threshold_rdy_i		(ctl1_dac_rdy),
-    	.d_code_o				(delay1_code_o),
-    	.run_i					(ctl_run),
-    	.point_rdy_o			(),
-    	.point_v_o				(),
-    	.point_t_o				()
+		.stb_i					(internal_stb),
+		.cmp_out_i				(cmp1_out_i),
+		.threshold_delta_i 		(ctl_threshold_delta),
+		.d_code_delta_i			(ctl_d_code_delta),
+		.threshold_o			(ctl1_dac_code),
+		.threshold_wre_o		(ctl1_dac_wre),
+		.threshold_rdy_i		(ctl1_dac_rdy),
+		.d_code_o				(delay1_code_o),
+		.run_i					(ctl_run),
+		.point_rdy_o			(),
+		.point_v_o				(),
+		.point_t_o				()
 	);
 
 	ch_measure_ctl ch_ctl2_inst(
 		.clk_i 					(wb_clk_i),
 		.arst_i					(wb_rst_i),
-    	.stb_i					(internal_stb),
-    	.cmp_out_i				(cmp2_out_i),
-    	.threshold_delta_i 		(ctl_threshold_delta),
-    	.d_code_delta_i			(ctl_d_code_delta),
-    	.threshold_o			(ctl2_dac_code),
-    	.threshold_wre_o		(ctl2_dac_wre),
-    	.threshold_rdy_i		(ctl2_dac_rdy),
-    	.d_code_o				(delay2_code_o),
-    	.run_i					(ctl_run),
-    	.point_rdy_o			(),
-    	.point_v_o				(),
-    	.point_t_o				()
+		.stb_i					(internal_stb),
+		.cmp_out_i				(cmp2_out_i),
+		.threshold_delta_i 		(ctl_threshold_delta),
+		.d_code_delta_i			(ctl_d_code_delta),
+		.threshold_o			(ctl2_dac_code),
+		.threshold_wre_o		(ctl2_dac_wre),
+		.threshold_rdy_i		(ctl2_dac_rdy),
+		.d_code_o				(delay2_code_o),
+		.run_i					(ctl_run),
+		.point_rdy_o			(),
+		.point_v_o				(),
+		.point_t_o				()
 	);
 
 	logic stb_gen_cmp_sel = 0;

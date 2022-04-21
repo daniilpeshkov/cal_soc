@@ -27,6 +27,13 @@ add_file -type verilog "../rtl/wbxbar/wbxbar.v"
 add_file -type verilog "../rtl/gpio/gpio_defines.v"
 add_file -type verilog "../rtl/gpio/gpio_top.v"
 
+# Measure Unit
+add_file -type verilog "../rtl/measure_unit/ch_measure_ctl.sv"
+add_file -type verilog "../rtl/measure_unit/stb_gen.sv"
+add_file -type verilog "../rtl/measure_unit/measure_unit.sv"
+add_file -type verilog "../rtl/measure_unit/dac_spi/clk_divider.sv"
+add_file -type verilog "../rtl/measure_unit/dac_spi/spi_master_o.sv"
+
 # PLL
 add_file -type verilog "../rtl/gowin_rpll/gowin_rpll.v"
 
