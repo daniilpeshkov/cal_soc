@@ -3,7 +3,9 @@ module measure_unit #(
 	parameter DAC_SPI_CLK_DIV = 3,
 	parameter DAC_SPI_WAIT_CYCLES = 3,
 	parameter STROBE_ZERO_HOLD_CYCLES = 3,
-   	parameter STROBE_GEN_CNT_WIDTH = 32
+   	parameter STROBE_GEN_CNT_WIDTH = 32,
+	parameter DEFAULT_DELAY_CODE_DELTA = 10'h1,
+	parameter DEFAULT_THRESHOLD_DELTA = 16'h1
 ) (
 //Wihbone
 	input   logic        wb_clk_i,
@@ -26,16 +28,24 @@ module measure_unit #(
 //CMP
 	input logic cmp1_out_i, cmp2_out_i
 );
+	localparam CH_CTL_DELTA_REG = 0;
+
 
 	localparam DAC_DATA_WIDTH = 24;
 	localparam DAC_CODE_WIDTH = 16;
+
 	logic [DAC_CODE_WIDTH-1 : 0] ctl1_dac_code, ctl2_dac_code;
 	logic ctl1_dac_wre, ctl2_dac_wre;
 	logic ctl1_dac_rdy, ctl2_dac_rdy;
 	logic internal_stb;
 
-    logic [15:0] ctl_threshold_delta = 1;
-    logic [9:0] ctl_d_code_delta_i = 1;
+	logic [25:0] ch_ctl_delta_reg;
+
+    logic [15:0] ctl_threshold_delta;
+    logic [9:0] ctl_d_code_delta;
+
+	assign ctl_threshold_delta = ch_ctl_delta_reg[15:0];
+	assign ctl_d_code_delta = ch_ctl_delta_reg[25:16];
 
 	logic ctl_run;
 
@@ -78,7 +88,7 @@ module measure_unit #(
     	.stb_i					(internal_stb),
     	.cmp_out_i				(cmp1_out_i),
     	.threshold_delta_i 		(ctl_threshold_delta),
-    	.d_code_delta_i			(ctl_d_code_delta_i),
+    	.d_code_delta_i			(ctl_d_code_delta),
     	.threshold_o			(ctl1_dac_code),
     	.threshold_wre_o		(ctl1_dac_wre),
     	.threshold_rdy_i		(ctl1_dac_rdy),
@@ -95,7 +105,7 @@ module measure_unit #(
     	.stb_i					(internal_stb),
     	.cmp_out_i				(cmp2_out_i),
     	.threshold_delta_i 		(ctl_threshold_delta),
-    	.d_code_delta_i			(ctl_d_code_delta_i),
+    	.d_code_delta_i			(ctl_d_code_delta),
     	.threshold_o			(ctl2_dac_code),
     	.threshold_wre_o		(ctl2_dac_wre),
     	.threshold_rdy_i		(ctl2_dac_rdy),
@@ -125,5 +135,39 @@ module measure_unit #(
    		.rdy_o		(stb_gen_rdy),
 		.stb_o		(internal_stb)
 	);
+///////////////////////////////////////////////////////////////////////////////////////
+//Wishbone logic	
+	logic [31:0] w_data;
+	logic [31:0] byte_mask;
+
+	assign byte_mask = {(wb_sel_i[3] ? 8'hFF : 8'h0), (wb_sel_i[2] ? 8'hFF : 8'h0), (wb_sel_i[1] ? 8'hFF : 8'h0) ,(wb_sel_i[0] ? 8'hFF : 8'h0)};	
+
+	always_comb begin
+		logic [31:0] w_reg;
+		case (wb_adr_i)
+			CH_CTL_DELTA_REG: w_reg = ch_ctl_delta_reg;
+		endcase
+		w_data = w_reg & byte_mask;
+	end
+
+	always_ff @(posedge wb_clk_i, posedge wb_rst_i) begin
+		if (wb_rst_i) begin
+			ch_ctl_delta_reg = {DEFAULT_DELAY_CODE_DELTA, DEFAULT_THRESHOLD_DELTA};
+		end else begin
+			wb_ack_o <= 0;
+			if (wb_cyc_i && wb_stb_i) begin
+				wb_ack_o <= 1;
+				case (wb_adr_i)
+					CH_CTL_DELTA_REG: begin
+						if (wb_we_i) begin
+							ch_ctl_delta_reg <= w_data;
+						end else begin
+							wb_dat_o <= ch_ctl_delta_reg;
+						end
+					end
+				endcase
+			end
+		end
+	end
 
 endmodule
