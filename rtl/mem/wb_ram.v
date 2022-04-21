@@ -16,7 +16,6 @@ module wb_ram #(
 	input  wire	 		wb_cyc_i,
 	input  wire	 		wb_stb_i,
 	output reg 		 	wb_ack_o,
-	output wire			wb_stall_o,
 	input  wire			wb_cti_i
 );
 

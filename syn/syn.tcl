@@ -43,6 +43,9 @@ add_file -type cst "./calsoc.cst"
 # Timing constrains
 add_file -type sdc "./calsoc.sdc"
 
+# Logic analyzer (Comment it or add disable opt to remove from project) 
+add_file -type gao -disable "calsoc.rao"
+
 set_option -output_base_name "calsoc"
 
 set_option -verilog_std "sysv2017"

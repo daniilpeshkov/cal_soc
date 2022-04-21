@@ -18,3 +18,5 @@
 *.gtkw
 *.txt
 *.csv
+impl
+src

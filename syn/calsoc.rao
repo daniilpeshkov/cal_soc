@@ -1,0 +1,129 @@
+<?xml version="1" encoding="UTF-8"?>
+<GAO_CONFIG>
+    <Version>3.0</Version>
+    <Mode>Standard</Mode>
+    <AoCore index="0" sample_clock="wb_clk_i" trig_type="0" storage_depth="1024" window_num="1" capture_amount="1024" trigger_pos="0">
+        <SignalList>
+            <Bus name="wbm_adr_o[31:0]">
+                <Signal>wbm_adr_o[31]</Signal>
+                <Signal>wbm_adr_o[30]</Signal>
+                <Signal>wbm_adr_o[29]</Signal>
+                <Signal>wbm_adr_o[28]</Signal>
+                <Signal>wbm_adr_o[27]</Signal>
+                <Signal>wbm_adr_o[26]</Signal>
+                <Signal>wbm_adr_o[25]</Signal>
+                <Signal>wbm_adr_o[24]</Signal>
+                <Signal>wbm_adr_o[23]</Signal>
+                <Signal>wbm_adr_o[22]</Signal>
+                <Signal>wbm_adr_o[21]</Signal>
+                <Signal>wbm_adr_o[20]</Signal>
+                <Signal>wbm_adr_o[19]</Signal>
+                <Signal>wbm_adr_o[18]</Signal>
+                <Signal>wbm_adr_o[17]</Signal>
+                <Signal>wbm_adr_o[16]</Signal>
+                <Signal>wbm_adr_o[15]</Signal>
+                <Signal>wbm_adr_o[14]</Signal>
+                <Signal>wbm_adr_o[13]</Signal>
+                <Signal>wbm_adr_o[12]</Signal>
+                <Signal>wbm_adr_o[11]</Signal>
+                <Signal>wbm_adr_o[10]</Signal>
+                <Signal>wbm_adr_o[9]</Signal>
+                <Signal>wbm_adr_o[8]</Signal>
+                <Signal>wbm_adr_o[7]</Signal>
+                <Signal>wbm_adr_o[6]</Signal>
+                <Signal>wbm_adr_o[5]</Signal>
+                <Signal>wbm_adr_o[4]</Signal>
+                <Signal>wbm_adr_o[3]</Signal>
+                <Signal>wbm_adr_o[2]</Signal>
+                <Signal>wbm_adr_o[1]</Signal>
+                <Signal>wbm_adr_o[0]</Signal>
+            </Bus>
+            <Signal>wbm_we_o</Signal>
+            <Signal>wbm_stb_o</Signal>
+            <Signal>wbm_ack_i</Signal>
+            <Signal>wbm_cyc_o</Signal>
+            <Signal>mu_wb_stb_i</Signal>
+            <Signal>mu_wb_cyc_i</Signal>
+            <Bus name="mu_wb_dat_o[31:0]">
+                <Signal>mu_wb_dat_o[31]</Signal>
+                <Signal>mu_wb_dat_o[30]</Signal>
+                <Signal>mu_wb_dat_o[29]</Signal>
+                <Signal>mu_wb_dat_o[28]</Signal>
+                <Signal>mu_wb_dat_o[27]</Signal>
+                <Signal>mu_wb_dat_o[26]</Signal>
+                <Signal>mu_wb_dat_o[25]</Signal>
+                <Signal>mu_wb_dat_o[24]</Signal>
+                <Signal>mu_wb_dat_o[23]</Signal>
+                <Signal>mu_wb_dat_o[22]</Signal>
+                <Signal>mu_wb_dat_o[21]</Signal>
+                <Signal>mu_wb_dat_o[20]</Signal>
+                <Signal>mu_wb_dat_o[19]</Signal>
+                <Signal>mu_wb_dat_o[18]</Signal>
+                <Signal>mu_wb_dat_o[17]</Signal>
+                <Signal>mu_wb_dat_o[16]</Signal>
+                <Signal>mu_wb_dat_o[15]</Signal>
+                <Signal>mu_wb_dat_o[14]</Signal>
+                <Signal>mu_wb_dat_o[13]</Signal>
+                <Signal>mu_wb_dat_o[12]</Signal>
+                <Signal>mu_wb_dat_o[11]</Signal>
+                <Signal>mu_wb_dat_o[10]</Signal>
+                <Signal>mu_wb_dat_o[9]</Signal>
+                <Signal>mu_wb_dat_o[8]</Signal>
+                <Signal>mu_wb_dat_o[7]</Signal>
+                <Signal>mu_wb_dat_o[6]</Signal>
+                <Signal>mu_wb_dat_o[5]</Signal>
+                <Signal>mu_wb_dat_o[4]</Signal>
+                <Signal>mu_wb_dat_o[3]</Signal>
+                <Signal>mu_wb_dat_o[2]</Signal>
+                <Signal>mu_wb_dat_o[1]</Signal>
+                <Signal>mu_wb_dat_o[0]</Signal>
+            </Bus>
+            <Signal>mu_wb_we_i</Signal>
+            <Signal>mu_wb_ack_o</Signal>
+        </SignalList>
+        <Triggers>
+            <Trigger index="0">
+                <SignalList>
+                    <Signal>mu_wb_stb_i</Signal>
+                </SignalList>
+            </Trigger>
+            <Trigger index="1"/>
+            <Trigger index="2"/>
+            <Trigger index="3"/>
+            <Trigger index="4"/>
+            <Trigger index="5"/>
+            <Trigger index="6"/>
+            <Trigger index="7"/>
+            <Trigger index="8"/>
+            <Trigger index="9"/>
+            <Trigger index="10"/>
+            <Trigger index="11"/>
+            <Trigger index="12"/>
+            <Trigger index="13"/>
+            <Trigger index="14"/>
+            <Trigger index="15"/>
+        </Triggers>
+        <MatchUnits>
+            <MatchUnit index="0" enabled="1" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="1" value1="0" trigger="0"/>
+            <MatchUnit index="1" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="2" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="3" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="4" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="5" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="6" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="7" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="8" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="9" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="10" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="11" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="12" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="13" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="14" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="15" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+        </MatchUnits>
+        <Expressions type="Static">
+            <Expression>M0</Expression>
+        </Expressions>
+    </AoCore>
+    <GAO_ID>0000000100011001</GAO_ID>
+</GAO_CONFIG>

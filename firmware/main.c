@@ -13,8 +13,8 @@ void main(void) {
 	unsigned int tmp;	
 
 	GPIOA->oe = 0xffffffff;
-	GPIOA->out = 0x8a;
-
+	GPIOA->out = 0xff;
+	GPIOA->out = *((unsigned int*)0x05000000);
 	while(1);
 
 	uart_init(UART1, 9600L);
