@@ -28,8 +28,25 @@ module measure_unit #(
 //CMP
 	input logic cmp1_out_i, cmp2_out_i
 );
+///////////////////////////////////////////////////////////////////////////////////////
+// Wishbone registers
+///////////////////////////////////////////////////////////////////////////////////////
 	localparam CH_CTL_DELTA_REG = 0;
 
+///////////////////////////////////////////////////////////////////////////////////////
+// CH_CTL_DELTA_REG
+///////////////////////////////////////////////////////////////////////////////////////
+
+	logic [25:0] ch_ctl_delta_reg;
+
+	logic [15:0] ctl_threshold_delta, default_ctl_threshold_delta;
+	logic [9:0] ctl_d_code_delta, default_ctl_d_code_delta;
+	assign default_ctl_d_code_delta = DEFAULT_DELAY_CODE_DELTA;
+	assign default_ctl_threshold_delta = DEFAULT_THRESHOLD_DELTA;
+
+	assign ctl_threshold_delta = ch_ctl_delta_reg[15:0];
+	assign ctl_d_code_delta = ch_ctl_delta_reg[25:16];
+///////////////////////////////////////////////////////////////////////////////////////
 
 	localparam DAC_DATA_WIDTH = 24;
 	localparam DAC_CODE_WIDTH = 16;
@@ -38,15 +55,6 @@ module measure_unit #(
 	logic ctl1_dac_wre, ctl2_dac_wre;
 	logic ctl1_dac_rdy, ctl2_dac_rdy;
 	logic internal_stb;
-
-	logic [25:0] ch_ctl_delta_reg;
-
-	logic [15:0] ctl_threshold_delta;
-	logic [9:0] ctl_d_code_delta;
-
-	assign ctl_threshold_delta = ch_ctl_delta_reg[15:0];
-	assign ctl_d_code_delta = ch_ctl_delta_reg[25:16];
-
 	logic ctl_run;
 
 	assign delay1_stb_o = internal_stb;
@@ -152,7 +160,7 @@ module measure_unit #(
 
 	always_ff @(posedge wb_clk_i, posedge wb_rst_i) begin
 		if (wb_rst_i) begin
-			ch_ctl_delta_reg = {DEFAULT_DELAY_CODE_DELTA, DEFAULT_THRESHOLD_DELTA};
+			ch_ctl_delta_reg = {default_ctl_d_code_delta, default_ctl_threshold_delta};
 		end else begin
 			wb_ack_o <= 0;
 			if (wb_cyc_i && wb_stb_i) begin

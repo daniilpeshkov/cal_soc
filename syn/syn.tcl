@@ -46,6 +46,6 @@ add_file -type sdc "./calsoc.sdc"
 set_option -output_base_name "calsoc"
 
 set_option -verilog_std "sysv2017"
-set_option -top_module "calsoc"
+set_option -top_module "calsoc_top"
 
 run all
