@@ -1,4 +1,4 @@
-#define F_CPU 	60000000L
+#define F_CPU 	20000000L
 #define BAUD 	9600
 
 #define GPIO_BASE 0x02000000

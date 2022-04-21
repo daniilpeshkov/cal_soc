@@ -2,7 +2,7 @@
 <GAO_CONFIG>
     <Version>3.0</Version>
     <Mode>Standard</Mode>
-    <AoCore index="0" sample_clock="wb_clk_i" trig_type="0" storage_depth="1024" window_num="1" capture_amount="1024" trigger_pos="0">
+    <AoCore index="0" sample_clock="wb_clk_i" trig_type="0" storage_depth="512" window_num="1" capture_amount="512" trigger_pos="10">
         <SignalList>
             <Bus name="wbm_adr_o[31:0]">
                 <Signal>wbm_adr_o[31]</Signal>
@@ -80,6 +80,75 @@
             </Bus>
             <Signal>mu_wb_we_i</Signal>
             <Signal>mu_wb_ack_o</Signal>
+            <Bus name="measure_unit_inst/ch_ctl_delta_reg[25:0]">
+                <Signal>measure_unit_inst/ch_ctl_delta_reg[25]</Signal>
+                <Signal>measure_unit_inst/ch_ctl_delta_reg[24]</Signal>
+                <Signal>measure_unit_inst/ch_ctl_delta_reg[23]</Signal>
+                <Signal>measure_unit_inst/ch_ctl_delta_reg[22]</Signal>
+                <Signal>measure_unit_inst/ch_ctl_delta_reg[21]</Signal>
+                <Signal>measure_unit_inst/ch_ctl_delta_reg[20]</Signal>
+                <Signal>measure_unit_inst/ch_ctl_delta_reg[19]</Signal>
+                <Signal>measure_unit_inst/ch_ctl_delta_reg[18]</Signal>
+                <Signal>measure_unit_inst/ch_ctl_delta_reg[17]</Signal>
+                <Signal>measure_unit_inst/ch_ctl_delta_reg[16]</Signal>
+                <Signal>measure_unit_inst/ch_ctl_delta_reg[15]</Signal>
+                <Signal>measure_unit_inst/ch_ctl_delta_reg[14]</Signal>
+                <Signal>measure_unit_inst/ch_ctl_delta_reg[13]</Signal>
+                <Signal>measure_unit_inst/ch_ctl_delta_reg[12]</Signal>
+                <Signal>measure_unit_inst/ch_ctl_delta_reg[11]</Signal>
+                <Signal>measure_unit_inst/ch_ctl_delta_reg[10]</Signal>
+                <Signal>measure_unit_inst/ch_ctl_delta_reg[9]</Signal>
+                <Signal>measure_unit_inst/ch_ctl_delta_reg[8]</Signal>
+                <Signal>measure_unit_inst/ch_ctl_delta_reg[7]</Signal>
+                <Signal>measure_unit_inst/ch_ctl_delta_reg[6]</Signal>
+                <Signal>measure_unit_inst/ch_ctl_delta_reg[5]</Signal>
+                <Signal>measure_unit_inst/ch_ctl_delta_reg[4]</Signal>
+                <Signal>measure_unit_inst/ch_ctl_delta_reg[3]</Signal>
+                <Signal>measure_unit_inst/ch_ctl_delta_reg[2]</Signal>
+                <Signal>measure_unit_inst/ch_ctl_delta_reg[1]</Signal>
+                <Signal>measure_unit_inst/ch_ctl_delta_reg[0]</Signal>
+            </Bus>
+            <Bus name="mu_wb_sel_i[3:0]">
+                <Signal>mu_wb_sel_i[3]</Signal>
+                <Signal>mu_wb_sel_i[2]</Signal>
+                <Signal>mu_wb_sel_i[1]</Signal>
+                <Signal>mu_wb_sel_i[0]</Signal>
+            </Bus>
+            <Bus name="measure_unit_inst/w_data[31:0]">
+                <Signal>measure_unit_inst/w_data[31]</Signal>
+                <Signal>measure_unit_inst/w_data[30]</Signal>
+                <Signal>measure_unit_inst/w_data[29]</Signal>
+                <Signal>measure_unit_inst/w_data[28]</Signal>
+                <Signal>measure_unit_inst/w_data[27]</Signal>
+                <Signal>measure_unit_inst/w_data[26]</Signal>
+                <Signal>measure_unit_inst/w_data[25]</Signal>
+                <Signal>measure_unit_inst/w_data[24]</Signal>
+                <Signal>measure_unit_inst/w_data[23]</Signal>
+                <Signal>measure_unit_inst/w_data[22]</Signal>
+                <Signal>measure_unit_inst/w_data[21]</Signal>
+                <Signal>measure_unit_inst/w_data[20]</Signal>
+                <Signal>measure_unit_inst/w_data[19]</Signal>
+                <Signal>measure_unit_inst/w_data[18]</Signal>
+                <Signal>measure_unit_inst/w_data[17]</Signal>
+                <Signal>measure_unit_inst/w_data[16]</Signal>
+                <Signal>measure_unit_inst/w_data[15]</Signal>
+                <Signal>measure_unit_inst/w_data[14]</Signal>
+                <Signal>measure_unit_inst/w_data[13]</Signal>
+                <Signal>measure_unit_inst/w_data[12]</Signal>
+                <Signal>measure_unit_inst/w_data[11]</Signal>
+                <Signal>measure_unit_inst/w_data[10]</Signal>
+                <Signal>measure_unit_inst/w_data[9]</Signal>
+                <Signal>measure_unit_inst/w_data[8]</Signal>
+                <Signal>measure_unit_inst/w_data[7]</Signal>
+                <Signal>measure_unit_inst/w_data[6]</Signal>
+                <Signal>measure_unit_inst/w_data[5]</Signal>
+                <Signal>measure_unit_inst/w_data[4]</Signal>
+                <Signal>measure_unit_inst/w_data[3]</Signal>
+                <Signal>measure_unit_inst/w_data[2]</Signal>
+                <Signal>measure_unit_inst/w_data[1]</Signal>
+                <Signal>measure_unit_inst/w_data[0]</Signal>
+            </Bus>
+            <Signal>wb_rst_i</Signal>
         </SignalList>
         <Triggers>
             <Trigger index="0">
@@ -125,5 +194,5 @@
             <Expression>M0</Expression>
         </Expressions>
     </AoCore>
-    <GAO_ID>0000000100011001</GAO_ID>
+    <GAO_ID>1111001110010000</GAO_ID>
 </GAO_CONFIG>

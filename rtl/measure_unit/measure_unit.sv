@@ -40,7 +40,9 @@ module measure_unit #(
 	logic [25:0] ch_ctl_delta_reg;
 
 	logic [15:0] ctl_threshold_delta, default_ctl_threshold_delta;
+
 	logic [9:0] ctl_d_code_delta, default_ctl_d_code_delta;
+
 	assign default_ctl_d_code_delta = DEFAULT_DELAY_CODE_DELTA;
 	assign default_ctl_threshold_delta = DEFAULT_THRESHOLD_DELTA;
 
@@ -155,12 +157,15 @@ module measure_unit #(
 		case (wb_adr_i)
 			CH_CTL_DELTA_REG: w_reg = ch_ctl_delta_reg;
 		endcase
-		w_data = w_reg & byte_mask;
+		w_data[7:0] = (wb_sel_i[0] ? wb_dat_i[7:0] : w_reg[7:0]);
+		w_data[15:8] = (wb_sel_i[1] ? wb_dat_i[15:8] : w_reg[15:8]);
+		w_data[23:16] = (wb_sel_i[2] ? wb_dat_i[23:16] : w_reg[23:16]);
+		w_data[31:24] = (wb_sel_i[3] ? wb_dat_i[31:24] : w_reg[31:24]);
 	end
 
 	always_ff @(posedge wb_clk_i, posedge wb_rst_i) begin
 		if (wb_rst_i) begin
-			ch_ctl_delta_reg = {default_ctl_d_code_delta, default_ctl_threshold_delta};
+			ch_ctl_delta_reg = 1;//{default_ctl_d_code_delta, default_ctl_threshold_delta};
 		end else begin
 			wb_ack_o <= 0;
 			if (wb_cyc_i && wb_stb_i) begin
