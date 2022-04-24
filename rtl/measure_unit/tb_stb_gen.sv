@@ -5,8 +5,10 @@ module tb_stb_gen();
 `define CLK_T 8 // clk period
 `define SIG_WIDTH 300
 
+    localparam T_CNT_WIDTH = 1;
+
 `define DUMPVARS
-`undef DUMPVARS    
+// `undef DUMPVARS    
 
     int freqs[] = {10000, 20000, 1000000, 2000000, 1333333};
 
@@ -18,8 +20,11 @@ module tb_stb_gen();
     logic err_o;
     logic oe_i = 1;
     logic rdy_o;
+    logic [T_CNT_WIDTH-1:0] stb_period_o;
 
-    stb_gen dut(
+    stb_gen #(
+        .T_CNT_WIDTH (T_CNT_WIDTH)
+    ) dut (
         .sig_i (comp_out),
         .*
     );

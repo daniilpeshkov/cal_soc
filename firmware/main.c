@@ -14,8 +14,9 @@ void main(void) {
 
 	GPIOA->oe = 0xffffffff;
 	GPIOA->out = 0xff;
-	*((unsigned int*)0x05000000) = 0xa;
-	GPIOA->out = *((unsigned int*)0x05000000);
+	*((unsigned int*)0x05000004) = 0x1;
+	while (1) GPIOA->out = *((unsigned int*)0x05000004);
+	_putchar('A');
 	while(1);
 
 	uart_init(UART1, 9600L);

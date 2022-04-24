@@ -20,10 +20,12 @@ module stb_gen #(
 
    output logic err_o,
    output logic rdy_o,
-   output logic stb_o
+   output logic stb_o,
+   output logic [T_CNT_WIDTH-1:0] stb_period_o
 );
    logic int_stb = 1;
    assign stb_o = (int_stb & oe_i);
+   assign stb_period_o = t_end;
 
    typedef enum logic[1:0] {GEN, FREQ_DET} stb_gen_state;
 
@@ -73,10 +75,10 @@ module stb_gen #(
                      state <= GEN;
                      t_cnt <= 0;//t_cnt - t_cnt / 8; //make offset
                      t_end <= t_cnt;
-                  end else if (t_cnt == {(T_CNT_WIDTH){1'b1}}) begin
+                  end
+               end else if (t_cnt == {(T_CNT_WIDTH){1'b1}}) begin
                      err_o <= 1; //overflow
                      state <= GEN;
-                  end
                end
             end
          endcase

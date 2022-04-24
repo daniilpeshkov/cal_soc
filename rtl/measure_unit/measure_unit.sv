@@ -3,7 +3,6 @@ module measure_unit #(
 	parameter DAC_SPI_CLK_DIV = 3,
 	parameter DAC_SPI_WAIT_CYCLES = 3,
 	parameter STROBE_ZERO_HOLD_CYCLES = 3,
-   	parameter STROBE_GEN_CNT_WIDTH = 32,
 	parameter DEFAULT_DELAY_CODE_DELTA = 10'h1,
 	parameter DEFAULT_THRESHOLD_DELTA = 16'h1
 ) (
@@ -31,7 +30,8 @@ module measure_unit #(
 ///////////////////////////////////////////////////////////////////////////////////////
 // Wishbone registers
 ///////////////////////////////////////////////////////////////////////////////////////
-	localparam CH_CTL_DELTA_REG = 0;
+	localparam CH_CTL_DELTA_REG 	= 0;
+	localparam STB_GEN_REG 			= 1;
 
 ///////////////////////////////////////////////////////////////////////////////////////
 // CH_CTL_DELTA_REG
@@ -49,15 +49,25 @@ module measure_unit #(
 	assign ctl_threshold_delta = ch_ctl_delta_reg[15:0];
 	assign ctl_d_code_delta = ch_ctl_delta_reg[25:16];
 ///////////////////////////////////////////////////////////////////////////////////////
+// STB_GEN_REG
+///////////////////////////////////////////////////////////////////////////////////////
 
+///////////////////////////////////////////////////////////////////////////////////////
 	localparam DAC_DATA_WIDTH = 24;
 	localparam DAC_CODE_WIDTH = 16;
+	localparam STB_GEN_CNT_WIDTH = 28;
 
 	logic [DAC_CODE_WIDTH-1 : 0] ctl1_dac_code, ctl2_dac_code;
 	logic ctl1_dac_wre, ctl2_dac_wre;
 	logic ctl1_dac_rdy, ctl2_dac_rdy;
 	logic internal_stb;
 	logic ctl_run;
+	logic [STB_GEN_CNT_WIDTH-1:0] stb_period;
+	logic stb_gen_cmp_sel = 0;
+	logic stb_gen_run = 0;
+	logic stb_gen_oe = 1;
+	logic stb_gen_err;
+	logic stb_gen_rdy;
 
 	assign delay1_stb_o = internal_stb;
 	assign delay2_stb_o = internal_stb;
@@ -126,36 +136,36 @@ module measure_unit #(
 		.point_t_o				()
 	);
 
-	logic stb_gen_cmp_sel = 0;
-	logic stb_gen_run = 0;
-	logic stb_gen_oe = 1;
-	logic stb_gen_err;
-	logic stb_gen_rdy;
-
 	stb_gen #(
    		.ZERO_HOLD_CYCLES	(STROBE_ZERO_HOLD_CYCLES),
-   		.T_CNT_WIDTH		(STROBE_GEN_CNT_WIDTH)
+   		.T_CNT_WIDTH		(STB_GEN_CNT_WIDTH)
 	) stb_gen_inst (
-		.clk_i 		(wb_clk_i),
-		.arst_i		(wb_rst_i),
-		.sig_i		(stb_gen_cmp_sel ? cmp2_out_i : cmp1_out_i),
-   		.run_det_i	(stb_gen_run),
-   		.oe_i		(stb_gen_oe),
-   		.err_o		(stb_gen_err),
-   		.rdy_o		(stb_gen_rdy),
-		.stb_o		(internal_stb)
+		.clk_i 			(wb_clk_i),
+		.arst_i			(wb_rst_i),
+		.sig_i			(stb_gen_cmp_sel ? cmp2_out_i : cmp1_out_i),
+   		.run_det_i		(stb_gen_run),
+   		.oe_i			(stb_gen_oe),
+   		.err_o			(stb_gen_err),
+   		.rdy_o			(stb_gen_rdy),
+		.stb_o			(internal_stb),
+		.stb_period_o	(stb_period)
 	);
+
 ///////////////////////////////////////////////////////////////////////////////////////
 //Wishbone logic	
+///////////////////////////////////////////////////////////////////////////////////////
+
 	logic [31:0] w_data;
+	logic [2:0] addr;
 	logic [31:0] byte_mask;
 
-	assign byte_mask = {(wb_sel_i[3] ? 8'hFF : 8'h0), (wb_sel_i[2] ? 8'hFF : 8'h0), (wb_sel_i[1] ? 8'hFF : 8'h0) ,(wb_sel_i[0] ? 8'hFF : 8'h0)};	
+	assign addr = wb_adr_i[4:2];
 
 	always_comb begin
 		logic [31:0] w_reg;
-		case (wb_adr_i)
-			CH_CTL_DELTA_REG: w_reg = ch_ctl_delta_reg;
+		case (addr)
+			CH_CTL_DELTA_REG: 	w_reg = ch_ctl_delta_reg;
+			STB_GEN_REG:		w_reg =	{stb_gen_cmp_sel, stb_gen_run};
 		endcase
 		w_data[7:0] = (wb_sel_i[0] ? wb_dat_i[7:0] : w_reg[7:0]);
 		w_data[15:8] = (wb_sel_i[1] ? wb_dat_i[15:8] : w_reg[15:8]);
@@ -165,17 +175,26 @@ module measure_unit #(
 
 	always_ff @(posedge wb_clk_i, posedge wb_rst_i) begin
 		if (wb_rst_i) begin
-			ch_ctl_delta_reg = 1;//{default_ctl_d_code_delta, default_ctl_threshold_delta};
+			ch_ctl_delta_reg = {default_ctl_d_code_delta, default_ctl_threshold_delta};
 		end else begin
 			wb_ack_o <= 0;
+			stb_gen_run <= 0;
 			if (wb_cyc_i && wb_stb_i) begin
 				wb_ack_o <= 1;
-				case (wb_adr_i)
+				case (addr)
 					CH_CTL_DELTA_REG: begin
 						if (wb_we_i) begin
-							ch_ctl_delta_reg <= w_data;
+							ch_ctl_delta_reg <= w_data; //TODO check for 0 in each delta
 						end else begin
 							wb_dat_o <= ch_ctl_delta_reg;
+						end
+					end
+					STB_GEN_REG: begin
+						if (wb_we_i) begin
+							stb_gen_run <= w_data[0];
+							stb_gen_cmp_sel <= w_data[1];
+						end else begin
+							wb_dat_o <= {stb_period, stb_gen_err, stb_gen_cmp_sel, stb_gen_rdy};
 						end
 					end
 				endcase

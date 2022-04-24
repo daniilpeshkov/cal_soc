@@ -23,10 +23,10 @@ module calsoc_top (
 //DAC
 	output dac1_sync_o, dac2_sync_o,
 	output dac1_sclk_o, dac2_sclk_o,
-	output dac1_sdi_o, 	dac2_sdi_o
+	output dac1_sdi_o, 	dac2_sdi_o,
 //Delay Line
 	// output logic [9:0] delay1_code_o, delay2_code_o,
-	// output logic 	   delay1_stb_o, delay2_stb_o,
+	 output logic 	   delay1_stb_o, delay2_stb_o
 //CMP
 	// input logic cmp1_out_i, cmp2_out_i
 );
@@ -38,7 +38,6 @@ module calsoc_top (
 		.clkout(wb_clk_i), //output clkout
 		.clkin(clk_i) //input clkin
 	);
-
 
 	//picorv32_wb wb
 	logic [31:0] 	wbm_adr_o;
@@ -98,7 +97,6 @@ module calsoc_top (
 		.DAC_SPI_CLK_DIV(3),
 		.DAC_SPI_WAIT_CYCLES(3),
 		.STROBE_ZERO_HOLD_CYCLES(3),
- 		.STROBE_GEN_CNT_WIDTH(32),
 		.DEFAULT_DELAY_CODE_DELTA(10'h1),
 		.DEFAULT_THRESHOLD_DELTA(16'h1)
 	) measure_unit_inst (
