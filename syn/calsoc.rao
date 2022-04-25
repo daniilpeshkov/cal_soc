@@ -2,7 +2,7 @@
 <GAO_CONFIG>
     <Version>3.0</Version>
     <Mode>Standard</Mode>
-    <AoCore index="0" sample_clock="wb_clk_i" trig_type="0" storage_depth="256" window_num="1" capture_amount="256" trigger_pos="10">
+    <AoCore index="0" sample_clock="hclk" trig_type="0" storage_depth="256" window_num="1" capture_amount="256" trigger_pos="10">
         <SignalList>
             <Bus name="wbm_adr_o[31:0]">
                 <Signal>wbm_adr_o[31]</Signal>
@@ -154,69 +154,10 @@
                 <Signal>mu_wb_adr_i[1]</Signal>
                 <Signal>mu_wb_adr_i[0]</Signal>
             </Bus>
-            <Signal>measure_unit_inst/stb_gen_run</Signal>
-            <Signal>measure_unit_inst/stb_gen_cmp_sel</Signal>
-            <Signal>measure_unit_inst/stb_gen_err</Signal>
-            <Bus name="measure_unit_inst/stb_period[27:0]">
-                <Signal>measure_unit_inst/stb_period[27]</Signal>
-                <Signal>measure_unit_inst/stb_period[26]</Signal>
-                <Signal>measure_unit_inst/stb_period[25]</Signal>
-                <Signal>measure_unit_inst/stb_period[24]</Signal>
-                <Signal>measure_unit_inst/stb_period[23]</Signal>
-                <Signal>measure_unit_inst/stb_period[22]</Signal>
-                <Signal>measure_unit_inst/stb_period[21]</Signal>
-                <Signal>measure_unit_inst/stb_period[20]</Signal>
-                <Signal>measure_unit_inst/stb_period[19]</Signal>
-                <Signal>measure_unit_inst/stb_period[18]</Signal>
-                <Signal>measure_unit_inst/stb_period[17]</Signal>
-                <Signal>measure_unit_inst/stb_period[16]</Signal>
-                <Signal>measure_unit_inst/stb_period[15]</Signal>
-                <Signal>measure_unit_inst/stb_period[14]</Signal>
-                <Signal>measure_unit_inst/stb_period[13]</Signal>
-                <Signal>measure_unit_inst/stb_period[12]</Signal>
-                <Signal>measure_unit_inst/stb_period[11]</Signal>
-                <Signal>measure_unit_inst/stb_period[10]</Signal>
-                <Signal>measure_unit_inst/stb_period[9]</Signal>
-                <Signal>measure_unit_inst/stb_period[8]</Signal>
-                <Signal>measure_unit_inst/stb_period[7]</Signal>
-                <Signal>measure_unit_inst/stb_period[6]</Signal>
-                <Signal>measure_unit_inst/stb_period[5]</Signal>
-                <Signal>measure_unit_inst/stb_period[4]</Signal>
-                <Signal>measure_unit_inst/stb_period[3]</Signal>
-                <Signal>measure_unit_inst/stb_period[2]</Signal>
-                <Signal>measure_unit_inst/stb_period[1]</Signal>
-                <Signal>measure_unit_inst/stb_period[0]</Signal>
-            </Bus>
-            <Bus name="measure_unit_inst/stb_gen_inst/t_cnt[27:0]">
-                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[27]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[26]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[25]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[24]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[23]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[22]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[21]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[20]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[19]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[18]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[17]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[16]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[15]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[14]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[13]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[12]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[11]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[10]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[9]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[8]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[7]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[6]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[5]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[4]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[3]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[2]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[1]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[0]</Signal>
-            </Bus>
+            <Signal>measure_unit_inst/dac1_spi_inst/rdy_o</Signal>
+            <Signal>measure_unit_inst/dac1_spi_inst/sdi_o</Signal>
+            <Signal>measure_unit_inst/dac1_spi_inst/sclk_o</Signal>
+            <Signal>measure_unit_inst/dac1_spi_inst/sync_o</Signal>
         </SignalList>
         <Triggers>
             <Trigger index="0">
@@ -262,5 +203,5 @@
             <Expression>M0</Expression>
         </Expressions>
     </AoCore>
-    <GAO_ID>0010010001000010</GAO_ID>
+    <GAO_ID>1110011111100001</GAO_ID>
 </GAO_CONFIG>

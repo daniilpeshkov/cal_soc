@@ -30,15 +30,19 @@ module calsoc_top (
 //CMP
 	// input logic cmp1_out_i, cmp2_out_i
 );
+// TODO FOR DEBUG BOARD
 	logic wb_rst_i;
 	logic wb_clk_i;
+	logic hclk;
+
 	assign wb_rst_i = ~rst_i;
+	assign wb_clk_i = clk_i;
 
 	Gowin_rPLL rPLL_inst (
-		.clkout(wb_clk_i), //output clkout
+		.clkout(hclk), //output clkout
 		.clkin(clk_i) //input clkin
 	);
-
+////////////////////////////////////////
 	//picorv32_wb wb
 	logic [31:0] 	wbm_adr_o;
 	logic [31:0] 	wbm_dat_o;
@@ -100,6 +104,7 @@ module calsoc_top (
 		.DEFAULT_DELAY_CODE_DELTA(10'h1),
 		.DEFAULT_THRESHOLD_DELTA(16'h1)
 	) measure_unit_inst (
+		.hclk_i			(hclk),
 		.wb_clk_i 		(wb_clk_i),
 		.wb_rst_i		(wb_rst_i),			
 		.wb_dat_i		(mu_wb_dat_i),
