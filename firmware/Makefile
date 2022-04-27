@@ -9,6 +9,7 @@ OBJ= \
 	src/main.o \
 	src/puts.o \
 	src/dev/uart/wbuart32.o \
+	src/dev/mu/mu.o \
 	src/pp_printf/vsprintf-xint.o \
 	src/pp_printf/printf.o \
 
@@ -20,6 +21,7 @@ SRC= \
 	src/main \
 	src/puts \
 	src/dev/uart/wbuart32 \
+	src/dev/mu/mu \
 	src/pp_printf/vsprintf-xint \
 	src/pp_printf/printf \
 
@@ -31,7 +33,6 @@ LINKER_SCRIPT= sections.lds
 OBJCOPY_FLAGS= -O binary 
 CC_FLAGS=-c -Os -march=rv32im -Wall
 START_ASM= bare_boot/start.s
-
 
 LINK_OPT=-Os -ffreestanding -nostdlib -o $(CALSOC_ELF) \
 		-Wl,-Bstatic,--strip-debug,-T,$(LINKER_SCRIPT) -lgcc 
