@@ -1,28 +1,57 @@
 TOOLCHAIN_PREFIX=/opt/riscv32i/bin/riscv32-unknown-elf-
+CC=$(TOOLCHAIN_PREFIX)gcc
+AS=$(TOOLCHAIN_PREFIX)as
+LD=$(TOOLCHAIN_PREFIX)ld
+OBJCOPY=$(TOOLCHAIN_PREFIX)objcopy
+SIZE=size
 
-.phony: test.o test.elf test.bin clean
+OBJ= \
+	src/main.o \
+	src/puts.o \
+	src/dev/uart/wbuart32.o \
+	src/pp_printf/vsprintf-xint.o \
+	src/pp_printf/printf.o \
 
-OBJ= 	uart.o \
-		main.o \
-		putchar.o \
-		# printf.o 
+CALSOC_ELF=calsoc.elf
+CALSOC_BIN=calsoc.bin
+CALSOC_HEX=calsoc.hex
 
-all: test.hex
+SRC= \
+	src/main \
+	src/puts \
+	src/dev/uart/wbuart32 \
+	src/pp_printf/vsprintf-xint \
+	src/pp_printf/printf \
+
+ASM_SRC= \
+	bare_boot/start
+
+LINKER_SCRIPT= sections.lds
+
+OBJCOPY_FLAGS= -O binary 
+CC_FLAGS=-c -Os -march=rv32im -Wall
+START_ASM= bare_boot/start.s
 
 
-%.o: %.c
-	$(TOOLCHAIN_PREFIX)gcc -c -march=rv32im$(subst C,c,$(COMPRESSED_ISA)) -o $@ $<
+LINK_OPT=-Os -ffreestanding -nostdlib -o $(CALSOC_ELF) \
+		-Wl,-Bstatic,--strip-debug,-T,$(LINKER_SCRIPT) -lgcc 
 
-test.elf: sections.lds start.s $(OBJ)
-	$(TOOLCHAIN_PREFIX)gcc -Os -ffreestanding -nostdlib -o $@ \
-		-Wl,-Bstatic,--strip-debug,-T,sections.lds \
-		$^ -lgcc
-		
-test.bin: test.elf
-	$(TOOLCHAIN_PREFIX)objcopy -O binary $< $@
-	
-test.hex: test.bin
-	python3 makehex.py $^ > $@
+.PHONY: boot firmware link
+
+all: link
+	@echo "finished"
+
+firmware:
+	@echo "src"
+	$(foreach c_src, $(SRC), $(CC) $(CC_FLAGS) -o $(c_src).o $(c_src).c;)
+
+link: firmware
+	@echo "link"
+	$(CC) $(LINK_OPT) $(START_ASM) $(OBJ)  
+	$(SIZE) $(CALSOC_ELF)
+	$(OBJCOPY) $(OBJCOPY_FLAGS) $(CALSOC_ELF) $(CALSOC_BIN)
 
 clean:
-	rm -f *.o test.elf test.bin test.hex
+	rm $(OBJ)
+	rm $(CALSOC_ELF)
+	rm $(CALSOC_BIN)

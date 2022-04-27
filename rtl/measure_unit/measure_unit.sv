@@ -38,26 +38,26 @@ module measure_unit #(
 	localparam CH_CTL_DELTA_REG 	= 0;
 //
 //      25          16 15              0
-//		+-------------+-----------------+
+//      +-------------+-----------------+
 //	r/w	| delay delta | threshold delta |
-//		+-------------+-----------------+
+//	    +-------------+-----------------+
 //
 //		delay delta 		- delay code change step
 //		threshold delta		- threshold dac code change step
 ///////////////////////////////////////////////////////////////////////////////////////
 	localparam STB_GEN_REG 			= 1;
 //
-//       30             3    2     1     0
-//		+-----------------+-----+-----+-----+
+//      30             3    2     1     0
+//	    +-----------------+-----+-----+-----+
 //	 r	|      period     | err | mux | rdy |
-//		+-----------------+-----+-----+-----+
+//	    +-----------------+-----+-----+-----+
 //       30             3    2     1     0
-//		+-----------------+-----+-----+-----+
+//	    +-----------------+-----+-----+-----+
 //	 w	|        x        |  x  | mux | run |
-//		+-----------------+-----+-----+-----+
+//	    +-----------------+-----+-----+-----+
 //
 //		period 	- count of 125 Mhz cycles per input signal period	
-//		err		- strobe generator overflow (input signal has frequency < PPS)
+//		err		- strobe generator overflow (input signal has frequency < 1 PPS)
 //		mux		- changes the sync channel (0 - ch 1, 1 - ch 2)
 //		rdy		- indicates that strobes are generating with ``period`` (if not 0)
 //		run		- writing 1 starts input frequency measurement

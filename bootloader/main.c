@@ -1,5 +1,5 @@
 #define F_CPU 	12000000L
-#define BAUD 	9600
+#define BAUD 	19200
 
 #define GPIO_BASE 0x02000000
 #define GPIO_OE *(unsigned int*)(GPIO_BASE + 0x8)
