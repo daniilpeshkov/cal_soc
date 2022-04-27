@@ -1,62 +1,77 @@
 `define DEFINE_WB_SLAVE_WIRE(prefix)\
-wire [31:0]		``prefix``_wb_adr_i;\
-wire [31:0]		``prefix``_wb_dat_i;\
-wire [31:0]		``prefix``_wb_dat_o;\
-wire			``prefix``_wb_we_i;\
-wire [3:0] 		``prefix``_wb_sel_i;\
-wire 			``prefix``_wb_stb_i;\
-wire 			``prefix``_wb_ack_o;\
-wire 			``prefix``_wb_cyc_i;\
-wire			``prefix``_wb_err_o;\
-wire			``prefix``_wb_stall_o;
+logic [31:0]	``prefix``_wb_adr_i;\
+logic [31:0]	``prefix``_wb_dat_i;\
+logic [31:0]	``prefix``_wb_dat_o;\
+logic			``prefix``_wb_we_i;\
+logic [3:0] 	``prefix``_wb_sel_i;\
+logic 			``prefix``_wb_stb_i;\
+logic 			``prefix``_wb_ack_o;\
+logic 			``prefix``_wb_cyc_i;\
+logic			``prefix``_wb_err_o;\
+logic			``prefix``_wb_stall_o;
 
 `define bootloader_path "../bootloader/bootloader.hex"
 `define RAM_WB_MEM_SIZE 'h100
 
-module calsoc (
-    input 	wire			clk,
-    input	wire			rst,
-	output	wire [31:0]  	gpioa_o,
+module calsoc_top (
+	input 	logic			clk_i,
+	input	logic			rst_i,
+	output	logic [7:0]  	gpioa_o,
 
-	input 	wire 			uart1_rx,
-	output 	wire 			uart1_tx
+	input 	logic 			uart1_rx,
+	output 	logic 			uart1_tx,
+//DAC
+	output dac1_sync_o, dac2_sync_o,
+	output dac1_sclk_o, dac2_sclk_o,
+	output dac1_sdi_o, 	dac2_sdi_o,
+//Delay Line
+	// output logic [9:0] delay1_code_o, delay2_code_o,
+	 output logic 	   delay1_stb_o, delay2_stb_o
+//CMP
+	// input logic cmp1_out_i, cmp2_out_i
 );
-	wire wb_rst_i;
-	wire wb_clk_i;
-	assign wb_rst_i = ~rst;
-	// assign wb_clk_i = clk;
-	Gowin_rPLL your_instance_name(
-        .clkout(wb_clk_i), //output clkout
-        .clkin(clk) //input clkin
-    );
+// TODO FOR DEBUG BOARD
+	logic wb_rst_i;
+	logic wb_clk_i;
+	logic hclk;
 
+	assign wb_rst_i = ~rst_i;
+	assign wb_clk_i = clk_i;
+
+	Gowin_rPLL rPLL_inst (
+		.clkout(hclk), //output clkout
+		.clkin(clk_i) //input clkin
+	);
+////////////////////////////////////////
 	//picorv32_wb wb
-	wire [31:0] 	wbm_adr_o;
-	wire [31:0] 	wbm_dat_o;
-	wire [31:0] 	wbm_dat_i;
-	wire 			wbm_we_o;
-	wire [3:0]		wbm_sel_o;
-	wire			wbm_stb_o;
-	wire			wbm_ack_i;
-	wire			wbm_cyc_o;
-	wire			wbm_stall_i, wbm_err_i;
+	logic [31:0] 	wbm_adr_o;
+	logic [31:0] 	wbm_dat_o;
+	logic [31:0] 	wbm_dat_i;
+	logic 			wbm_we_o;
+	logic [3:0]		wbm_sel_o;
+	logic			wbm_stb_o;
+	logic			wbm_ack_i;
+	logic			wbm_cyc_o;
+	logic			wbm_stall_i, wbm_err_i;
 
-	//ram inputs/outputs
+	// ram inputs/outputs
 	`DEFINE_WB_SLAVE_WIRE(ram)
-	//GPIOA	wb
+	// GPIOA wb
 	`DEFINE_WB_SLAVE_WIRE(gpioa)
-	//uart1	wb
+	// uart1 wb
 	`DEFINE_WB_SLAVE_WIRE(uart1)
-	//bootloader ROM
+	// bootloader ROM
 	`DEFINE_WB_SLAVE_WIRE(bootrom)
-	//temporary program memory (in RAM)
+	// temporary program memory (in RAM)
 	`DEFINE_WB_SLAVE_WIRE(prg_ram)
+	// measure unit wb
+	`DEFINE_WB_SLAVE_WIRE(mu)
 		
 	wbxbar #(
 		.NM			(1),
-		.NS			(5),
-		.SLAVE_ADDR	({32'h01000000, 32'h00000000, 32'h02000000, 32'h03000000, 32'h04000000}), 
-		.SLAVE_MASK	({32'hff000000, 32'hff000000, 32'hffffffC0, 32'hfffffff0, 32'hff000000})
+		.NS			(6),
+		.SLAVE_ADDR	({32'h01000000, 32'h00000000, 32'h02000000, 32'h03000000, 32'h04000000, 32'h05000000}), 
+		.SLAVE_MASK	({32'hff000000, 32'hff000000, 32'hffffffC0, 32'hfffffff0, 32'hff000000, 32'hff000000})
 	) wbbus (
 		.i_clk		(wb_clk_i),
 		.i_reset	(wb_rst_i),
@@ -70,18 +85,49 @@ module calsoc (
 		.o_mdata	(wbm_dat_i),
 		.o_mstall	(wbm_stall_i),
 
-		.o_scyc		({bootrom_wb_cyc_i, ram_wb_cyc_i, gpioa_wb_cyc_i,uart1_wb_cyc_i, prg_ram_wb_cyc_i}),
-		.o_sstb		({bootrom_wb_stb_i, ram_wb_stb_i, gpioa_wb_stb_i, uart1_wb_stb_i, prg_ram_wb_stb_i }),
-		.o_swe		({bootrom_wb_we_i,  ram_wb_we_i,  gpioa_wb_we_i, uart1_wb_we_i, prg_ram_wb_we_i}),
-		.o_saddr	({bootrom_wb_adr_i, ram_wb_adr_i, gpioa_wb_adr_i, uart1_wb_adr_i, prg_ram_wb_adr_i}),
-		.o_sdata	({bootrom_wb_dat_i, ram_wb_dat_i, gpioa_wb_dat_i, uart1_wb_dat_i, prg_ram_wb_dat_i}),
-		.o_ssel		({bootrom_wb_sel_i, ram_wb_sel_i, gpioa_wb_sel_i, uart1_wb_sel_i, prg_ram_wb_sel_i}),
-		.i_sack		({bootrom_wb_ack_o, ram_wb_ack_o, gpioa_wb_ack_o, uart1_wb_ack_o, prg_ram_wb_ack_o}),
-		.i_sdata	({bootrom_wb_dat_o, ram_wb_dat_o, gpioa_wb_dat_o, uart1_wb_dat_o, prg_ram_wb_dat_o}),
-		.i_serr		({bootrom_wb_err_o, ram_wb_err_o, gpioa_wb_err_o, uart1_wb_err_o, prg_ram_wb_err_o}),
-		.i_sstall	({bootrom_wb_stall_o, ram_wb_stall_o, gpioa_wb_stall_o, uart1_wb_stall_o, prg_ram_wb_stall_o})
+		.o_scyc		({bootrom_wb_cyc_i,   ram_wb_cyc_i,   gpioa_wb_cyc_i,   uart1_wb_cyc_i,   prg_ram_wb_cyc_i,   mu_wb_cyc_i}),
+		.o_sstb		({bootrom_wb_stb_i,   ram_wb_stb_i,   gpioa_wb_stb_i,   uart1_wb_stb_i,   prg_ram_wb_stb_i,   mu_wb_stb_i}),
+		.o_swe		({bootrom_wb_we_i,    ram_wb_we_i,    gpioa_wb_we_i,    uart1_wb_we_i,    prg_ram_wb_we_i,    mu_wb_we_i}),
+		.o_saddr	({bootrom_wb_adr_i,   ram_wb_adr_i,   gpioa_wb_adr_i,   uart1_wb_adr_i,   prg_ram_wb_adr_i,   mu_wb_adr_i}),
+		.o_sdata	({bootrom_wb_dat_i,   ram_wb_dat_i,   gpioa_wb_dat_i,   uart1_wb_dat_i,   prg_ram_wb_dat_i,   mu_wb_dat_i}),
+		.o_ssel		({bootrom_wb_sel_i,   ram_wb_sel_i,   gpioa_wb_sel_i,   uart1_wb_sel_i,   prg_ram_wb_sel_i,   mu_wb_sel_i}),
+		.i_sack		({bootrom_wb_ack_o,   ram_wb_ack_o,   gpioa_wb_ack_o,   uart1_wb_ack_o,   prg_ram_wb_ack_o,   mu_wb_ack_o}),
+		.i_sdata	({bootrom_wb_dat_o,   ram_wb_dat_o,   gpioa_wb_dat_o,   uart1_wb_dat_o,   prg_ram_wb_dat_o,   mu_wb_dat_o}),
+		.i_serr		({bootrom_wb_err_o,   ram_wb_err_o,   gpioa_wb_err_o,   uart1_wb_err_o,   prg_ram_wb_err_o,   mu_wb_err_o}),
+		.i_sstall	({bootrom_wb_stall_o, ram_wb_stall_o, gpioa_wb_stall_o, uart1_wb_stall_o, prg_ram_wb_stall_o, mu_wb_stall_o})
 	);
 	
+	measure_unit #(
+		.DAC_SPI_CLK_DIV(3),
+		.DAC_SPI_WAIT_CYCLES(3),
+		.STROBE_ZERO_HOLD_CYCLES(3),
+		.DEFAULT_DELAY_CODE_DELTA(10'h1),
+		.DEFAULT_THRESHOLD_DELTA(16'h1)
+	) measure_unit_inst (
+		.hclk_i			(hclk),
+		.wb_clk_i 		(wb_clk_i),
+		.wb_rst_i		(wb_rst_i),			
+		.wb_dat_i		(mu_wb_dat_i),
+		.wb_dat_o		(mu_wb_dat_o),
+	 	.wb_adr_i		(mu_wb_adr_i),
+		.wb_we_i		(mu_wb_we_i),
+		.wb_sel_i		(mu_wb_sel_i),
+		.wb_cyc_i		(mu_wb_cyc_i),
+		.wb_stb_i		(mu_wb_stb_i),
+		.wb_ack_o		(mu_wb_ack_o),
+		.dac1_sync_o	(dac1_sync_o),
+		.dac2_sync_o	(dac2_sync_o),
+		.dac1_sclk_o	(dac1_sclk_o),
+		.dac2_sclk_o	(dac2_sclk_o),
+		.dac1_sdi_o		(dac1_sdi_o),
+		.dac2_sdi_o		(dac2_sdi_o),
+		.delay1_code_o	(delay1_code_o),
+		.delay2_code_o	(delay2_code_o),
+		.delay1_stb_o	(delay1_stb_o),
+		.delay2_stb_o	(delay2_stb_o),
+		.cmp1_out_i		(cmp1_out_i),
+		.cmp2_out_i		(cmp2_out_i)
+	);
 	
 	gpio_top gpioa (
 		.wb_clk_i	(wb_clk_i),
@@ -161,20 +207,20 @@ module calsoc (
 	);
 
 
-	reg        		pcpi_valid;
-	reg [31:0] 		pcpi_insn;
-	reg [31:0] 		pcpi_rs1;
-	reg [31:0] 		pcpi_rs2;
-	reg         	pcpi_wr;
-	reg [31:0] 		pcpi_rd;
-	reg        		pcpi_wait;
-	reg         	pcpi_ready;
-	reg [31:0] 		irq;
-	reg [31:0]  	eoi;
-	reg 			trap;
-	reg        		trace_valid;
-	reg [35:0] 		trace_data;
-	reg 			mem_instr;
+	logic        	pcpi_valid;
+	logic [31:0] 	pcpi_insn;
+	logic [31:0] 	pcpi_rs1;
+	logic [31:0] 	pcpi_rs2;
+	logic         	pcpi_wr;
+	logic [31:0] 	pcpi_rd;
+	logic        	pcpi_wait;
+	logic         	pcpi_ready;
+	logic [31:0] 	irq;
+	logic [31:0]  	eoi;
+	logic 			trap;
+	logic        	trace_valid;
+	logic [35:0] 	trace_data;
+	logic 			mem_instr;
 
 	
 	picorv32_wb #(

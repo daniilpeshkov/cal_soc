@@ -1,8 +1,10 @@
-#ifndef _REG_DEF_H_
-#define _REG_DEF_H_
+#ifndef _DEV_H_
+#define _DEV_H
 
-#include "gpio.h"
-#include "uart.h"
+#define F_CPU 12000000L
+
+#include "gpio/gpio.h"
+#include "uart/wbuart32.h"
 
 #define UART1_BASE 0x03000000 
 #define GPIOA_BASE 0x02000000

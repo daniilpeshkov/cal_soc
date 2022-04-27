@@ -3,21 +3,21 @@
 module tb_ch_measure_ctl();
 
 `define DUMPVARS
-`undef DUMPVARS    
+// `undef DUMPVARS    
 
-	parameter int SIG_MAX = 'h7FF;
-	parameter int SIG_FREQ = 1000000; //Hz
+	parameter int SIG_MAX = 'hFF;
+	parameter int SIG_FREQ = 500000; //Hz
 	parameter real PI_2 = 3.14159265359 * 2;
 	parameter  CLK_T =  8; // clk period
 
 	parameter DAC_RDY_DELAY = 20;
 
-	int sig;
+	real sig;
 	logic clk_i = 0;
 	logic arst_i = 0;
 
 	always begin
-		#1 sig = (SIG_MAX * $sin($time/1000000000.0 * PI_2 * SIG_FREQ) + SIG_MAX) / 2;
+		#1 sig = (SIG_MAX * $sin($time/1000000000.0 * PI_2 * SIG_FREQ) + SIG_MAX) / 2 + 10;
 	end
 
 	logic stb_gen_sig_i;
@@ -27,7 +27,7 @@ module tb_ch_measure_ctl();
 	logic stb_gen_err_o;
 	logic stb_gen_stb_o;
 
-	assign stb_gen_sig_i = sig >= SIG_MAX / 2;
+	assign stb_gen_sig_i = sig >= 11;
 
 	stb_gen #(
 		.ZERO_HOLD_CYCLES(2)
@@ -42,20 +42,17 @@ module tb_ch_measure_ctl();
    		.stb_o		(stb_gen_stb_o)
 	);
 
-
 	logic threshold_rdy = 0;
 	logic threshold_wre;
 
 	logic cmp_out = 0;
-	logic [15:0] threshold_delta_i = 0;
-	logic threshold_delta_wr_i = 0;
-	logic [9:0] d_code_delta_i = 0;
-	logic d_code_delta_wr_i = 0;
+	logic [15:0] threshold_delta_i = 1;
+	logic [9:0] d_code_delta_i = 1;
 	logic [9:0] d_code_o;
 	logic run_i = 0;
-    output logic point_rdy_o;
-    output logic [15:0] point_v_o;
-    output logic [9:0] point_t_o;
+    logic point_rdy_o;
+    logic [15:0] point_v_o;
+    logic [9:0] point_t_o;
 
 	logic [15:0] dut_threshold_o;
 	ch_measure_ctl dut (
@@ -84,7 +81,7 @@ module tb_ch_measure_ctl();
 	always @(threshold, sig) begin
 		// stb_delayed signal is a latch for comparator
 		if (!stb_delayed) begin 
-			cmp_out = sig > threshold;
+			cmp_out = sig >= threshold;
 		end
 
 
@@ -105,13 +102,18 @@ module tb_ch_measure_ctl();
 		@(posedge stb_gen_rdy_o);
 		run_i = 1;
 	end
+	int f;
+	initial f = $fopen("points.csv", "w");
 
-	always @(posedge point_rdy_o)
+	always @(posedge point_rdy_o) begin
 		$display( "%d", point_v_o);
+		$fwrite(f, "%d,%d\n",point_t_o, point_v_o);
+		if (point_t_o == 1023) $finish;
+	end
 
 	initial begin 
 `ifdef DUMPVARS
-		$dumpfile("dump.lxt", "w");
+		$dumpfile("dump.vcd");
 		$dumpvars(0, tb_ch_measure_ctl);
 `endif
 	end

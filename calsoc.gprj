@@ -1,0 +1,36 @@
+<?xml version="1" encoding="UTF-8"?>
+<!DOCTYPE gowin-fpga-project>
+<Project>
+    <Template>FPGA</Template>
+    <Version>5</Version>
+    <Device name="GW1NR-9" pn="GW1NR-LV9QN88C6/I5">gw1nr9-000</Device>
+    <FileList>
+        <File path="rtl/calsoc_top.sv" type="file.verilog" enable="1"/>
+        <File path="rtl/gowin_rpll/gowin_rpll.v" type="file.verilog" enable="1"/>
+        <File path="rtl/gpio/gpio_defines.v" type="file.verilog" enable="1"/>
+        <File path="rtl/gpio/gpio_top.v" type="file.verilog" enable="1"/>
+        <File path="rtl/gpio/gpo.v" type="file.verilog" enable="1"/>
+        <File path="rtl/measure_unit/ch_measure_ctl.sv" type="file.verilog" enable="1"/>
+        <File path="rtl/measure_unit/dac_spi/clk_divider.sv" type="file.verilog" enable="1"/>
+        <File path="rtl/measure_unit/dac_spi/spi_master_o.sv" type="file.verilog" enable="1"/>
+        <File path="rtl/measure_unit/measure_unit.sv" type="file.verilog" enable="1"/>
+        <File path="rtl/measure_unit/stb_gen.sv" type="file.verilog" enable="1"/>
+        <File path="rtl/mem/wb_ram.v" type="file.verilog" enable="1"/>
+        <File path="rtl/mem/wb_ram_sc_sw.v" type="file.verilog" enable="1"/>
+        <File path="rtl/mem/wb_rom.v" type="file.verilog" enable="1"/>
+        <File path="rtl/picorv/picorv32.v" type="file.verilog" enable="1"/>
+        <File path="rtl/wbuart/rxuart.v" type="file.verilog" enable="1"/>
+        <File path="rtl/wbuart/txuart.v" type="file.verilog" enable="1"/>
+        <File path="rtl/wbuart/ufifo.v" type="file.verilog" enable="1"/>
+        <File path="rtl/wbuart/wbuart.v" type="file.verilog" enable="1"/>
+        <File path="rtl/wbxbar/addrdecode.v" type="file.verilog" enable="1"/>
+        <File path="rtl/wbxbar/skidbuffer.v" type="file.verilog" enable="1"/>
+        <File path="rtl/wbxbar/wbxbar.v" type="file.verilog" enable="1"/>
+        <File path="syn/calsoc.cst" type="file.cst" enable="1"/>
+        <File path="syn/calsoc.sdc" type="file.sdc" enable="1"/>
+        <File path="syn/calsoc.rao" type="file.gao" enable="0"/>
+        <File path="syn/calsoc2.rao" type="file.gao" enable="1"/>
+        <File path="rtl/gowin_rpll/gowin_rpll.ipc" type="file.other" enable="1"/>
+        <File path="rtl/gowin_rpll/gowin_rpll.mod" type="file.other" enable="1"/>
+    </FileList>
+</Project>

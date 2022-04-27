@@ -18,7 +18,7 @@ bootloader.bin: bootloader.elf
 	$(TOOLCHAIN_PREFIX)objcopy -O binary $< $@
 	
 bootloader.hex: bootloader.bin
-	python3 ../makehex.py $^ > $@
+	python3 makehex.py $^ > $@
 
 clean:
 	rm -f *.o bootloader.elf bootloader.bin bootloader.hex

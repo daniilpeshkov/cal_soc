@@ -27,6 +27,13 @@ add_file -type verilog "../rtl/wbxbar/wbxbar.v"
 add_file -type verilog "../rtl/gpio/gpio_defines.v"
 add_file -type verilog "../rtl/gpio/gpio_top.v"
 
+# Measure Unit
+add_file -type verilog "../rtl/measure_unit/ch_measure_ctl.sv"
+add_file -type verilog "../rtl/measure_unit/stb_gen.sv"
+add_file -type verilog "../rtl/measure_unit/measure_unit.sv"
+add_file -type verilog "../rtl/measure_unit/dac_spi/clk_divider.sv"
+add_file -type verilog "../rtl/measure_unit/dac_spi/spi_master_o.sv"
+
 # PLL
 add_file -type verilog "../rtl/gowin_rpll/gowin_rpll.v"
 
@@ -36,9 +43,12 @@ add_file -type cst "./calsoc.cst"
 # Timing constrains
 add_file -type sdc "./calsoc.sdc"
 
+# Logic analyzer (Comment it or add disable opt to remove from project) 
+add_file -type gao -disable "calsoc.rao"
+
 set_option -output_base_name "calsoc"
 
 set_option -verilog_std "sysv2017"
-set_option -top_module "calsoc"
+set_option -top_module "calsoc_top"
 
 run all

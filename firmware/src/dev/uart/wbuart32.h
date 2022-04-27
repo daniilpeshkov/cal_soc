@@ -1,5 +1,7 @@
-#ifndef _UART_H_
-#define _UART_H_
+#ifndef _WBUART32_H_
+#define _WBUART32_H_
+
+#define F_UART 12000000
 
 typedef struct {
     volatile unsigned int setup;
@@ -9,5 +11,7 @@ typedef struct {
 } UART_TypeDef;
 
 void uart_init(UART_TypeDef *uart_base, unsigned int baud);
+
+void uart_putchar(UART_TypeDef *uart_base, char c);
 
 #endif
