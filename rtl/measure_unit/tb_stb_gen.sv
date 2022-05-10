@@ -1,11 +1,13 @@
 `timescale 1ns/1ns
 
+`include "stb_gen.sv"
+
 module tb_stb_gen();
 
 `define CLK_T 8 // clk period
 `define SIG_WIDTH 300
 
-    localparam T_CNT_WIDTH = 1;
+    localparam T_CNT_WIDTH = 32;
 
 `define DUMPVARS
 // `undef DUMPVARS    

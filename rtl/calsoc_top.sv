@@ -26,9 +26,9 @@ module calsoc_top (
 	output dac1_sdi_o, 	dac2_sdi_o,
 //Delay Line
 	// output logic [9:0] delay1_code_o, delay2_code_o,
-	 output logic 	   delay1_stb_o, delay2_stb_o
+	 output logic 	   delay1_stb_o, delay2_stb_o,
 //CMP
-	// input logic cmp1_out_i, cmp2_out_i
+	input logic cmp1_out_i, cmp2_out_i
 );
 // TODO FOR DEBUG BOARD
 	logic wb_rst_i;
@@ -38,7 +38,7 @@ module calsoc_top (
 	assign wb_rst_i = ~rst_i;
 	assign wb_clk_i = clk_i;
 
-	Gowin_rPLL rPLL_inst (
+	Gowin_rPLL hclk_rPLL_inst (
 		.clkout(hclk), //output clkout
 		.clkin(clk_i) //input clkin
 	);

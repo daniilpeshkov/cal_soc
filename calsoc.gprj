@@ -15,6 +15,7 @@
         <File path="rtl/measure_unit/dac_spi/spi_master_o.sv" type="file.verilog" enable="1"/>
         <File path="rtl/measure_unit/measure_unit.sv" type="file.verilog" enable="1"/>
         <File path="rtl/measure_unit/stb_gen.sv" type="file.verilog" enable="1"/>
+        <File path="rtl/measure_unit/sync_ff.sv" type="file.verilog" enable="1"/>
         <File path="rtl/mem/wb_ram.v" type="file.verilog" enable="1"/>
         <File path="rtl/mem/wb_ram_sc_sw.v" type="file.verilog" enable="1"/>
         <File path="rtl/mem/wb_rom.v" type="file.verilog" enable="1"/>
@@ -28,8 +29,8 @@
         <File path="rtl/wbxbar/wbxbar.v" type="file.verilog" enable="1"/>
         <File path="syn/calsoc.cst" type="file.cst" enable="1"/>
         <File path="syn/calsoc.sdc" type="file.sdc" enable="1"/>
-        <File path="syn/calsoc.rao" type="file.gao" enable="1"/>
-        <File path="syn/calsoc2.rao" type="file.gao" enable="0"/>
+        <File path="syn/calsoc.rao" type="file.gao" enable="0"/>
+        <File path="syn/calsoc2.rao" type="file.gao" enable="1"/>
         <File path="rtl/gowin_rpll/gowin_rpll.ipc" type="file.other" enable="1"/>
         <File path="rtl/gowin_rpll/gowin_rpll.mod" type="file.other" enable="1"/>
     </FileList>

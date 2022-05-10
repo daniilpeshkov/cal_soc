@@ -2,10 +2,10 @@
 #include "dev/dev.h"
 #include "pp_printf/pp-printf.h"
 
+// __attribute__((used)) 
 
-unsigned int delay(unsigned int n) {
-	while (n > 0) n--;
-	return n;
+void delay(unsigned int n)  {
+	while (--n) asm("");
 }
 
 int main(void) {
@@ -14,11 +14,17 @@ int main(void) {
 
 	pp_printf("WR Calibrator \r\n");
 	pp_printf("running frequency measurement\r\n");
-	mu_run_freq_detection(MU1, MUX_DAC1, 0xff);
-	unsigned int stat;
-	while ((stat = mu_stb_gen_status(MU1)) == MU_RUN);
-	if (stat == MU_ERR) pp_printf("can't measure signal frequency\r\n");
-
-	while(1) GPIOA->out = MU1->stb_gen;
+	while (1) {
+		mu_run_freq_detection(MU1, MUX_DAC1, 0xff);
+		unsigned int stat, tmp;
+		while ((stat = mu_stb_gen_status(MU1)) == MU_RUN);
+		if (stat == MU_ERR) pp_printf("can't measure signal frequency\r\n");
+		else {
+			tmp = MU1->stb_gen;
+			tmp >>= 3;
+			pp_printf("period = %d\r\n", tmp);
+		}
+		delay(500000);
+	}
 	return 0;
 }

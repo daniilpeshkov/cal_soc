@@ -2,126 +2,156 @@
 <GAO_CONFIG>
     <Version>3.0</Version>
     <Mode>Standard</Mode>
-    <AoCore index="0" sample_clock="hclk" trig_type="0" storage_depth="256" window_num="1" capture_amount="256" trigger_pos="10">
+    <AoCore index="0" sample_clock="clk_i" trig_type="0" storage_depth="512" window_num="1" capture_amount="512" trigger_pos="10">
         <SignalList>
-            <Bus name="prg_ram_wb_adr_i[31:0]">
-                <Signal>prg_ram_wb_adr_i[31]</Signal>
-                <Signal>prg_ram_wb_adr_i[30]</Signal>
-                <Signal>prg_ram_wb_adr_i[29]</Signal>
-                <Signal>prg_ram_wb_adr_i[28]</Signal>
-                <Signal>prg_ram_wb_adr_i[27]</Signal>
-                <Signal>prg_ram_wb_adr_i[26]</Signal>
-                <Signal>prg_ram_wb_adr_i[25]</Signal>
-                <Signal>prg_ram_wb_adr_i[24]</Signal>
-                <Signal>prg_ram_wb_adr_i[23]</Signal>
-                <Signal>prg_ram_wb_adr_i[22]</Signal>
-                <Signal>prg_ram_wb_adr_i[21]</Signal>
-                <Signal>prg_ram_wb_adr_i[20]</Signal>
-                <Signal>prg_ram_wb_adr_i[19]</Signal>
-                <Signal>prg_ram_wb_adr_i[18]</Signal>
-                <Signal>prg_ram_wb_adr_i[17]</Signal>
-                <Signal>prg_ram_wb_adr_i[16]</Signal>
-                <Signal>prg_ram_wb_adr_i[15]</Signal>
-                <Signal>prg_ram_wb_adr_i[14]</Signal>
-                <Signal>prg_ram_wb_adr_i[13]</Signal>
-                <Signal>prg_ram_wb_adr_i[12]</Signal>
-                <Signal>prg_ram_wb_adr_i[11]</Signal>
-                <Signal>prg_ram_wb_adr_i[10]</Signal>
-                <Signal>prg_ram_wb_adr_i[9]</Signal>
-                <Signal>prg_ram_wb_adr_i[8]</Signal>
-                <Signal>prg_ram_wb_adr_i[7]</Signal>
-                <Signal>prg_ram_wb_adr_i[6]</Signal>
-                <Signal>prg_ram_wb_adr_i[5]</Signal>
-                <Signal>prg_ram_wb_adr_i[4]</Signal>
-                <Signal>prg_ram_wb_adr_i[3]</Signal>
-                <Signal>prg_ram_wb_adr_i[2]</Signal>
-                <Signal>prg_ram_wb_adr_i[1]</Signal>
-                <Signal>prg_ram_wb_adr_i[0]</Signal>
+            <Signal>measure_unit_inst/stb_gen_run</Signal>
+            <Bus name="wbm_adr_o[31:0]">
+                <Signal>wbm_adr_o[31]</Signal>
+                <Signal>wbm_adr_o[30]</Signal>
+                <Signal>wbm_adr_o[29]</Signal>
+                <Signal>wbm_adr_o[28]</Signal>
+                <Signal>wbm_adr_o[27]</Signal>
+                <Signal>wbm_adr_o[26]</Signal>
+                <Signal>wbm_adr_o[25]</Signal>
+                <Signal>wbm_adr_o[24]</Signal>
+                <Signal>wbm_adr_o[23]</Signal>
+                <Signal>wbm_adr_o[22]</Signal>
+                <Signal>wbm_adr_o[21]</Signal>
+                <Signal>wbm_adr_o[20]</Signal>
+                <Signal>wbm_adr_o[19]</Signal>
+                <Signal>wbm_adr_o[18]</Signal>
+                <Signal>wbm_adr_o[17]</Signal>
+                <Signal>wbm_adr_o[16]</Signal>
+                <Signal>wbm_adr_o[15]</Signal>
+                <Signal>wbm_adr_o[14]</Signal>
+                <Signal>wbm_adr_o[13]</Signal>
+                <Signal>wbm_adr_o[12]</Signal>
+                <Signal>wbm_adr_o[11]</Signal>
+                <Signal>wbm_adr_o[10]</Signal>
+                <Signal>wbm_adr_o[9]</Signal>
+                <Signal>wbm_adr_o[8]</Signal>
+                <Signal>wbm_adr_o[7]</Signal>
+                <Signal>wbm_adr_o[6]</Signal>
+                <Signal>wbm_adr_o[5]</Signal>
+                <Signal>wbm_adr_o[4]</Signal>
+                <Signal>wbm_adr_o[3]</Signal>
+                <Signal>wbm_adr_o[2]</Signal>
+                <Signal>wbm_adr_o[1]</Signal>
+                <Signal>wbm_adr_o[0]</Signal>
             </Bus>
-            <Bus name="prg_ram_wb_dat_i[31:0]">
-                <Signal>prg_ram_wb_dat_i[31]</Signal>
-                <Signal>prg_ram_wb_dat_i[30]</Signal>
-                <Signal>prg_ram_wb_dat_i[29]</Signal>
-                <Signal>prg_ram_wb_dat_i[28]</Signal>
-                <Signal>prg_ram_wb_dat_i[27]</Signal>
-                <Signal>prg_ram_wb_dat_i[26]</Signal>
-                <Signal>prg_ram_wb_dat_i[25]</Signal>
-                <Signal>prg_ram_wb_dat_i[24]</Signal>
-                <Signal>prg_ram_wb_dat_i[23]</Signal>
-                <Signal>prg_ram_wb_dat_i[22]</Signal>
-                <Signal>prg_ram_wb_dat_i[21]</Signal>
-                <Signal>prg_ram_wb_dat_i[20]</Signal>
-                <Signal>prg_ram_wb_dat_i[19]</Signal>
-                <Signal>prg_ram_wb_dat_i[18]</Signal>
-                <Signal>prg_ram_wb_dat_i[17]</Signal>
-                <Signal>prg_ram_wb_dat_i[16]</Signal>
-                <Signal>prg_ram_wb_dat_i[15]</Signal>
-                <Signal>prg_ram_wb_dat_i[14]</Signal>
-                <Signal>prg_ram_wb_dat_i[13]</Signal>
-                <Signal>prg_ram_wb_dat_i[12]</Signal>
-                <Signal>prg_ram_wb_dat_i[11]</Signal>
-                <Signal>prg_ram_wb_dat_i[10]</Signal>
-                <Signal>prg_ram_wb_dat_i[9]</Signal>
-                <Signal>prg_ram_wb_dat_i[8]</Signal>
-                <Signal>prg_ram_wb_dat_i[7]</Signal>
-                <Signal>prg_ram_wb_dat_i[6]</Signal>
-                <Signal>prg_ram_wb_dat_i[5]</Signal>
-                <Signal>prg_ram_wb_dat_i[4]</Signal>
-                <Signal>prg_ram_wb_dat_i[3]</Signal>
-                <Signal>prg_ram_wb_dat_i[2]</Signal>
-                <Signal>prg_ram_wb_dat_i[1]</Signal>
-                <Signal>prg_ram_wb_dat_i[0]</Signal>
+            <Bus name="wbm_dat_o[31:0]">
+                <Signal>wbm_dat_o[31]</Signal>
+                <Signal>wbm_dat_o[30]</Signal>
+                <Signal>wbm_dat_o[29]</Signal>
+                <Signal>wbm_dat_o[28]</Signal>
+                <Signal>wbm_dat_o[27]</Signal>
+                <Signal>wbm_dat_o[26]</Signal>
+                <Signal>wbm_dat_o[25]</Signal>
+                <Signal>wbm_dat_o[24]</Signal>
+                <Signal>wbm_dat_o[23]</Signal>
+                <Signal>wbm_dat_o[22]</Signal>
+                <Signal>wbm_dat_o[21]</Signal>
+                <Signal>wbm_dat_o[20]</Signal>
+                <Signal>wbm_dat_o[19]</Signal>
+                <Signal>wbm_dat_o[18]</Signal>
+                <Signal>wbm_dat_o[17]</Signal>
+                <Signal>wbm_dat_o[16]</Signal>
+                <Signal>wbm_dat_o[15]</Signal>
+                <Signal>wbm_dat_o[14]</Signal>
+                <Signal>wbm_dat_o[13]</Signal>
+                <Signal>wbm_dat_o[12]</Signal>
+                <Signal>wbm_dat_o[11]</Signal>
+                <Signal>wbm_dat_o[10]</Signal>
+                <Signal>wbm_dat_o[9]</Signal>
+                <Signal>wbm_dat_o[8]</Signal>
+                <Signal>wbm_dat_o[7]</Signal>
+                <Signal>wbm_dat_o[6]</Signal>
+                <Signal>wbm_dat_o[5]</Signal>
+                <Signal>wbm_dat_o[4]</Signal>
+                <Signal>wbm_dat_o[3]</Signal>
+                <Signal>wbm_dat_o[2]</Signal>
+                <Signal>wbm_dat_o[1]</Signal>
+                <Signal>wbm_dat_o[0]</Signal>
             </Bus>
-            <Bus name="prg_ram_wb_dat_o[31:0]">
-                <Signal>prg_ram_wb_dat_o[31]</Signal>
-                <Signal>prg_ram_wb_dat_o[30]</Signal>
-                <Signal>prg_ram_wb_dat_o[29]</Signal>
-                <Signal>prg_ram_wb_dat_o[28]</Signal>
-                <Signal>prg_ram_wb_dat_o[27]</Signal>
-                <Signal>prg_ram_wb_dat_o[26]</Signal>
-                <Signal>prg_ram_wb_dat_o[25]</Signal>
-                <Signal>prg_ram_wb_dat_o[24]</Signal>
-                <Signal>prg_ram_wb_dat_o[23]</Signal>
-                <Signal>prg_ram_wb_dat_o[22]</Signal>
-                <Signal>prg_ram_wb_dat_o[21]</Signal>
-                <Signal>prg_ram_wb_dat_o[20]</Signal>
-                <Signal>prg_ram_wb_dat_o[19]</Signal>
-                <Signal>prg_ram_wb_dat_o[18]</Signal>
-                <Signal>prg_ram_wb_dat_o[17]</Signal>
-                <Signal>prg_ram_wb_dat_o[16]</Signal>
-                <Signal>prg_ram_wb_dat_o[15]</Signal>
-                <Signal>prg_ram_wb_dat_o[14]</Signal>
-                <Signal>prg_ram_wb_dat_o[13]</Signal>
-                <Signal>prg_ram_wb_dat_o[12]</Signal>
-                <Signal>prg_ram_wb_dat_o[11]</Signal>
-                <Signal>prg_ram_wb_dat_o[10]</Signal>
-                <Signal>prg_ram_wb_dat_o[9]</Signal>
-                <Signal>prg_ram_wb_dat_o[8]</Signal>
-                <Signal>prg_ram_wb_dat_o[7]</Signal>
-                <Signal>prg_ram_wb_dat_o[6]</Signal>
-                <Signal>prg_ram_wb_dat_o[5]</Signal>
-                <Signal>prg_ram_wb_dat_o[4]</Signal>
-                <Signal>prg_ram_wb_dat_o[3]</Signal>
-                <Signal>prg_ram_wb_dat_o[2]</Signal>
-                <Signal>prg_ram_wb_dat_o[1]</Signal>
-                <Signal>prg_ram_wb_dat_o[0]</Signal>
+            <Bus name="wbm_dat_i[31:0]">
+                <Signal>wbm_dat_i[31]</Signal>
+                <Signal>wbm_dat_i[30]</Signal>
+                <Signal>wbm_dat_i[29]</Signal>
+                <Signal>wbm_dat_i[28]</Signal>
+                <Signal>wbm_dat_i[27]</Signal>
+                <Signal>wbm_dat_i[26]</Signal>
+                <Signal>wbm_dat_i[25]</Signal>
+                <Signal>wbm_dat_i[24]</Signal>
+                <Signal>wbm_dat_i[23]</Signal>
+                <Signal>wbm_dat_i[22]</Signal>
+                <Signal>wbm_dat_i[21]</Signal>
+                <Signal>wbm_dat_i[20]</Signal>
+                <Signal>wbm_dat_i[19]</Signal>
+                <Signal>wbm_dat_i[18]</Signal>
+                <Signal>wbm_dat_i[17]</Signal>
+                <Signal>wbm_dat_i[16]</Signal>
+                <Signal>wbm_dat_i[15]</Signal>
+                <Signal>wbm_dat_i[14]</Signal>
+                <Signal>wbm_dat_i[13]</Signal>
+                <Signal>wbm_dat_i[12]</Signal>
+                <Signal>wbm_dat_i[11]</Signal>
+                <Signal>wbm_dat_i[10]</Signal>
+                <Signal>wbm_dat_i[9]</Signal>
+                <Signal>wbm_dat_i[8]</Signal>
+                <Signal>wbm_dat_i[7]</Signal>
+                <Signal>wbm_dat_i[6]</Signal>
+                <Signal>wbm_dat_i[5]</Signal>
+                <Signal>wbm_dat_i[4]</Signal>
+                <Signal>wbm_dat_i[3]</Signal>
+                <Signal>wbm_dat_i[2]</Signal>
+                <Signal>wbm_dat_i[1]</Signal>
+                <Signal>wbm_dat_i[0]</Signal>
             </Bus>
-            <Bus name="prg_ram_wb_sel_i[3:0]">
-                <Signal>prg_ram_wb_sel_i[3]</Signal>
-                <Signal>prg_ram_wb_sel_i[2]</Signal>
-                <Signal>prg_ram_wb_sel_i[1]</Signal>
-                <Signal>prg_ram_wb_sel_i[0]</Signal>
+            <Signal>wbm_we_o</Signal>
+            <Signal>wbm_stb_o</Signal>
+            <Signal>wbm_ack_i</Signal>
+            <Signal>wbm_cyc_o</Signal>
+            <Bus name="measure_unit_inst/stb_gen_inst/t_cnt[27:0]">
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[27]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[26]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[25]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[24]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[23]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[22]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[21]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[20]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[19]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[18]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[17]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[16]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[15]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[14]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[13]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[12]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[11]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[10]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[9]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[8]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[7]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[6]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[5]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[4]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[3]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[2]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[1]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[0]</Signal>
             </Bus>
-            <Signal>prg_ram_wb_we_i</Signal>
-            <Signal>prg_ram_wb_stb_i</Signal>
-            <Signal>prg_ram_wb_ack_o</Signal>
-            <Signal>prg_ram_wb_cyc_i</Signal>
-            <Signal>prg_ram_wb_err_o</Signal>
+            <Signal>measure_unit_inst/stb_gen_rdy</Signal>
+            <Bus name="measure_unit_inst/stb_gen_inst/state[1:0]">
+                <Signal>measure_unit_inst/stb_gen_inst/state[1]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/state[0]</Signal>
+            </Bus>
+            <Signal>measure_unit_inst/stb_gen_inst/rdy_o</Signal>
         </SignalList>
         <Triggers>
             <Trigger index="0">
                 <SignalList>
-                    <Signal>prg_ram_wb_stb_i</Signal>
+                    <Signal>measure_unit_inst/stb_gen_run</Signal>
                 </SignalList>
             </Trigger>
             <Trigger index="1"/>
@@ -141,7 +171,7 @@
             <Trigger index="15"/>
         </Triggers>
         <MatchUnits>
-            <MatchUnit index="0" enabled="1" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="1" value1="0" trigger="0"/>
+            <MatchUnit index="0" enabled="1" match_type="3" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="R" value1="0" trigger="0"/>
             <MatchUnit index="1" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
             <MatchUnit index="2" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
             <MatchUnit index="3" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
@@ -162,5 +192,5 @@
             <Expression>M0</Expression>
         </Expressions>
     </AoCore>
-    <GAO_ID>1000101100011110</GAO_ID>
+    <GAO_ID>0101010111110011</GAO_ID>
 </GAO_CONFIG>

@@ -218,6 +218,7 @@ module measure_unit #(
 		if (wb_rst_i) begin
 			ch_ctl_delta_reg = {default_ctl_d_code_delta, default_ctl_threshold_delta};
 			wb_dac_wre = 0;
+			stb_gen_run = 0;
 		end else begin
 			wb_ack_o <= 0;
 			stb_gen_run <= 0;

@@ -2,9 +2,9 @@
 //All rights reserved. 
 //File Title: Physical Constraints file
 //GOWIN Version: 1.9.8
-//Part Number: GW1NR-LV9QN88PC6/I5
+//Part Number: GW1NR-LV9QN88C6/I5
 //Device: GW1NR-9
-//Created Time: Sat 01 22 01:46:00 2022
+//Created Time: Wed 04 27 20:55:32 2022
 
 IO_LOC "uart1_tx" 37;
 IO_PORT "uart1_tx" IO_TYPE=LVTTL33 PULL_MODE=UP DRIVE=8;
@@ -24,6 +24,8 @@ IO_LOC "gpioa_o[1]" 85;
 IO_PORT "gpioa_o[1]" PULL_MODE=UP DRIVE=8;
 IO_LOC "gpioa_o[0]" 86;
 IO_PORT "gpioa_o[0]" PULL_MODE=UP DRIVE=8;
+IO_LOC "cmp1_out_i" 39;
+IO_PORT "cmp1_out_i" PULL_MODE=UP;
 IO_LOC "uart1_rx" 16;
 IO_PORT "uart1_rx" PULL_MODE=UP;
 IO_LOC "rst_i" 77;
