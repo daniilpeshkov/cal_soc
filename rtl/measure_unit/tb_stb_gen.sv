@@ -1,6 +1,5 @@
 `timescale 1ns/1ns
 
-`include "stb_gen.sv"
 
 module tb_stb_gen();
 

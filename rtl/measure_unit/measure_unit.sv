@@ -63,6 +63,7 @@ module measure_unit #(
 //		run		- writing 1 starts input frequency measurement
 ///////////////////////////////////////////////////////////////////////////////////////
 	localparam W_THRESHOLD_REG		= 2;
+	
 //		     1           0 
 //		+----------+----------+
 //	 r	| dac2 rdy | dac2 rdy |
