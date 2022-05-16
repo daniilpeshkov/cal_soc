@@ -24,12 +24,11 @@ module stb_gen #(
 );
    
    logic int_stb = 1;
-   assign stb_o = (int_stb & oe_i);
-   // assign stb_period_o = t_end;
+   assign stb_o = (int_stb & oe_i & ~err_o);
 
-   typedef enum logic[1:0] { GEN, FREQ_DET, WAIT } stb_gen_state;
+   typedef enum logic[1:0] { RUN, FREQ_DET } stb_gen_state;
 
-   stb_gen_state state = GEN;
+   stb_gen_state state = RUN;
 
 
    logic [T_CNT_WIDTH-1 : 0] t_cnt;
@@ -56,53 +55,51 @@ module stb_gen #(
    logic sig_posedge;
    assign sig_posedge = sig_synced & ~prev_sig;
 
-   logic edge_num = 0;
+   logic [1:0] edge_num = 0;
 
-   always_ff @(posedge clk_i, posedge arst_i) begin
+   always_ff @(posedge clk_i, posedge arst_i, posedge run_det_i) begin
       if (arst_i) begin 
          int_stb = 1;
          err_o = 0;
-         state = GEN;
+         state = RUN;
          t_end = 0;
+         t_cnt = 0;
          rdy_o = 1;
+      end else if (run_det_i) begin
+         state = FREQ_DET;
+         edge_num = 0;
+         rdy_o = 0;
       end else begin 
          t_cnt <= t_cnt + 1;
          case (state) 
-            GEN: begin
-               if (run_det_i) begin 
-                  state <= FREQ_DET;
-                  err_o <= 0;
-                  edge_num <= 0;
-                  rdy_o <= 0;
-               end else if (!err_o) begin 
-                  if (t_cnt == t_end) begin 
-                     int_stb <= 1;
-                     t_cnt <= 0;
-                  end else if (t_cnt == t_end - ZERO_HOLD_CYCLES) begin
-                     int_stb <= 0;
-                  end
+            RUN: begin
+               if (t_cnt == t_end) begin 
+                  int_stb <= 1;
+                  t_cnt <= 0;
+               end else if (t_cnt == t_end - ZERO_HOLD_CYCLES) begin
+                  int_stb <= 0;
                end
             end
 
             FREQ_DET: begin
                if (sig_posedge) begin 
-                  if (edge_num == 0) begin //find first edge
-                     edge_num += 1;
-                     t_cnt <= 0;
-                  end else if (edge_num == 1) begin 
-                     t_cnt <= 0;
-                     t_end <= t_cnt + 1;
-                     stb_period_o <= t_cnt + 1;
-                     rdy_o <= 1;
-                  end
+                  case (edge_num)
+                     1: begin //skip first edge for accuracy 
+                        edge_num += 1;
+                        t_cnt <= 0;
+                     end
+                     2: begin
+                        t_cnt <= 0;
+                        t_end <= t_cnt;
+                        stb_period_o <= t_cnt + 1;
+                        rdy_o <= 1;
+                        state <= RUN;
+                     end
+                     default: edge_num <= edge_num + 1;
+                  endcase
                end else if (&t_cnt) begin
                      err_o <= 1; //overflow
-                     state <= GEN;
                end
-            end
-
-            WAIT: begin
-               if (run_det_i == 0) state <= GEN;
             end
          endcase
       end

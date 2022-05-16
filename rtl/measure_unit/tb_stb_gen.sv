@@ -17,7 +17,7 @@ module tb_stb_gen();
     logic comp_out = 0;
     logic arst_i = 0;
     logic stb_o;
-    logic run_det_i = 1;
+    logic run_det_i = 0;
     logic err_o;
     logic oe_i = 1;
     logic rdy_o;
@@ -32,31 +32,30 @@ module tb_stb_gen();
 
     initial begin 
         int t;
+
+        time start;
         foreach (freqs[i]) begin
-            run_det_i = 1;
-            #2 arst_i = 1;
-            #2 arst_i = 0;
+            #1 arst_i = 1;
+            #1 arst_i = 0;
+            #10 run_det_i = 1;
             #(`CLK_T*2) run_det_i = 0;
-            fork
-                begin
-                    repeat (4) begin
-                        #($urandom_range(1, 7));
-                        comp_out = 1;
-                        #(`SIG_WIDTH) comp_out = 0;
-                        #(freqs[i] - `SIG_WIDTH);
-                    end
-                end
 
-                begin
-                    time start;
-                    @(posedge stb_o);
-                    start = $time;
-                    @(posedge stb_o);
-                    t = $time - start;
-                end
-            join
+            #($urandom_range(1, 7));
+            while (!rdy_o) begin
+                comp_out = 1;
+                #(`SIG_WIDTH) comp_out = 0;
+                #(freqs[i] - `SIG_WIDTH);
+            end
 
-            $display("stb T = %d ns \tsig T = %d ns \t\t with clk period %3d ns", t, freqs[i], `CLK_T);
+            @(posedge stb_o);
+            start = $time;
+            @(posedge stb_o);
+            t = $time - start;
+            $display("measured signal  T= %d ns", freqs[i]);
+            $display("generated strobe T= %d ns", t);
+            $display("err=%d ns\tclk T= %3d ns", t - freqs[i], `CLK_T);
+            $display("counted period=%d", stb_period_o*`CLK_T);
+            $display("");
         end
         $finish;
     end
