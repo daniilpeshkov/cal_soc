@@ -3,8 +3,8 @@
 
 module tb_stb_gen();
 
-`define CLK_T 8 // clk period
-`define SIG_WIDTH 300
+    localparam CLK_T = 8; // clk period
+    localparam SIG_WIDTH = 300;
 
     localparam T_CNT_WIDTH = 32;
 
@@ -38,13 +38,13 @@ module tb_stb_gen();
             #1 arst_i = 1;
             #1 arst_i = 0;
             #10 run_det_i = 1;
-            #(`CLK_T*2) run_det_i = 0;
+            #(CLK_T*2) run_det_i = 0;
 
-            #($urandom_range(1, 7));
+            #($urandom_range(1, CLK_T));
             while (!rdy_o) begin
                 comp_out = 1;
-                #(`SIG_WIDTH) comp_out = 0;
-                #(freqs[i] - `SIG_WIDTH);
+                #(SIG_WIDTH) comp_out = 0;
+                #(freqs[i] - SIG_WIDTH);
             end
 
             @(posedge stb_o);
@@ -53,10 +53,14 @@ module tb_stb_gen();
             t = $time - start;
             $display("measured signal  T= %d ns", freqs[i]);
             $display("generated strobe T= %d ns", t);
-            $display("err=%d ns\tclk T= %3d ns", t - freqs[i], `CLK_T);
-            $display("counted period=%d", stb_period_o*`CLK_T);
+            $display("err=%d ns\tclk T= %3d ns", t - freqs[i], CLK_T);
+            $display("counted period=%d", stb_period_o * CLK_T);
             $display("");
+            if ($abs(t - freqs[i]) >= CLK_T) begin
+                $fatal(1, "error is more than clk T");
+            end
         end
+        $display("OK!");
         $finish;
     end
 
@@ -67,6 +71,6 @@ module tb_stb_gen();
 `endif
     end
 
-    always #(`CLK_T/2) clk_i = ~clk_i;
+    always #(CLK_T/2) clk_i = ~clk_i;
 
 endmodule

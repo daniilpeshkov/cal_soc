@@ -96,7 +96,11 @@ module calsoc_top (
 		.i_serr		({bootrom_wb_err_o,   ram_wb_err_o,   gpioa_wb_err_o,   uart1_wb_err_o,   prg_ram_wb_err_o,   mu_wb_err_o}),
 		.i_sstall	({bootrom_wb_stall_o, ram_wb_stall_o, gpioa_wb_stall_o, uart1_wb_stall_o, prg_ram_wb_stall_o, mu_wb_stall_o})
 	);
-	
+
+	logic [3:0] cnt;
+
+	always_ff @(posedge clk_i) cnt <= cnt + 1;
+
 	measure_unit #(
 		.DAC_SPI_CLK_DIV(3),
 		.DAC_SPI_WAIT_CYCLES(3),
@@ -125,7 +129,7 @@ module calsoc_top (
 		.delay2_code_o	(delay2_code_o),
 		.delay1_stb_o	(delay1_stb_o),
 		.delay2_stb_o	(delay2_stb_o),
-		.cmp1_out_i		(cmp1_out_i),
+		.cmp1_out_i		(cnt[3]), //(cmp1_out_i),
 		.cmp2_out_i		(cmp2_out_i)
 	);
 	
