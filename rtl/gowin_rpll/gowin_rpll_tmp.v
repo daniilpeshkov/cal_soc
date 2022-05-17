@@ -2,9 +2,9 @@
 //All rights reserved.
 //File Title: Template file for instantiation
 //GOWIN Version: V1.9.8
-//Part Number: GW1NR-LV9QN88C6/I5
+//Part Number: GW1NR-UV9QN88C6/I5
 //Device: GW1NR-9
-//Created Time: Mon May 02 21:36:23 2022
+//Created Time: Tue May 17 17:48:02 2022
 
 //Change the instance name and port connections to the signal names
 //--------Copy here to design--------

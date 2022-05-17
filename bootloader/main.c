@@ -1,5 +1,5 @@
-#define F_CPU 	12000000L
-#define BAUD 	19200
+#define F_CPU 	25000000L
+#define BAUD 	19200L
 
 #define GPIO_BASE 0x02000000
 #define GPIO_OE *(unsigned int*)(GPIO_BASE + 0x8)
@@ -43,10 +43,8 @@ void main(void) {
 	b_state state = IDLE_STATE;
 
 	// TODO check bootmode
-	
 
 	GPIO_OE = 0xffffffff;
-	GPIO_OUT = 0xaa;
 
 	//init uart
 	UART1_SETUP = F_CPU / BAUD;

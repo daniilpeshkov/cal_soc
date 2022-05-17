@@ -14,12 +14,15 @@ logic			``prefix``_wb_stall_o;
 `define RAM_WB_MEM_SIZE 'h100
 
 module calsoc_top (
-	input 	logic			clk_i,
+	input 	logic			clk_p_i,
+	input	logic 			clk_n_i,
 	input	logic			rst_i,
 	output	logic [7:0]  	gpioa_o,
 
 	input 	logic 			uart1_rx,
 	output 	logic 			uart1_tx,
+
+	output	logic			debug_uart_tx,
 //DAC
 	output dac1_sync_o, dac2_sync_o,
 	output dac1_sclk_o, dac2_sclk_o,
@@ -28,19 +31,37 @@ module calsoc_top (
 	// output logic [9:0] delay1_code_o, delay2_code_o,
 	 output logic 	   delay1_stb_o, delay2_stb_o,
 //CMP
-	input logic cmp1_out_i, cmp2_out_i
+	input logic cmp1_out_p_i,
+	input logic cmp1_out_n_i,
+
+	input logic cmp2_out_i,
+	output logic debug_led
 );
 // TODO FOR DEBUG BOARD
 	logic wb_rst_i;
 	logic wb_clk_i;
 	logic hclk;
 
-	assign wb_rst_i = ~rst_i;
-	assign wb_clk_i = clk_i;
+	assign wb_rst_i = rst_i;
+	assign debug_led = 0;
+
+	TLVDS_IBUF hclk_lvds_IBUF_inst (
+		.I	(clk_p_i),
+		.IB	(clk_n_i),
+		.O	(hclk)
+	);
+
+	logic cmp1_out;
+
+	TLVDS_IBUF cmp1_out_lvds_IBUF_inst (
+		.I	(cmp1_out_p_i),
+		.IB	(cmp1_out_n_i),
+		.O	(cmp1_out)
+	);
 
 	Gowin_rPLL hclk_rPLL_inst (
-		.clkout(hclk), //output clkout
-		.clkin(clk_i) //input clkin
+		.clkout(wb_clk_i), //output clkout
+		.clkin(hclk) //input clkin
 	);
 ////////////////////////////////////////
 	//picorv32_wb wb
@@ -99,7 +120,7 @@ module calsoc_top (
 
 	logic [3:0] cnt;
 
-	always_ff @(posedge clk_i) cnt <= cnt + 1;
+	always_ff @(posedge wb_clk_i) cnt <= cnt + 1;
 
 	measure_unit #(
 		.DAC_SPI_CLK_DIV(3),
@@ -129,7 +150,7 @@ module calsoc_top (
 		.delay2_code_o	(delay2_code_o),
 		.delay1_stb_o	(delay1_stb_o),
 		.delay2_stb_o	(delay2_stb_o),
-		.cmp1_out_i		(cnt[3]), //(cmp1_out_i),
+		.cmp1_out_i		(cmp1_out), //(cmp1_out_i),
 		.cmp2_out_i		(cmp2_out_i)
 	);
 	
@@ -177,6 +198,11 @@ module calsoc_top (
 		.wb_ack_o	(prg_ram_wb_ack_o)
 	);
 
+	logic tmp_uart;
+
+	assign debug_uart_tx = tmp_uart;
+	assign uart1_tx = tmp_uart;
+
 	wbuart #(
 		.LGFLEN('ha)
 	) uart1 (
@@ -190,7 +216,7 @@ module calsoc_top (
 		.o_wb_data	(uart1_wb_dat_o), 
 		.o_wb_ack	(uart1_wb_ack_o),
 		.i_uart_rx	(uart1_rx),
-		.o_uart_tx	(uart1_tx),
+		.o_uart_tx	(tmp_uart),
 		.o_wb_stall	(uart1_wb_stall_o)
 	);
 

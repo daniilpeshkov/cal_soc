@@ -13,6 +13,14 @@ int main(void) {
 	uart_init(UART1, 19200);
 
 	pp_printf("WR Calibrator \r\n");
+
+	int dac = 0xFFFF / 4;
+
+	pp_printf("Writing to dac %x \r\n", dac);
+	MU1->threshold = dac;	
+
+
+
 	pp_printf("running frequency measurement\r\n");
 
 	MU1->stb_gen = 1;
@@ -23,7 +31,7 @@ int main(void) {
 			break;
 		}
 	}
-	pp_printf("%x\r\n", MU1->stb_gen);
+	// pp_printf("%x\r\n", MU1->stb_gen);
 
 	while(1);
 	// while (1) {

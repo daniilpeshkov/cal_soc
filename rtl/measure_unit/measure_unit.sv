@@ -120,7 +120,7 @@ module measure_unit #(
 	) dac1_spi_inst (
 		.clk_i 	(hclk_i),
 		.arst_i	(wb_rst_i),
-		.data_i	({4'b0011, (wb_dac_wre ? wb_dac_code : ctl1_dac_code), 4'b0000}),
+		.data_i	({8'h00, (wb_dac_wre ? wb_dac_code : ctl1_dac_code)}),
 		.wre_i	(ctl1_dac_wre | wb_dac_wre),
 		.rdy_o	(dac1_rdy),
 		.sdi_o	(dac1_sdi_o),
@@ -135,7 +135,7 @@ module measure_unit #(
 	) dac2_spi_inst (
 		.clk_i 	(hclk_i),
 		.arst_i	(wb_rst_i),
-		.data_i	({4'b0011, ctl2_dac_code, 4'b0000}),
+		.data_i	({8'h00, (wb_dac_wre ? wb_dac_code : ctl2_dac_code)}),
 		.wre_i	(ctl2_dac_wre),
 		.rdy_o	(dac2_rdy),
 		.sdi_o	(dac2_sdi_o),

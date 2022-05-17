@@ -2,33 +2,27 @@
 //All rights reserved. 
 //File Title: Physical Constraints file
 //GOWIN Version: 1.9.8
-//Part Number: GW1NR-LV9QN88C6/I5
+//Part Number: GW1NR-UV9QN88C6/I5
 //Device: GW1NR-9
-//Created Time: Wed 04 27 20:55:32 2022
+//Created Time: Tue 05 17 21:52:10 2022
 
-IO_LOC "uart1_tx" 37;
-IO_PORT "uart1_tx" IO_TYPE=LVTTL33 PULL_MODE=UP DRIVE=8;
-IO_LOC "gpioa_o[7]" 79;
-IO_PORT "gpioa_o[7]" PULL_MODE=UP DRIVE=8;
-IO_LOC "gpioa_o[6]" 80;
-IO_PORT "gpioa_o[6]" PULL_MODE=UP DRIVE=8;
-IO_LOC "gpioa_o[5]" 81;
-IO_PORT "gpioa_o[5]" PULL_MODE=UP DRIVE=8;
-IO_LOC "gpioa_o[4]" 82;
-IO_PORT "gpioa_o[4]" PULL_MODE=UP DRIVE=8;
-IO_LOC "gpioa_o[3]" 83;
-IO_PORT "gpioa_o[3]" PULL_MODE=UP DRIVE=8;
-IO_LOC "gpioa_o[2]" 84;
-IO_PORT "gpioa_o[2]" PULL_MODE=UP DRIVE=8;
-IO_LOC "gpioa_o[1]" 85;
-IO_PORT "gpioa_o[1]" PULL_MODE=UP DRIVE=8;
-IO_LOC "gpioa_o[0]" 86;
-IO_PORT "gpioa_o[0]" PULL_MODE=UP DRIVE=8;
-IO_LOC "cmp1_out_i" 39;
-IO_PORT "cmp1_out_i" PULL_MODE=UP;
-IO_LOC "uart1_rx" 16;
-IO_PORT "uart1_rx" PULL_MODE=UP;
-IO_LOC "rst_i" 77;
-IO_PORT "rst_i" PULL_MODE=UP;
-IO_LOC "clk_i" 35;
-IO_PORT "clk_i" PULL_MODE=UP;
+IO_LOC "debug_led" 3;
+IO_PORT "debug_led" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8;
+IO_LOC "dac1_sdi_o" 17;
+IO_PORT "dac1_sdi_o" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8;
+IO_LOC "dac1_sclk_o" 18;
+IO_PORT "dac1_sclk_o" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8;
+IO_LOC "dac1_sync_o" 19;
+IO_PORT "dac1_sync_o" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8;
+IO_LOC "debug_uart_tx" 86;
+IO_PORT "debug_uart_tx" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8;
+IO_LOC "uart1_tx" 83;
+IO_PORT "uart1_tx" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8;
+IO_LOC "uart1_rx" 84;
+IO_PORT "uart1_rx" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+IO_LOC "rst_i" 80;
+IO_PORT "rst_i" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+IO_LOC "cmp1_out_p_i" 39,40;
+IO_PORT "cmp1_out_p_i" PULL_MODE=NONE;
+IO_LOC "clk_p_i" 25,26;
+IO_PORT "clk_p_i" PULL_MODE=NONE;

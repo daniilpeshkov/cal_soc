@@ -1,7 +1,7 @@
 #ifndef _DEV_H_
 #define _DEV_H
 
-#define F_CPU 12000000L
+#define F_CPU 25000000L
 
 #include "gpio/gpio.h"
 #include "uart/wbuart32.h"
