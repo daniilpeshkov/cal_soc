@@ -77,7 +77,7 @@ module stb_gen #(
 
 	stb_gen_state state = IDLE;
 
-	logic [T_CNT_WIDTH-1 : 0] t_cnt = 0;
+	logic [T_CNT_WIDTH-1 : 0] t_cnt;
 	logic [T_CNT_WIDTH-1 : 0] t_start;
 	logic [T_CNT_WIDTH-1 : 0] t_end;
 	stb_gen_state next_state;
@@ -85,14 +85,15 @@ module stb_gen #(
 	logic cnt_eq;
 	assign cnt_eq = t_cnt == t_start;
 	logic [T_CNT_WIDTH-1:0] period_minus_zero_hold;
-	assign period_minus_zero_hold = stb_period_o - ZERO_HOLD_CYCLES;
+	// assign period_minus_zero_hold = stb_period_o - ZERO_HOLD_CYCLES;
+
+	always_ff @(posedge clk_i) period_minus_zero_hold <= stb_period_o - ZERO_HOLD_CYCLES;
 
 	logic cnt_eq_latched;
 
 	always_ff @(posedge clk_i) begin
 		cnt_eq_latched <= cnt_eq;
 	end
-
 
 	always_comb begin
 		next_state = state;
@@ -128,10 +129,16 @@ module stb_gen #(
 	end
 
 	always_ff @(posedge clk_i) begin
-		if (state == WRITE_START) t_start <= t_cnt;
-		else if (state == COUNT_STB_ZERO_HOLD) t_start <= t_cnt + period_minus_zero_hold;
-		else if (state == COUNT_STB_END) t_start <= t_cnt + ZERO_HOLD_CYCLES;
-		else t_start <= t_start;
+		case (state) 
+			WRITE_START: 			t_start <= t_cnt;
+			COUNT_STB_ZERO_HOLD: 	t_start <= t_cnt + period_minus_zero_hold;
+			COUNT_STB_END: 			t_start <= t_cnt + ZERO_HOLD_CYCLES;
+			default: 				t_start <= t_start;
+		endcase
+		// if (state == WRITE_START) t_start <= t_cnt;
+		// else if (state == COUNT_STB_ZERO_HOLD) t_start <= t_cnt + period_minus_zero_hold;
+		// else if (state == COUNT_STB_END) t_start <= t_cnt + ZERO_HOLD_CYCLES;
+		// else t_start <= t_start;
 	end
 
 	always_ff @(posedge clk_i) begin
@@ -144,34 +151,15 @@ module stb_gen #(
 		else int_stb <= int_stb;
 	end
 
+	logic [16:0] low_bytes = 0;
+	logic [15:0] high_bytes = 0;
 
-	// always_ff @(posedge clk_i) begin
-	// 	case (state)
-	// 		// FIND_EDGE_1: begin
-	// 		// 	err_o <= 0;	
-	// 		// end
-	// 		// WRITE_START: begin
-	// 		// 	t_start <= t_cnt;
-	// 		// end
-	// 		// WRITE_END: begin
-	// 		// 	t_end <= t_cnt;
-	// 		// end
-	// 		// COUNT_PERIOD: begin
-	// 		// 	// stb_period_o <= t_end - t_start;
-	// 		// end
-	// 		COUNT_STB_ZERO_HOLD: begin
-	// 			int_stb <= 1;
-	// 			// t_start <= t_cnt + period_minus_zero_hold;
-	// 		end
-	// 		COUNT_STB_END: begin
-	// 			int_stb <= 0;
-	// 			// t_start <= t_cnt + ZERO_HOLD_CYCLES;
-	// 		end
-	// 	endcase
-	// end
+	// assign t_cnt = {high_bytes, low_bytes[15:0]};
 
 	always_ff @(posedge clk_i) begin
-		t_cnt <= t_cnt + 1;
+		t_cnt <= {high_bytes, low_bytes[15:0]};
+		low_bytes <= low_bytes + 1;
+		high_bytes <= high_bytes + low_bytes[16];
 	end
 
 endmodule

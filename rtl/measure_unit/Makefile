@@ -9,7 +9,7 @@ all:
 	 		measure_unit.sv dac_spi/clk_divider.sv dac_spi/spi_master_o.sv \
 			ch_measure_ctl.sv stb_gen.sv sync_ff.sv
 stb_gen:
-	iverilog -o test_stb_gen.vvp -g2005-sv stb_gen.sv tb_stb_gen.sv sync_ff.sv 
+	iverilog -o test_stb_gen.vvp -g2005-sv stb_gen.sv tb_stb_gen.sv sync_ff.sv two_cycle_32_adder.sv
 	vvp -n test_stb_gen.vvp 
 
 clean:
