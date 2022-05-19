@@ -17,27 +17,31 @@ module calsoc_top (
 	input 	logic			clk_p_i,
 	input	logic 			clk_n_i,
 	input	logic			rst_i,
-	output	logic [7:0]  	gpioa_o,
+	input 	logic			node_clk_i,
 
 	input 	logic 			uart1_rx,
 	output 	logic 			uart1_tx,
 
 	output	logic			debug_uart_tx,
 //DAC
-	output dac1_sync_o, dac2_sync_o,
-	output dac1_sclk_o, dac2_sclk_o,
-	output dac1_sdi_o, 	dac2_sdi_o,
+	output 	logic			dac1_sync_o, dac2_sync_o,
+	output	logic			dac1_sclk_o, dac2_sclk_o,
+	output	logic			dac1_sdi_o, dac2_sdi_o,
 //Delay Line
-	// output logic [9:0] delay1_code_o, delay2_code_o,
-	 output logic 	   delay1_stb_o, delay2_stb_o,
+	output logic [9:0] delay1_code_o, delay2_code_p_o,
+	output logic 	   delay1_stb_p_o, delay2_stb_p_o,
+	output logic 	   delay1_stb_n_o, delay2_stb_n_o,
 //CMP
 	input logic cmp1_out_p_i,
 	input logic cmp1_out_n_i,
 
-	input logic cmp2_out_i,
+	input logic cmp2_out_p_1,
+	input logic cmp2_out_n_1,
 	output logic debug_led
 );
-// TODO FOR DEBUG BOARD
+////////////////////////////
+// CLOCK
+////////////////////////////
 	logic wb_rst_i;
 	logic wb_clk_i;
 	logic hclk;
@@ -51,7 +55,16 @@ module calsoc_top (
 		.O	(hclk)
 	);
 
+	// assign hclk = node_clk_i;
+
+	Gowin_rPLL hclk_rPLL_inst (
+		.clkout(wb_clk_i), //output clkout
+		.clkin(hclk) //input clkin
+	);
+
+////////////////////////////
 	logic cmp1_out;
+	logic cmp2_out;
 
 	TLVDS_IBUF cmp1_out_lvds_IBUF_inst (
 		.I	(cmp1_out_p_i),
@@ -59,10 +72,32 @@ module calsoc_top (
 		.O	(cmp1_out)
 	);
 
-	Gowin_rPLL hclk_rPLL_inst (
-		.clkout(wb_clk_i), //output clkout
-		.clkin(hclk) //input clkin
+	// TLVDS_IBUF cmp2_out_lvds_IBUF_inst (
+	// 	.I	(cmp2_out_p_i),
+	// 	.IB	(cmp2_out_n_i),
+	// 	.O	(cmp2_out)
+	// );
+
+
+////////////////////////////
+// DELAY LINE
+////////////////////////////
+
+	logic delay1_stb, delay2_stb;
+
+	TLVDS_OBUF delay1_stb_lvds_OBUF_inst (
+		.O	(delay1_stb_p_o),
+		.OB	(delay1_stb_n_o),
+		.I	(delay1_stb)
 	);
+
+	// TLVDS_OBUF delay2_stb_lvds_OBUF_inst (
+	// 	.O	(delay2_stb_p_o),
+	// 	.OB	(delay2_stb_n_o),
+	// 	.I	(delay2_stb)
+	// );
+
+
 ////////////////////////////////////////
 	//picorv32_wb wb
 	logic [31:0] 	wbm_adr_o;
@@ -118,12 +153,8 @@ module calsoc_top (
 		.i_sstall	({bootrom_wb_stall_o, ram_wb_stall_o, gpioa_wb_stall_o, uart1_wb_stall_o, prg_ram_wb_stall_o, mu_wb_stall_o})
 	);
 
-	logic [3:0] cnt;
-
-	always_ff @(posedge wb_clk_i) cnt <= cnt + 1;
-
 	measure_unit #(
-		.DAC_SPI_CLK_DIV(3),
+		.DAC_SPI_CLK_DIV(10),
 		.DAC_SPI_WAIT_CYCLES(3),
 		.STROBE_ZERO_HOLD_CYCLES(3),
 		.DEFAULT_DELAY_CODE_DELTA(10'h1),
@@ -148,8 +179,8 @@ module calsoc_top (
 		.dac2_sdi_o		(dac2_sdi_o),
 		.delay1_code_o	(delay1_code_o),
 		.delay2_code_o	(delay2_code_o),
-		.delay1_stb_o	(delay1_stb_o),
-		.delay2_stb_o	(delay2_stb_o),
+		.delay1_stb_o	(delay1_stb),
+		.delay2_stb_o	(delay2_stb),
 		.cmp1_out_i		(cmp1_out), //(cmp1_out_i),
 		.cmp2_out_i		(cmp2_out_i)
 	);
@@ -165,7 +196,7 @@ module calsoc_top (
 		.wb_stb_i	(gpioa_wb_stb_i),
 		.wb_dat_o	(gpioa_wb_dat_o), 
 		.wb_ack_o	(gpioa_wb_ack_o),
-		.ext_pad_o	(gpioa_o)
+		.ext_pad_o	()
 	);
 	
 	wb_ram #(

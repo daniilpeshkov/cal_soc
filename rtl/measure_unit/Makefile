@@ -10,7 +10,7 @@ all:
 			ch_measure_ctl.sv stb_gen.sv sync_ff.sv
 stb_gen:
 	iverilog -o test_stb_gen.vvp -g2005-sv stb_gen.sv tb_stb_gen.sv sync_ff.sv 
-	vvp test_stb_gen.vvp 
+	vvp -n test_stb_gen.vvp 
 
 clean:
 	rm *.vvp
