@@ -4,14 +4,14 @@
 module tb_stb_gen();
 
     localparam CLK_T = 8; // clk period
-    localparam SIG_WIDTH = 300;
+    localparam SIG_WIDTH = 20;
 
     localparam T_CNT_WIDTH = 12;
 
 `define DUMPVARS
 // `undef DUMPVARS    
 
-    int freqs[] = {1000, 20000, 1000000, 2000000, 1333333};
+    int freqs[] = {100, 20000, 1000000, 2000000, 1333333};
 
     logic clk_i = 0;
     logic comp_out = 0;
@@ -38,8 +38,7 @@ module tb_stb_gen();
             #1 arst_i = 1;
             #1 arst_i = 0;
             #10 run_det_i = 1;
-            #(CLK_T*2) run_det_i = 0;
-
+            #333 run_det_i = 0;
             #($urandom_range(1, CLK_T));
             while (!rdy_o) begin
                 comp_out = 1;

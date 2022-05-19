@@ -114,20 +114,20 @@ module measure_unit #(
 	assign delay1_stb_o = internal_stb;
 	assign delay2_stb_o = internal_stb;
 
-	// spi_master_o #(
-	// 	.DATA_WIDTH	(DAC_DATA_WIDTH),
-	// 	.CLK_DIV 	(DAC_SPI_CLK_DIV),
-	// 	.WAIT_CYCLES(DAC_SPI_WAIT_CYCLES)
-	// ) dac1_spi_inst (
-	// 	.clk_i 	(hclk_i),
-	// 	.arst_i	(wb_rst_i),
-	// 	.data_i	({8'h00, (wb_dac_wre ? wb_dac_code : ctl1_dac_code)}),
-	// 	.wre_i	(ctl1_dac_wre | wb_dac_wre),
-	// 	.rdy_o	(dac1_rdy),
-	// 	.sdi_o	(dac1_sdi_o),
-	// 	.sclk_o	(dac1_sclk_o),
-	// 	.sync_o	(dac1_sync_o)
-	// );
+	spi_master_o #(
+		.DATA_WIDTH	(DAC_DATA_WIDTH),
+		.CLK_DIV 	(DAC_SPI_CLK_DIV),
+		.WAIT_CYCLES(DAC_SPI_WAIT_CYCLES)
+	) dac1_spi_inst (
+		.clk_i 	(wb_clk_i),
+		.arst_i	(wb_rst_i),
+		.data_i	({8'h00, (wb_dac_wre ? wb_dac_code : ctl1_dac_code)}),
+		.wre_i	(ctl1_dac_wre | wb_dac_wre),
+		.rdy_o	(dac1_rdy),
+		.sdi_o	(dac1_sdi_o),
+		.sclk_o	(dac1_sclk_o),
+		.sync_o	(dac1_sync_o)
+	);
 
 	// spi_master_o #(
 	// 	.DATA_WIDTH	(DAC_DATA_WIDTH),
@@ -209,6 +209,7 @@ module measure_unit #(
 			CH_CTL_DELTA_REG: 	w_reg = ch_ctl_delta_reg;
 			STB_GEN_REG:		w_reg =	{stb_gen_cmp_sel, stb_gen_run};
 			W_THRESHOLD_REG:	w_reg = wb_dac_code;
+			default: w_reg = 0;
 		endcase
 		w_data[7:0] = (wb_sel_i[0] ? wb_dat_i[7:0] : w_reg[7:0]);
 		w_data[15:8] = (wb_sel_i[1] ? wb_dat_i[15:8] : w_reg[15:8]);

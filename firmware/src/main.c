@@ -14,7 +14,7 @@ int main(void) {
 
 	pp_printf("WR Calibrator \r\n");
 
-	int dac = 0xFFFF / 4;
+	int dac = 0xFFFF / 8;
 
 	pp_printf("Writing to dac %x \r\n", dac);
 	MU1->threshold = dac;	
@@ -22,26 +22,24 @@ int main(void) {
 
 
 	while (1) {
-		pp_printf("reg %x\r\n", MU1->stb_gen);
+		// pp_printf("reg %x\r\n", MU1->stb_gen);
 
-		MU1->threshold = dac;	
-		while (!MU1->threshold);
+		// MU1->threshold = dac;	
+		// while (!MU1->threshold);
 		MU1->stb_gen = 1;
-		while (1) {
-			if (MU1->stb_gen & STB_GEN_ERR) {
-				pp_printf("err\r\n");
-				delay(900000);
-				break;
-			} else if (MU1->stb_gen & STB_GEN_RDY) {
-				pp_printf("%d\r\n", (MU1->stb_gen >> 3));
-				break;
-			}
+		if (MU1->stb_gen & STB_GEN_ERR) {
+			pp_printf("err\r\n");
+			delay(900000);
+		} else if (MU1->stb_gen & STB_GEN_RDY) {
+			pp_printf("%d\r\n", (MU1->stb_gen >> 3));
+			break;
 		}
 
 	}
 	// pp_printf("%x\r\n", MU1->stb_gen);
 
 	// while(1);
+	while(1);
 	while (1) {
 		pp_printf("running frequency measurement\r\n");
 		mu_run_freq_detection(MU1, MUX_DAC1, 0xffff/4);

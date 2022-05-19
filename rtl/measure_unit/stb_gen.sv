@@ -66,7 +66,7 @@ module stb_gen #(
 	logic run_det_posedge;
 	assign run_det_posedge = run_det & ~prev_run_det;
 
-	assign rdy_o = state == IDLE;
+	// assign rdy_o = state == IDLE;
 
 	typedef enum logic[3:0] { 
 		IDLE, FIND_EDGE_1, FIND_EDGE_2, WRITE_START,
@@ -83,20 +83,31 @@ module stb_gen #(
 	stb_gen_state next_state;
 
 	logic cnt_eq;
-	assign cnt_eq = t_cnt == t_start;
 	logic [T_CNT_WIDTH-1:0] period_minus_zero_hold;
 	// assign period_minus_zero_hold = stb_period_o - ZERO_HOLD_CYCLES;
 
 	always_ff @(posedge clk_i) period_minus_zero_hold <= stb_period_o - ZERO_HOLD_CYCLES;
 
 	logic cnt_eq_latched;
+	assign cnt_eq = t_cnt == t_start;
 
 	always_ff @(posedge clk_i) begin
 		cnt_eq_latched <= cnt_eq;
 	end
 
+	logic count_zero_hold_begin, zero_hold_begin_valid;
+	logic count_stb_end, stb_end_valid;
+
+	always_ff @(posedge clk_i, posedge arst_i) begin
+		if (arst_i) rdy_o = 0;
+		else if (state == WAIT_STB_START) rdy_o <= 1;
+		else rdy_o <= rdy_o;
+	end
+
 	always_comb begin
 		next_state = state;
+		count_zero_hold_begin = 0;
+		count_stb_end = 0;
 		case (state)
 			IDLE:					if (run_det_posedge) next_state = FIND_EDGE_1;
 			FIND_EDGE_1:			if (sig_posedge) next_state = FIND_EDGE_2;
@@ -105,10 +116,16 @@ module stb_gen #(
 			FIND_EDGE_3:			if (sig_posedge) next_state = WRITE_END;
 			WRITE_END:				next_state = COUNT_PERIOD;
 			COUNT_PERIOD:			next_state = WAIT_STB_START;
-			WAIT_STB_START:			if (cnt_eq_latched) next_state = COUNT_STB_ZERO_HOLD;
-			COUNT_STB_ZERO_HOLD: 	next_state = WAIT_ZERO_HOLD;
-			WAIT_ZERO_HOLD: 		if (cnt_eq_latched) next_state = COUNT_STB_END;
-			COUNT_STB_END: 			next_state = WAIT_STB_START;
+			WAIT_STB_START:			if (cnt_eq_latched) begin
+										next_state = COUNT_STB_ZERO_HOLD;
+										count_zero_hold_begin = 1;
+									end
+			COUNT_STB_ZERO_HOLD: 	if (zero_hold_begin_valid) next_state = WAIT_ZERO_HOLD;
+			WAIT_ZERO_HOLD: 		if (cnt_eq_latched) begin
+										next_state = COUNT_STB_END;
+										count_stb_end = 1;
+									end
+			COUNT_STB_END: 			if (stb_end_valid) next_state = WAIT_STB_START;
 		endcase
 	end
 
@@ -128,17 +145,36 @@ module stb_gen #(
 		t_end <= (state == WRITE_END ? t_cnt : t_end);
 	end
 
+	logic [31:0] adder_zero_hold_res;
+	logic [31:0] adder_stb_end_res;
+
+	two_cycle_32_adder adder_zero_hold_begin (
+		.clk_i 	(clk_i),
+		.a_i	(t_cnt),
+		.b_i	(period_minus_zero_hold),
+		.valid_i(count_zero_hold_begin),
+		.valid_o(zero_hold_begin_valid),
+		.res_o	(adder_zero_hold_res)
+	);
+
+	two_cycle_32_adder adder_stb_end (
+		.clk_i 	(clk_i),
+		.a_i	(t_cnt),
+		.b_i	(ZERO_HOLD_CYCLES),
+		.valid_i(count_stb_end),
+		.valid_o(stb_end_valid),
+		.res_o	(adder_stb_end_res)
+	);
+
 	always_ff @(posedge clk_i) begin
 		case (state) 
 			WRITE_START: 			t_start <= t_cnt;
-			COUNT_STB_ZERO_HOLD: 	t_start <= t_cnt + period_minus_zero_hold;
-			COUNT_STB_END: 			t_start <= t_cnt + ZERO_HOLD_CYCLES;
+			COUNT_STB_ZERO_HOLD: 	if (zero_hold_begin_valid) t_start <= adder_zero_hold_res; //t_cnt + period_minus_zero_hold;
+									else t_start <= t_start;
+			COUNT_STB_END: 			if (stb_end_valid) t_start <= adder_stb_end_res;//t_cnt + ZERO_HOLD_CYCLES;
+									else t_start <= t_start;
 			default: 				t_start <= t_start;
 		endcase
-		// if (state == WRITE_START) t_start <= t_cnt;
-		// else if (state == COUNT_STB_ZERO_HOLD) t_start <= t_cnt + period_minus_zero_hold;
-		// else if (state == COUNT_STB_END) t_start <= t_cnt + ZERO_HOLD_CYCLES;
-		// else t_start <= t_start;
 	end
 
 	always_ff @(posedge clk_i) begin
@@ -153,12 +189,15 @@ module stb_gen #(
 
 	logic [16:0] low_bytes = 0;
 	logic [15:0] high_bytes = 0;
+	logic [15:0] latched_low_bytes;
 
 	// assign t_cnt = {high_bytes, low_bytes[15:0]};
 
 	always_ff @(posedge clk_i) begin
+		// t_cnt <= {high_bytes, latched_low_bytes[15:0]};
 		t_cnt <= {high_bytes, low_bytes[15:0]};
 		low_bytes <= low_bytes + 1;
+		latched_low_bytes <= low_bytes[15:0];
 		high_bytes <= high_bytes + low_bytes[16];
 	end
 

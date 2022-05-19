@@ -88,7 +88,7 @@ module calsoc_top (
 	TLVDS_OBUF delay1_stb_lvds_OBUF_inst (
 		.O	(delay1_stb_p_o),
 		.OB	(delay1_stb_n_o),
-		.I	(delay1_stb)
+		.I	(~delay1_stb)
 	);
 
 	// TLVDS_OBUF delay2_stb_lvds_OBUF_inst (
@@ -156,7 +156,7 @@ module calsoc_top (
 	measure_unit #(
 		.DAC_SPI_CLK_DIV(10),
 		.DAC_SPI_WAIT_CYCLES(3),
-		.STROBE_ZERO_HOLD_CYCLES(3),
+		.STROBE_ZERO_HOLD_CYCLES(10),
 		.DEFAULT_DELAY_CODE_DELTA(10'h1),
 		.DEFAULT_THRESHOLD_DELTA(16'h1)
 	) measure_unit_inst (

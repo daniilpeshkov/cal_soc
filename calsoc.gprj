@@ -16,6 +16,7 @@
         <File path="rtl/measure_unit/measure_unit.sv" type="file.verilog" enable="1"/>
         <File path="rtl/measure_unit/stb_gen.sv" type="file.verilog" enable="1"/>
         <File path="rtl/measure_unit/sync_ff.sv" type="file.verilog" enable="1"/>
+        <File path="rtl/measure_unit/two_cycle_32_adder.sv" type="file.verilog" enable="1"/>
         <File path="rtl/mem/wb_ram.v" type="file.verilog" enable="1"/>
         <File path="rtl/mem/wb_ram_sc_sw.v" type="file.verilog" enable="1"/>
         <File path="rtl/mem/wb_rom.v" type="file.verilog" enable="1"/>
@@ -32,6 +33,7 @@
         <File path="syn/calsoc.rao" type="file.gao" enable="0"/>
         <File path="syn/calsoc2.rao" type="file.gao" enable="0"/>
         <File path="syn/calsoc_stb_gen.rao" type="file.gao" enable="0"/>
+        <File path="syn/calsoc_stb_o.rao" type="file.gao" enable="1"/>
         <File path="rtl/gowin_rpll/gowin_rpll.ipc" type="file.other" enable="1"/>
         <File path="rtl/gowin_rpll/gowin_rpll.mod" type="file.other" enable="1"/>
     </FileList>

@@ -2,52 +2,14 @@
 <GAO_CONFIG>
     <Version>3.0</Version>
     <Mode>Standard</Mode>
-    <AoCore index="0" sample_clock="wb_clk_i" trig_type="0" storage_depth="1024" window_num="1" capture_amount="1024" trigger_pos="10">
+    <AoCore index="0" sample_clock="hclk" trig_type="0" storage_depth="512" window_num="1" capture_amount="512" trigger_pos="10">
         <SignalList>
-            <Signal>measure_unit_inst/dac1_rdy</Signal>
-            <Signal>measure_unit_inst/dac2_rdy</Signal>
-            <Signal>measure_unit_inst/stb_gen_cmp_sel</Signal>
-            <Signal>measure_unit_inst/stb_gen_run</Signal>
-            <Signal>measure_unit_inst/stb_gen_oe</Signal>
-            <Signal>measure_unit_inst/stb_gen_err</Signal>
-            <Signal>measure_unit_inst/stb_gen_rdy</Signal>
-            <Signal>measure_unit_inst/delay1_stb_o</Signal>
-            <Signal>measure_unit_inst/stb_gen_inst/run_det_i</Signal>
-            <Bus name="measure_unit_inst/stb_gen_inst/stb_period_o[27:0]">
-                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[27]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[26]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[25]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[24]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[23]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[22]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[21]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[20]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[19]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[18]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[17]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[16]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[15]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[14]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[13]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[12]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[11]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[10]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[9]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[8]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[7]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[6]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[5]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[4]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[3]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[2]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[1]</Signal>
-                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[0]</Signal>
-            </Bus>
+            <Signal>delay1_stb</Signal>
         </SignalList>
         <Triggers>
             <Trigger index="0">
                 <SignalList>
-                    <Signal>measure_unit_inst/stb_gen_inst/run_det_i</Signal>
+                    <Signal>delay1_stb</Signal>
                 </SignalList>
             </Trigger>
             <Trigger index="1"/>
@@ -88,5 +50,5 @@
             <Expression>M0</Expression>
         </Expressions>
     </AoCore>
-    <GAO_ID>1111011110000000</GAO_ID>
+    <GAO_ID>0011101000010001</GAO_ID>
 </GAO_CONFIG>
