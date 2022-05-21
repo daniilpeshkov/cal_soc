@@ -6,7 +6,7 @@
 //------------------------------------------------------
 
 module stb_gen #(
-	parameter ZERO_HOLD_CYCLES = 10,
+	parameter ZERO_HOLD_CYCLES = 5,
 	parameter T_CNT_WIDTH = 32,
 	parameter OFFSET = 20
 ) (
@@ -86,7 +86,7 @@ module stb_gen #(
 	logic [T_CNT_WIDTH-1:0] period_minus_zero_hold;
 	// assign period_minus_zero_hold = stb_period_o - ZERO_HOLD_CYCLES;
 
-	always_ff @(posedge clk_i) period_minus_zero_hold <= stb_period_o - ZERO_HOLD_CYCLES;
+	always_ff @(posedge clk_i) period_minus_zero_hold <= stb_period_o - (ZERO_HOLD_CYCLES + 1);
 
 	logic cnt_eq_latched;
 	assign cnt_eq = t_cnt == t_start;
@@ -160,7 +160,7 @@ module stb_gen #(
 	two_cycle_32_adder adder_stb_end (
 		.clk_i 	(clk_i),
 		.a_i	(t_cnt),
-		.b_i	(ZERO_HOLD_CYCLES),
+		.b_i	(ZERO_HOLD_CYCLES-1),
 		.valid_i(count_stb_end),
 		.valid_o(stb_end_valid),
 		.res_o	(adder_stb_end_res)
@@ -181,24 +181,32 @@ module stb_gen #(
 		stb_period_o <= (state == COUNT_PERIOD ? t_end - t_start : stb_period_o);
 	end
 
-	always_ff @(posedge clk_i) begin
-		if (state == COUNT_STB_ZERO_HOLD) int_stb <= 1;
-		else if (state == COUNT_STB_END) int_stb <= 0;
-		else int_stb <= int_stb;
+	always_ff @(posedge clk_i, posedge arst_i) begin
+		if (arst_i) begin
+			int_stb = 1;
+		end else begin
+			if (state == COUNT_STB_ZERO_HOLD) int_stb <= 1;
+			else if (state == COUNT_STB_END) int_stb <= 0;
+			else int_stb <= int_stb;
+		end
 	end
 
-	logic [16:0] low_bytes = 0;
+	logic [15:0] low_bytes = 0;
 	logic [15:0] high_bytes = 0;
-	logic [15:0] latched_low_bytes;
+	logic [15:0] latched_low_bytes = 0;
+	logic latched_carry = 0;
+	logic carry;
 
-	// assign t_cnt = {high_bytes, low_bytes[15:0]};
-
-	always_ff @(posedge clk_i) begin
-		// t_cnt <= {high_bytes, latched_low_bytes[15:0]};
-		t_cnt <= {high_bytes, low_bytes[15:0]};
-		low_bytes <= low_bytes + 1;
+	logic [15:0] low_bytes_plus_1;
+	assign {carry, low_bytes_plus_1} = low_bytes + 1;
+  
+	always @(posedge clk_i) begin
+		t_cnt <= {high_bytes, latched_low_bytes};
+		low_bytes <= low_bytes_plus_1;
 		latched_low_bytes <= low_bytes[15:0];
-		high_bytes <= high_bytes + low_bytes[16];
+		
+		latched_carry <= carry;
+		high_bytes <= high_bytes + latched_carry;
 	end
 
 endmodule

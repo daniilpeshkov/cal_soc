@@ -6,12 +6,12 @@ module tb_stb_gen();
     localparam CLK_T = 8; // clk period
     localparam SIG_WIDTH = 20;
 
-    localparam T_CNT_WIDTH = 12;
+    localparam T_CNT_WIDTH = 10;
 
 `define DUMPVARS
 // `undef DUMPVARS    
 
-    int freqs[] = {100, 20000, 1000000, 2000000, 1333333};
+    int freqs[] = { 100, 20000,200000, 1333333};
 
     logic clk_i = 0;
     logic comp_out = 0;
@@ -56,6 +56,7 @@ module tb_stb_gen();
             $display("counted period=%d", stb_period_o * CLK_T);
             $display("");
             if ($abs(t - freqs[i]) >= CLK_T) begin
+                #100
                 $fatal(1, "error is more than clk T");
             end
         end
