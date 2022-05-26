@@ -38,16 +38,16 @@ module stb_gen #(
 		.data_o(sig_synced)
 	);
 
-	logic run_det;
+	// logic run_det;
 
-	sync_ff #(
-		.WIDTH (1),
-		.STAGES(2)
-	) run_det_sync_ff_inst (
-		.clk_i (clk_i),
-		.data_i(run_det_i),
-		.data_o(run_det)
-	);
+	// sync_ff #(
+	// 	.WIDTH (1),
+	// 	.STAGES(2)
+	// ) run_det_sync_ff_inst (
+	// 	.clk_i (clk_i),
+	// 	.data_i(run_det_i),
+	// 	.data_o(run_det)
+	// );
 
 	logic prev_sig; //edge detect
 
@@ -58,25 +58,25 @@ module stb_gen #(
 	logic sig_posedge;
 	assign sig_posedge = sig_synced & ~prev_sig;
 
-	logic prev_run_det; //edge detect
+	// logic prev_run_det; //edge detect
 
-	always_ff @(posedge clk_i) begin
-		prev_run_det <= run_det;
-	end
+	// always_ff @(posedge clk_i) begin
+	// 	prev_run_det <= run_det;
+	// end
 
-	logic run_det_posedge;
-	assign run_det_posedge = run_det & ~prev_run_det;
+	// logic run_det_posedge;
+	// assign run_det_posedge = run_det & ~prev_run_det;
 
 	// assign rdy_o = state == IDLE;
 
 	typedef enum logic[3:0] { 
-		IDLE, FIND_EDGE_1, FIND_EDGE_2, WRITE_START,
+		/*IDLE,*/ FIND_EDGE_1, FIND_EDGE_2, WRITE_START,
 		FIND_EDGE_3, WRITE_END, COUNT_PERIOD,
 		WAIT_STB_START, COUNT_STB_ZERO_HOLD,
 		WAIT_ZERO_HOLD, COUNT_STB_END 
 	} stb_gen_state;
 
-	stb_gen_state state = IDLE;
+	stb_gen_state state = FIND_EDGE_1;
 
 	logic [T_CNT_WIDTH-1 : 0] t_cnt;
 	logic [T_CNT_WIDTH-1 : 0] t_start;
@@ -110,13 +110,17 @@ module stb_gen #(
 		count_zero_hold_begin = 0;
 		count_stb_end = 0;
 		case (state)
-			IDLE:					if (run_det_posedge) next_state = FIND_EDGE_1;
+			// IDLE:					/*if (run_det_posedge)*/ next_state = FIND_EDGE_1;
 			FIND_EDGE_1:			if (sig_posedge) next_state = FIND_EDGE_2;
 			FIND_EDGE_2:			if (sig_posedge) next_state = WRITE_START;
 			WRITE_START:			next_state = FIND_EDGE_3;
 			FIND_EDGE_3:			if (sig_posedge) next_state = WRITE_END;
 			WRITE_END:				next_state = COUNT_PERIOD;
-			COUNT_PERIOD:			next_state = WAIT_STB_START;
+			// COUNT_PERIOD:			next_state = WAIT_STB_START;
+			COUNT_PERIOD: 			begin
+										next_state = COUNT_STB_END;
+										count_stb_end = 1;
+									end
 			WAIT_STB_START:			if (cnt_eq_latched) begin
 										next_state = COUNT_STB_ZERO_HOLD;
 										count_zero_hold_begin = 1;
@@ -132,7 +136,7 @@ module stb_gen #(
 
 	always_ff @(posedge clk_i, posedge arst_i) begin
 		if (arst_i) begin
-			state = IDLE;
+			state = FIND_EDGE_1;
 		end else begin
 			state <= next_state;
 		end

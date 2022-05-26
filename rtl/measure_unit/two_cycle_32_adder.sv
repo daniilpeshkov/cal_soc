@@ -20,11 +20,12 @@ module two_cycle_32_adder (
 
     always_ff @(posedge clk_i) state <= next_state;
   
-    logic valid;
-
+    logic [1:0] valid;
+    integer i;
     always_ff @(posedge clk_i) begin
-        valid <= valid_i;
-        valid_o <= valid;
+        valid[0] <= valid_i;
+        for (i = 1; i <= 1; i = i +1 ) valid[i] <= valid[i-1];
+        valid_o <= valid[1];
     end
 
 

@@ -21,12 +21,12 @@ int main(void) {
 
 	while( !MU1->threshold);
 
+		MU1->stb_gen = 1;
 	while (1) {
 		// pp_printf("reg %x\r\n", MU1->stb_gen);
 
 		// MU1->threshold = dac;	
 		// while (!MU1->threshold);
-		MU1->stb_gen = 1;
 		if (MU1->stb_gen & STB_GEN_ERR) {
 			pp_printf("err\r\n");
 			delay(900000);

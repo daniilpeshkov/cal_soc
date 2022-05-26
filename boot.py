@@ -14,7 +14,7 @@ def write_data(ser, start_addr : int, data):
     ser.write(b'\x00')
 
 
-ser = serial.Serial('COM12', 19200)
+ser = serial.Serial('COM15', 19200)
 with open('firmware/calsoc.bin', 'rb') as bin_f:
     write_data(ser, 0x04000000, bin_f)
     while True:

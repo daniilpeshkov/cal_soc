@@ -31,6 +31,8 @@ module calsoc_top (
 	output logic [9:0] delay1_code_o, delay2_code_p_o,
 	output logic 	   delay1_stb_p_o, delay2_stb_p_o,
 	output logic 	   delay1_stb_n_o, delay2_stb_n_o,
+
+	output logic		delay1_le_o,
 //CMP
 	input logic cmp1_out_p_i,
 	input logic cmp1_out_n_i,
@@ -39,6 +41,8 @@ module calsoc_top (
 	input logic cmp2_out_n_1,
 	output logic debug_led
 );
+
+	assign delay1_le_o = 0;
 ////////////////////////////
 // CLOCK
 ////////////////////////////
@@ -152,7 +156,7 @@ module calsoc_top (
 		.i_serr		({bootrom_wb_err_o,   ram_wb_err_o,   gpioa_wb_err_o,   uart1_wb_err_o,   prg_ram_wb_err_o,   mu_wb_err_o}),
 		.i_sstall	({bootrom_wb_stall_o, ram_wb_stall_o, gpioa_wb_stall_o, uart1_wb_stall_o, prg_ram_wb_stall_o, mu_wb_stall_o})
 	);
-
+	assign delay1_code_o = {10{1'b1}};
 	measure_unit #(
 		.DAC_SPI_CLK_DIV(10),
 		.DAC_SPI_WAIT_CYCLES(3),
@@ -160,7 +164,7 @@ module calsoc_top (
 		.DEFAULT_DELAY_CODE_DELTA(10'h1),
 		.DEFAULT_THRESHOLD_DELTA(16'h1)
 	) measure_unit_inst (
-		.hclk_i			(hclk),
+		.hclk_i			(wb_clk_i),//(hclk),
 		.wb_clk_i 		(wb_clk_i),
 		.wb_rst_i		(wb_rst_i),			
 		.wb_dat_i		(mu_wb_dat_i),
@@ -177,7 +181,7 @@ module calsoc_top (
 		.dac2_sclk_o	(dac2_sclk_o),
 		.dac1_sdi_o		(dac1_sdi_o),
 		.dac2_sdi_o		(dac2_sdi_o),
-		.delay1_code_o	(delay1_code_o),
+		.delay1_code_o	(/*delay1_code_o*/),
 		.delay2_code_o	(delay2_code_o),
 		.delay1_stb_o	(delay1_stb),
 		.delay2_stb_o	(delay2_stb),

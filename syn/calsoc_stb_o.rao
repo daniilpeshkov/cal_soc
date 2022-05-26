@@ -1,19 +1,204 @@
-<?xml version="1" encoding="UTF-8"?>
+<?xml version="1"?>
 <GAO_CONFIG>
     <Version>3.0</Version>
     <Mode>Standard</Mode>
-    <AoCore index="0" sample_clock="hclk" trig_type="0" storage_depth="512" window_num="1" capture_amount="512" trigger_pos="10">
+    <AoCore index="0" sample_clock="wb_clk_i" trig_type="0" storage_depth="512" window_num="1" capture_amount="512" trigger_pos="250">
         <SignalList>
-            <Signal>delay1_stb</Signal>
+            <Signal>measure_unit_inst/stb_gen_rdy</Signal>
+            <Bus restorename="measure_unit_inst/stb_gen_inst/stb_period_o[31:0]">
+                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[31]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[30]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[29]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[28]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[27]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[26]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[25]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[24]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[23]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[22]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[21]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[20]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[19]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[18]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[17]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[16]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[15]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[14]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[13]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[12]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[11]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[10]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[9]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[8]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[7]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[6]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[5]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[4]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[3]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[2]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[1]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[0]</Signal>
+            </Bus>
+            <Bus restorename="measure_unit_inst/stb_gen_inst/state[3:0]">
+                <Signal>measure_unit_inst/stb_gen_inst/state[3]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/state[2]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/state[1]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/state[0]</Signal>
+            </Bus>
+            <Bus restorename="measure_unit_inst/stb_gen_inst/t_cnt[31:0]">
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[31]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[30]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[29]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[28]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[27]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[26]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[25]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[24]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[23]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[22]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[21]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[20]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[19]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[18]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[17]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[16]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[15]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[14]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[13]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[12]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[11]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[10]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[9]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[8]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[7]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[6]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[5]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[4]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[3]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[2]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[1]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_cnt[0]</Signal>
+            </Bus>
+            <Bus restorename="measure_unit_inst/stb_gen_inst/t_start[31:0]">
+                <Signal>measure_unit_inst/stb_gen_inst/t_start[31]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_start[30]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_start[29]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_start[28]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_start[27]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_start[26]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_start[25]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_start[24]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_start[23]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_start[22]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_start[21]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_start[20]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_start[19]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_start[18]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_start[17]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_start[16]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_start[15]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_start[14]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_start[13]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_start[12]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_start[11]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_start[10]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_start[9]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_start[8]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_start[7]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_start[6]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_start[5]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_start[4]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_start[3]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_start[2]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_start[1]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_start[0]</Signal>
+            </Bus>
+            <Signal>measure_unit_inst/stb_gen_inst/int_stb</Signal>
+            <Signal>measure_unit_inst/stb_gen_inst/sig_i</Signal>
+            <Bus restorename="measure_unit_inst/stb_gen_inst/t_end[31:0]">
+                <Signal>measure_unit_inst/stb_gen_inst/t_end[31]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_end[30]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_end[29]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_end[28]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_end[27]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_end[26]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_end[25]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_end[24]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_end[23]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_end[22]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_end[21]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_end[20]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_end[19]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_end[18]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_end[17]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_end[16]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_end[15]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_end[14]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_end[13]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_end[12]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_end[11]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_end[10]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_end[9]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_end[8]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_end[7]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_end[6]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_end[5]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_end[4]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_end[3]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_end[2]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_end[1]</Signal>
+                <Signal>measure_unit_inst/stb_gen_inst/t_end[0]</Signal>
+            </Bus>
         </SignalList>
         <Triggers>
             <Trigger index="0">
                 <SignalList>
-                    <Signal>delay1_stb</Signal>
+                    <Signal>measure_unit_inst/stb_gen_rdy</Signal>
                 </SignalList>
             </Trigger>
-            <Trigger index="1"/>
-            <Trigger index="2"/>
+            <Trigger index="1">
+                <SignalList>
+                    <Signal>measure_unit_inst/stb_gen_inst/int_stb</Signal>
+                </SignalList>
+            </Trigger>
+            <Trigger index="2">
+                <SignalList>
+                    <Bus restorename="measure_unit_inst/stb_gen_inst/t_cnt[31:0]">
+                        <Signal>measure_unit_inst/stb_gen_inst/t_cnt[31]</Signal>
+                        <Signal>measure_unit_inst/stb_gen_inst/t_cnt[30]</Signal>
+                        <Signal>measure_unit_inst/stb_gen_inst/t_cnt[29]</Signal>
+                        <Signal>measure_unit_inst/stb_gen_inst/t_cnt[28]</Signal>
+                        <Signal>measure_unit_inst/stb_gen_inst/t_cnt[27]</Signal>
+                        <Signal>measure_unit_inst/stb_gen_inst/t_cnt[26]</Signal>
+                        <Signal>measure_unit_inst/stb_gen_inst/t_cnt[25]</Signal>
+                        <Signal>measure_unit_inst/stb_gen_inst/t_cnt[24]</Signal>
+                        <Signal>measure_unit_inst/stb_gen_inst/t_cnt[23]</Signal>
+                        <Signal>measure_unit_inst/stb_gen_inst/t_cnt[22]</Signal>
+                        <Signal>measure_unit_inst/stb_gen_inst/t_cnt[21]</Signal>
+                        <Signal>measure_unit_inst/stb_gen_inst/t_cnt[20]</Signal>
+                        <Signal>measure_unit_inst/stb_gen_inst/t_cnt[19]</Signal>
+                        <Signal>measure_unit_inst/stb_gen_inst/t_cnt[18]</Signal>
+                        <Signal>measure_unit_inst/stb_gen_inst/t_cnt[17]</Signal>
+                        <Signal>measure_unit_inst/stb_gen_inst/t_cnt[16]</Signal>
+                        <Signal>measure_unit_inst/stb_gen_inst/t_cnt[15]</Signal>
+                        <Signal>measure_unit_inst/stb_gen_inst/t_cnt[14]</Signal>
+                        <Signal>measure_unit_inst/stb_gen_inst/t_cnt[13]</Signal>
+                        <Signal>measure_unit_inst/stb_gen_inst/t_cnt[12]</Signal>
+                        <Signal>measure_unit_inst/stb_gen_inst/t_cnt[11]</Signal>
+                        <Signal>measure_unit_inst/stb_gen_inst/t_cnt[10]</Signal>
+                        <Signal>measure_unit_inst/stb_gen_inst/t_cnt[9]</Signal>
+                        <Signal>measure_unit_inst/stb_gen_inst/t_cnt[8]</Signal>
+                        <Signal>measure_unit_inst/stb_gen_inst/t_cnt[7]</Signal>
+                        <Signal>measure_unit_inst/stb_gen_inst/t_cnt[6]</Signal>
+                        <Signal>measure_unit_inst/stb_gen_inst/t_cnt[5]</Signal>
+                        <Signal>measure_unit_inst/stb_gen_inst/t_cnt[4]</Signal>
+                        <Signal>measure_unit_inst/stb_gen_inst/t_cnt[3]</Signal>
+                        <Signal>measure_unit_inst/stb_gen_inst/t_cnt[2]</Signal>
+                        <Signal>measure_unit_inst/stb_gen_inst/t_cnt[1]</Signal>
+                        <Signal>measure_unit_inst/stb_gen_inst/t_cnt[0]</Signal>
+                    </Bus>
+                </SignalList>
+            </Trigger>
             <Trigger index="3"/>
             <Trigger index="4"/>
             <Trigger index="5"/>
@@ -30,8 +215,8 @@
         </Triggers>
         <MatchUnits>
             <MatchUnit index="0" enabled="1" match_type="3" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="R" value1="0" trigger="0"/>
-            <MatchUnit index="1" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
-            <MatchUnit index="2" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="1" enabled="1" match_type="3" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="F" value1="0" trigger="1"/>
+            <MatchUnit index="2" enabled="1" match_type="2" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="00000000000000000000000000000000" value1="00000000000000000000000000000000" trigger="2"/>
             <MatchUnit index="3" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
             <MatchUnit index="4" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
             <MatchUnit index="5" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
@@ -47,8 +232,7 @@
             <MatchUnit index="15" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
         </MatchUnits>
         <Expressions type="Static">
-            <Expression>M0</Expression>
+            <Expression>M2</Expression>
         </Expressions>
     </AoCore>
-    <GAO_ID>0011101000010001</GAO_ID>
 </GAO_CONFIG>

@@ -48,7 +48,7 @@
         <Triggers>
             <Trigger index="0">
                 <SignalList>
-                    <Signal>measure_unit_inst/stb_gen_inst/run_det_i</Signal>
+                    <Signal>measure_unit_inst/stb_gen_run</Signal>
                 </SignalList>
             </Trigger>
             <Trigger index="1"/>

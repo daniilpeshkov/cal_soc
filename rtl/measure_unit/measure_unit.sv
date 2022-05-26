@@ -183,9 +183,9 @@ module measure_unit #(
    		.T_CNT_WIDTH		(STB_GEN_CNT_WIDTH)
 	) stb_gen_inst (
 		.clk_i 			(hclk_i),
-		.arst_i			(wb_rst_i),
+		.arst_i			(stb_gen_run),//(wb_rst_i),
 		.sig_i			(stb_gen_cmp_sel ? cmp2_out_i : cmp1_out_i),
-   		.run_det_i		(stb_gen_run),
+   		.run_det_i		(/*stb_gen_run*/),
    		.oe_i			(stb_gen_oe),
    		.err_o			(stb_gen_err),
    		.rdy_o			(stb_gen_rdy),
