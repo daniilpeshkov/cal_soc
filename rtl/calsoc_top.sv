@@ -86,8 +86,8 @@ module calsoc_top (
 	logic delay1_stb, delay2_stb;
 
 	TLVDS_OBUF delay1_stb_lvds_OBUF_inst (
-		.O	(delay1_stb_p_o),
-		.OB	(delay1_stb_n_o),
+		.O	(delay1_stb_n_o),
+		.OB	(delay1_stb_p_o),
 		.I	(~delay1_stb)
 	);
 

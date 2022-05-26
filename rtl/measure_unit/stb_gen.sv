@@ -6,7 +6,7 @@
 //------------------------------------------------------
 
 module stb_gen #(
-	parameter ZERO_HOLD_CYCLES = 5,
+	parameter ZERO_HOLD_CYCLES = 10,
 	parameter T_CNT_WIDTH = 32,
 	parameter OFFSET = 20
 ) (
@@ -23,8 +23,9 @@ module stb_gen #(
 	output logic [T_CNT_WIDTH-1:0] stb_period_o
 );
 	
-	logic int_stb = 1;
-	assign stb_o = (int_stb & oe_i & ~err_o);
+	logic int_stb = 0;
+	// assign stb_o = (int_stb & oe_i & ~err_o);
+	assign stb_o = int_stb;
 
 	logic sig_synced;
 
@@ -183,7 +184,7 @@ module stb_gen #(
 
 	always_ff @(posedge clk_i, posedge arst_i) begin
 		if (arst_i) begin
-			int_stb = 1;
+			int_stb = 0;
 		end else begin
 			if (state == COUNT_STB_ZERO_HOLD) int_stb <= 1;
 			else if (state == COUNT_STB_END) int_stb <= 0;

@@ -17,9 +17,9 @@ int main(void) {
 	int dac = 0xFFFF / 8;
 
 	pp_printf("Writing to dac %x \r\n", dac);
-	MU1->threshold = dac;	
+	MU1->threshold = 0;	
 
-
+	while( !MU1->threshold);
 
 	while (1) {
 		// pp_printf("reg %x\r\n", MU1->stb_gen);

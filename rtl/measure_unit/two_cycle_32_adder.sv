@@ -19,8 +19,7 @@ module two_cycle_32_adder (
     enum logic[1:0] {IDLE, FIRST_STAGE, SECOND_STAGE} state = IDLE, next_state;
 
     always_ff @(posedge clk_i) state <= next_state;
-
-    
+  
     logic valid;
 
     always_ff @(posedge clk_i) begin
@@ -28,7 +27,6 @@ module two_cycle_32_adder (
         valid_o <= valid;
     end
 
-    logic carry;
 
     always_comb begin
         next_state = state;
@@ -38,6 +36,8 @@ module two_cycle_32_adder (
             SECOND_STAGE: next_state = IDLE;
         endcase
     end
+
+    logic carry;
 
     always_ff @(posedge clk_i) begin
         case (state) 

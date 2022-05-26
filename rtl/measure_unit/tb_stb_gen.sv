@@ -6,12 +6,12 @@ module tb_stb_gen();
     localparam CLK_T = 8; // clk period
     localparam SIG_WIDTH = 20;
 
-    localparam T_CNT_WIDTH = 10;
+    localparam T_CNT_WIDTH = 32;
 
 `define DUMPVARS
 // `undef DUMPVARS    
 
-    int freqs[] = { 100, 20000,200000, 1333333};
+    int freqs[] = { 200, 20000,200000, 1333333};
 
     logic clk_i = 0;
     logic comp_out = 0;

@@ -28,9 +28,4 @@ module tb_measure_unit ();
 
 	logic cmp1_out_i = 0, cmp2_out_i = 0;
 
-    
-
-
-
-
 endmodule

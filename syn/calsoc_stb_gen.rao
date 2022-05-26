@@ -43,6 +43,7 @@
                 <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[1]</Signal>
                 <Signal>measure_unit_inst/stb_gen_inst/stb_period_o[0]</Signal>
             </Bus>
+            <Signal>cmp1_out</Signal>
         </SignalList>
         <Triggers>
             <Trigger index="0">
@@ -88,5 +89,5 @@
             <Expression>M0</Expression>
         </Expressions>
     </AoCore>
-    <GAO_ID>1111011110000000</GAO_ID>
+    <GAO_ID>1001001111010001</GAO_ID>
 </GAO_CONFIG>

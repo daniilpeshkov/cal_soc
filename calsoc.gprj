@@ -32,7 +32,7 @@
         <File path="syn/calsoc.sdc" type="file.sdc" enable="1"/>
         <File path="syn/calsoc.rao" type="file.gao" enable="0"/>
         <File path="syn/calsoc2.rao" type="file.gao" enable="0"/>
-        <File path="syn/calsoc_stb_gen.rao" type="file.gao" enable="0"/>
+        <File path="syn/calsoc_stb_gen.rao" type="file.gao" enable="1"/>
         <File path="syn/calsoc_stb_o.rao" type="file.gao" enable="0"/>
         <File path="rtl/gowin_rpll/gowin_rpll.ipc" type="file.other" enable="1"/>
         <File path="rtl/gowin_rpll/gowin_rpll.mod" type="file.other" enable="1"/>
