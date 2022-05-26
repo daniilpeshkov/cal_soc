@@ -164,7 +164,7 @@ module calsoc_top (
 		.DEFAULT_DELAY_CODE_DELTA(10'h1),
 		.DEFAULT_THRESHOLD_DELTA(16'h1)
 	) measure_unit_inst (
-		.hclk_i			(wb_clk_i),//(hclk),
+		.hclk_i			(hclk),//(hclk),
 		.wb_clk_i 		(wb_clk_i),
 		.wb_rst_i		(wb_rst_i),			
 		.wb_dat_i		(mu_wb_dat_i),
@@ -185,7 +185,7 @@ module calsoc_top (
 		.delay2_code_o	(delay2_code_o),
 		.delay1_stb_o	(delay1_stb),
 		.delay2_stb_o	(delay2_stb),
-		.cmp1_out_i		(cmp1_out), //(cmp1_out_i),
+		.cmp1_out_i		(cmp1_out),
 		.cmp2_out_i		(cmp2_out_i)
 	);
 	

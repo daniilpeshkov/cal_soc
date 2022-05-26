@@ -71,7 +71,7 @@ module stb_gen #(
 
 	typedef enum logic[3:0] { 
 		/*IDLE,*/ FIND_EDGE_1, FIND_EDGE_2, WRITE_START,
-		FIND_EDGE_3, WRITE_END, COUNT_PERIOD,
+		FIND_EDGE_3, WRITE_END, COUNT_PERIOD, START_GEN,
 		WAIT_STB_START, COUNT_STB_ZERO_HOLD,
 		WAIT_ZERO_HOLD, COUNT_STB_END 
 	} stb_gen_state;
@@ -85,7 +85,6 @@ module stb_gen #(
 
 	logic cnt_eq;
 	logic [T_CNT_WIDTH-1:0] period_minus_zero_hold;
-	// assign period_minus_zero_hold = stb_period_o - ZERO_HOLD_CYCLES;
 
 	always_ff @(posedge clk_i) period_minus_zero_hold <= stb_period_o - (ZERO_HOLD_CYCLES + 1);
 
@@ -110,14 +109,14 @@ module stb_gen #(
 		count_zero_hold_begin = 0;
 		count_stb_end = 0;
 		case (state)
-			// IDLE:					/*if (run_det_posedge)*/ next_state = FIND_EDGE_1;
 			FIND_EDGE_1:			if (sig_posedge) next_state = FIND_EDGE_2;
 			FIND_EDGE_2:			if (sig_posedge) next_state = WRITE_START;
 			WRITE_START:			next_state = FIND_EDGE_3;
 			FIND_EDGE_3:			if (sig_posedge) next_state = WRITE_END;
 			WRITE_END:				next_state = COUNT_PERIOD;
 			// COUNT_PERIOD:			next_state = WAIT_STB_START;
-			COUNT_PERIOD: 			begin
+			COUNT_PERIOD:			next_state = START_GEN;
+			START_GEN:	 			begin
 										next_state = COUNT_STB_END;
 										count_stb_end = 1;
 									end
@@ -208,7 +207,7 @@ module stb_gen #(
 	always @(posedge clk_i) begin
 		t_cnt <= {high_bytes, latched_low_bytes};
 		low_bytes <= low_bytes_plus_1;
-		latched_low_bytes <= low_bytes[15:0];
+		latched_low_bytes <= low_bytes;
 		
 		latched_carry <= carry;
 		high_bytes <= high_bytes + latched_carry;
