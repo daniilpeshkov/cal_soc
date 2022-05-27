@@ -6,7 +6,7 @@
 //------------------------------------------------------
 
 module stb_gen #(
-	parameter ZERO_HOLD_CYCLES = 10,
+	parameter ZERO_HOLD_CYCLES = 5,
 	parameter T_CNT_WIDTH = 32,
 	parameter OFFSET = 20
 ) (
@@ -203,9 +203,10 @@ module stb_gen #(
 
 	logic [15:0] low_bytes_plus_1;
 	assign {carry, low_bytes_plus_1} = low_bytes + 1;
-  
+	logic [T_CNT_WIDTH-1:0] latched_cnt;
 	always @(posedge clk_i) begin
-		t_cnt <= {high_bytes, latched_low_bytes};
+		latched_cnt <= {high_bytes, latched_low_bytes};
+		t_cnt <= latched_cnt;
 		low_bytes <= low_bytes_plus_1;
 		latched_low_bytes <= low_bytes;
 		

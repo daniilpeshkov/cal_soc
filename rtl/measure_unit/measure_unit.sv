@@ -45,18 +45,17 @@ module measure_unit #(
 //		delay delta 		- delay code change step
 //		threshold delta		- threshold dac code change step
 ///////////////////////////////////////////////////////////////////////////////////////
-	localparam STB_GEN_REG 			= 1;
+	localparam STB_GEN_CTL 			= 1;
 //
 //      30             3    2     1     0
 //	    +-----------------+-----+-----+-----+
-//	 r	|      period     | err | mux | rdy |
+//	 r	|        x        | err | mux | rdy |
 //	    +-----------------+-----+-----+-----+
 //       30             3    2     1     0
 //	    +-----------------+-----+-----+-----+
 //	 w	|        x        |  x  | mux | run |
 //	    +-----------------+-----+-----+-----+
 //
-//		period 	- count of 125 Mhz cycles per input signal period	
 //		err		- strobe generator overflow (input signal has frequency < 1 PPS)
 //		mux		- changes the sync channel (0 - ch 1, 1 - ch 2)
 //		rdy		- indicates that strobes are generating with ``period`` (if not 0)
@@ -77,6 +76,15 @@ module measure_unit #(
 //		dac1 rdy	- indicates that threshold at dac2 is set
 //		threshold	- writing to this register cause setting threshold on dac1 and dac2
 //
+///////////////////////////////////////////////////////////////////////////////////////
+	localparam STB_GEN_PERIOD 			= 3;
+//
+//      31                                 0
+//	    +-----------------------------------+
+//	 r	|               period              |
+//	    +-----------------------------------+
+//
+//		period 	- count of 125 Mhz cycles per input signal period	
 ///////////////////////////////////////////////////////////////////////////////////////
 // CH_CTL_DELTA_REG
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -207,7 +215,7 @@ module measure_unit #(
 		logic [31:0] w_reg;
 		case (addr)
 			CH_CTL_DELTA_REG: 	w_reg = ch_ctl_delta_reg;
-			STB_GEN_REG:		w_reg =	{stb_gen_cmp_sel, stb_gen_run};
+			STB_GEN_CTL:		w_reg =	{stb_gen_cmp_sel, stb_gen_run};
 			W_THRESHOLD_REG:	w_reg = wb_dac_code;
 			default: w_reg = 0;
 		endcase
@@ -236,12 +244,12 @@ module measure_unit #(
 							wb_dat_o <= ch_ctl_delta_reg;
 						end
 					end
-					STB_GEN_REG: begin
+					STB_GEN_CTL: begin
 						if (wb_we_i) begin
 							stb_gen_run <= w_data[0];
 							stb_gen_cmp_sel <= w_data[1];
 						end else begin
-							wb_dat_o <= {stb_period, stb_gen_err, stb_gen_cmp_sel, stb_gen_rdy};
+							wb_dat_o <= {stb_gen_err, stb_gen_cmp_sel, stb_gen_rdy};
 						end
 					end
 					W_THRESHOLD_REG: begin
@@ -250,6 +258,13 @@ module measure_unit #(
 							wb_dac_wre <= 1;
 						end else begin
 							wb_dat_o <= {dac2_rdy, dac1_rdy};
+						end
+					end
+					STB_GEN_PERIOD: begin
+						if (wb_we_i) begin
+							wb_dat_o <= 0;
+						end else begin
+							wb_dat_o <= stb_period;
 						end
 					end
 				endcase

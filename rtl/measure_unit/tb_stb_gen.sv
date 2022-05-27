@@ -11,7 +11,7 @@ module tb_stb_gen();
 `define DUMPVARS
 // `undef DUMPVARS    
 
-    int freqs[] = { 200, 20000,200000, 1333333};
+    int freqs[] = { 100, 20000,200000, 1333333};
 
     logic clk_i = 0;
     logic comp_out = 0;
@@ -29,7 +29,7 @@ module tb_stb_gen();
         .sig_i (comp_out),
         .*
     );
-
+    // initial #524400 $finish;
     initial begin 
         int t;
 
