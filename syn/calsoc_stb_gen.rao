@@ -2,7 +2,7 @@
 <GAO_CONFIG>
     <Version>3.0</Version>
     <Mode>Standard</Mode>
-    <AoCore index="0" sample_clock="wb_clk_i" trig_type="0" storage_depth="1024" window_num="1" capture_amount="1024" trigger_pos="10">
+    <AoCore index="0" sample_clock="wb_clk_i" trig_type="0" storage_depth="2048" window_num="1" capture_amount="2048" trigger_pos="10">
         <SignalList>
             <Signal>measure_unit_inst/dac1_rdy</Signal>
             <Signal>measure_unit_inst/dac2_rdy</Signal>
@@ -89,5 +89,5 @@
             <Expression>M0</Expression>
         </Expressions>
     </AoCore>
-    <GAO_ID>1001001111010001</GAO_ID>
+    <GAO_ID>1010100101111011</GAO_ID>
 </GAO_CONFIG>

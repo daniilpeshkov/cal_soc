@@ -186,10 +186,7 @@ module measure_unit #(
 	// 	.point_t_o				()
 	// );
 
-	stb_gen #(
-   		.ZERO_HOLD_CYCLES	(STROBE_ZERO_HOLD_CYCLES),
-   		.T_CNT_WIDTH		(STB_GEN_CNT_WIDTH)
-	) stb_gen_inst (
+	stb_gen stb_gen_inst (
 		.clk_i 			(hclk_i),
 		.arst_i			(stb_gen_run),//(wb_rst_i),
 		.sig_i			(stb_gen_cmp_sel ? cmp2_out_i : cmp1_out_i),

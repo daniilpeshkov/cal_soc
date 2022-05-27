@@ -23,6 +23,7 @@ module calsoc_top (
 	output 	logic 			uart1_tx,
 
 	output	logic			debug_uart_tx,
+	output	logic			debug_uart_rx,
 //DAC
 	output 	logic			dac1_sync_o, dac2_sync_o,
 	output	logic			dac1_sclk_o, dac2_sclk_o,
@@ -43,6 +44,8 @@ module calsoc_top (
 );
 
 	assign delay1_le_o = 0;
+	assign debug_uart_rx = 0;
+	assign debug_uart_tx = delay1_stb;
 ////////////////////////////
 // CLOCK
 ////////////////////////////
@@ -160,7 +163,7 @@ module calsoc_top (
 	measure_unit #(
 		.DAC_SPI_CLK_DIV(10),
 		.DAC_SPI_WAIT_CYCLES(3),
-		.STROBE_ZERO_HOLD_CYCLES(10),
+		.STROBE_ZERO_HOLD_CYCLES(5),
 		.DEFAULT_DELAY_CODE_DELTA(10'h1),
 		.DEFAULT_THRESHOLD_DELTA(16'h1)
 	) measure_unit_inst (
@@ -188,7 +191,9 @@ module calsoc_top (
 		.cmp1_out_i		(cmp1_out),
 		.cmp2_out_i		(cmp2_out_i)
 	);
-	
+
+	// assign delay1_stb = 0;
+
 	gpio_top gpioa (
 		.wb_clk_i	(wb_clk_i),
 		.wb_rst_i	(wb_rst_i),
@@ -235,9 +240,6 @@ module calsoc_top (
 
 	logic tmp_uart;
 
-	assign debug_uart_tx = tmp_uart;
-	assign uart1_tx = tmp_uart;
-
 	wbuart #(
 		.LGFLEN('ha)
 	) uart1 (
@@ -251,7 +253,7 @@ module calsoc_top (
 		.o_wb_data	(uart1_wb_dat_o), 
 		.o_wb_ack	(uart1_wb_ack_o),
 		.i_uart_rx	(uart1_rx),
-		.o_uart_tx	(tmp_uart),
+		.o_uart_tx	(uart1_tx),
 		.o_wb_stall	(uart1_wb_stall_o)
 	);
 

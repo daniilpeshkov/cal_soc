@@ -17,21 +17,21 @@ int main(void) {
 	int dac = 0xFFFF / 8;
 
 	pp_printf("Writing to dac %x \r\n", dac);
-	MU1->threshold = 0;	
+	MU1->threshold = dac;	
 
 	while( !MU1->threshold);
 
-		MU1->stb_gen = 1;
+	MU1->stb_gen_ctl = 1;
 	while (1) {
 		// pp_printf("reg %x\r\n", MU1->stb_gen);
 
 		// MU1->threshold = dac;	
 		// while (!MU1->threshold);
-		if (MU1->stb_gen & STB_GEN_ERR) {
+		if (MU1->stb_gen_ctl & STB_GEN_ERR) {
 			pp_printf("err\r\n");
 			delay(900000);
-		} else if (MU1->stb_gen & STB_GEN_RDY) {
-			pp_printf("%d\r\n", (MU1->stb_gen >> 3));
+		} else if (MU1->stb_gen_ctl & STB_GEN_RDY) {
+			pp_printf("%d\r\n", MU1->stb_gen_period);
 			break;
 		}
 
@@ -40,18 +40,5 @@ int main(void) {
 
 	// while(1);
 	while(1);
-	while (1) {
-		pp_printf("running frequency measurement\r\n");
-		mu_run_freq_detection(MU1, MUX_DAC1, 0xffff/4);
-		unsigned int stat, tmp;
-		while ((stat = mu_stb_gen_status(MU1)) == MU_RUN) delay(1000);
-		if (stat == MU_ERR) pp_printf("can't measure signal frequency\r\n");
-		else {
-			tmp = MU1->stb_gen;
-			tmp >>= 3;
-			pp_printf("period = %d\r\n", tmp);
-		}
-		delay(100000);
-	}
 	return 0;
 }

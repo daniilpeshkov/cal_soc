@@ -11,7 +11,7 @@ module tb_stb_gen();
 `define DUMPVARS
 // `undef DUMPVARS    
 
-    int freqs[] = { 100, 20000,200000, 1333333};
+    int freqs[] = { 200, 20000,200000, 1333333};
 
     logic clk_i = 0;
     logic comp_out = 0;
@@ -23,9 +23,7 @@ module tb_stb_gen();
     logic rdy_o;
     logic [T_CNT_WIDTH-1:0] stb_period_o;
 
-    stb_gen #(
-        .T_CNT_WIDTH (T_CNT_WIDTH)
-    ) dut (
+    stb_gen dut (
         .sig_i (comp_out),
         .*
     );
@@ -46,7 +44,7 @@ module tb_stb_gen();
                 #(freqs[i] - SIG_WIDTH);
             end
 
-            @(posedge stb_o);
+            repeat (10)@(posedge stb_o);
             start = $time;
             @(posedge stb_o);
             t = $time - start;
