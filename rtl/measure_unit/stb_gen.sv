@@ -126,7 +126,6 @@ module stb_gen #(
 	logic [T_CNT_WIDTH-1:0] latched_stb_end_res;
 
 	always_ff @(posedge clk_i) latched_zero_hold_res <= (zero_hold_begin_valid ? adder_zero_hold_res : latched_zero_hold_res);
-
 	always_ff @(posedge clk_i) latched_stb_end_res <= (stb_end_valid ? adder_stb_end_res : latched_stb_end_res);
 
 	logic is_zero_hold_start;
@@ -163,25 +162,32 @@ module stb_gen #(
 
 	// pipelined counter
 
-	logic [15:0] low_bytes = 0;
-	logic [15:0] high_bytes = 0;
-	logic [15:0] latched_low_bytes = 0;
-	logic latched_carry = 0;
+	logic [T_CNT_WIDTH-1:0] latched_cnt;
+	logic [T_CNT_WIDTH/2-1 : 0] high_bytes = 0;
+	logic [T_CNT_WIDTH/2-1 : 0] latched_low_bytes = 0;
+	logic [T_CNT_WIDTH/2-1 : 0] low_bytes = 0;
+	logic [T_CNT_WIDTH/2-1 : 0] low_bytes_plus_1;
 	logic carry;
 
-	logic [15:0] low_bytes_plus_1;
 	assign {carry, low_bytes_plus_1} = low_bytes + 1;
-	logic [T_CNT_WIDTH-1:0] latched_cnt, tmp;
 
+	//incrementing low bytes
+	always_ff @(posedge clk_i) low_bytes <= low_bytes_plus_1;
 
-	always @(posedge clk_i) begin
-		latched_cnt <= {high_bytes, latched_low_bytes};
-		// t_cnt <= latched_cnt;
-		t_cnt <= {high_bytes, latched_low_bytes};
-		low_bytes <= low_bytes_plus_1;
-		latched_low_bytes <= low_bytes;
-		latched_carry <= carry;
-		high_bytes <= high_bytes + latched_carry;
-	end
+	//latching low bytes for 1 cycle
+	always_ff @(posedge clk_i) latched_low_bytes <= low_bytes;
+
+	logic latched_carry = 0;
+
+	//latching carry
+	always_ff @(posedge clk_i) latched_carry <= carry;
+
+	//adding latched carry to high bytes
+	always_ff @(posedge clk_i) high_bytes <= high_bytes + latched_carry;
+
+	//seting t_cnt
+	always_ff @(posedge clk_i) latched_cnt <= {high_bytes, latched_low_bytes};
+
+	always_ff @(posedge clk_i) t_cnt <= latched_cnt;
 
 endmodule

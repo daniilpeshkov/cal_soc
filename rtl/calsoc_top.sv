@@ -192,22 +192,6 @@ module calsoc_top (
 		.cmp2_out_i		(cmp2_out_i)
 	);
 
-	// assign delay1_stb = 0;
-
-	gpio_top gpioa (
-		.wb_clk_i	(wb_clk_i),
-		.wb_rst_i	(wb_rst_i),
-		.wb_cyc_i	(gpioa_wb_cyc_i),
-		.wb_adr_i	(gpioa_wb_adr_i[5:0]),
-		.wb_dat_i	(gpioa_wb_dat_i),
-		.wb_sel_i	(gpioa_wb_sel_i), 
-		.wb_we_i	(gpioa_wb_we_i),
-		.wb_stb_i	(gpioa_wb_stb_i),
-		.wb_dat_o	(gpioa_wb_dat_o), 
-		.wb_ack_o	(gpioa_wb_ack_o),
-		.ext_pad_o	()
-	);
-	
 	wb_ram #(
 		.WORD_COUNT(`RAM_WB_MEM_SIZE)
 	) ram (
@@ -223,20 +207,20 @@ module calsoc_top (
 		.wb_ack_o	(ram_wb_ack_o)
 	);
 
-	wb_ram #(
-		.WORD_COUNT('h1000)
-	) prg_ram (
-		.clk_i		(wb_clk_i),
-		.rst_i		(wb_rst_i),
-		.wb_cyc_i	(prg_ram_wb_cyc_i),
-		.wb_adr_i	(prg_ram_wb_adr_i),
-		.wb_dat_i	(prg_ram_wb_dat_i),
-		.wb_sel_i	(prg_ram_wb_sel_i), 
-		.wb_we_i	(prg_ram_wb_we_i),
-		.wb_stb_i	(prg_ram_wb_stb_i),
-		.wb_dat_o	(prg_ram_wb_dat_o), 
-		.wb_ack_o	(prg_ram_wb_ack_o)
-	);
+	// wb_ram #(
+	// 	.WORD_COUNT('h1000)
+	// ) prg_ram (
+	// 	.clk_i		(wb_clk_i),
+	// 	.rst_i		(wb_rst_i),
+	// 	.wb_cyc_i	(prg_ram_wb_cyc_i),
+	// 	.wb_adr_i	(prg_ram_wb_adr_i),
+	// 	.wb_dat_i	(prg_ram_wb_dat_i),
+	// 	.wb_sel_i	(prg_ram_wb_sel_i), 
+	// 	.wb_we_i	(prg_ram_wb_we_i),
+	// 	.wb_stb_i	(prg_ram_wb_stb_i),
+	// 	.wb_dat_o	(prg_ram_wb_dat_o), 
+	// 	.wb_ack_o	(prg_ram_wb_ack_o)
+	// );
 
 	logic tmp_uart;
 
