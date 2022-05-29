@@ -11,7 +11,7 @@ module tb_stb_gen();
 `define DUMPVARS
 // `undef DUMPVARS    
 
-    int freqs[] = { 200, 20000,200000, 1333333};
+    int freqs[] = { 100, 20000,200000, 1333333};
 
     logic clk_i = 0;
     logic comp_out = 0;
@@ -22,6 +22,9 @@ module tb_stb_gen();
     logic oe_i = 1;
     logic rdy_o;
     logic [T_CNT_WIDTH-1:0] stb_period_o;
+	logic stb_req_i;
+	logic stb_valid_o;
+	logic debug_stb_o;
 
     stb_gen dut (
         .sig_i (comp_out),
@@ -45,9 +48,9 @@ module tb_stb_gen();
                 #(freqs[i] - SIG_WIDTH);
             end
 
-            repeat (10)@(posedge stb_o);
+            repeat (10)@(posedge debug_stb_o);
             start = $time;
-            @(posedge stb_o);
+            @(posedge debug_stb_o);
             t = $time - start;
             $display("measured signal  T= %d ns", freqs[i]);
             $display("generated strobe T= %d ns", t);

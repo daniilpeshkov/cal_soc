@@ -1,50 +1,57 @@
-
 `timescale 1ns/1ns
 
 module tb_stb_gen();
 
-`define DUMPVARS
-`undef DUMPVARS    
+    localparam CLK_T = 8; // clk period
+    localparam SIG_WIDTH = 20;
 
     localparam T_CNT_WIDTH = 32;
-    localparam  CLK_T = 8; // clk period
-    localparam SIG_PERIOD = 133333;
-    localparam SIG_WIDTH = 300;
+
+`define DUMPVARS
+// `undef DUMPVARS    
+
+    int sig_T = 20000;
 
     logic clk_i = 0;
-    logic sig_i = 0;
+    logic comp_out = 0;
     logic arst_i = 0;
     logic stb_o;
-    logic run_det_i = 1;
+    logic run_det_i = 0;
     logic err_o;
     logic oe_i = 1;
     logic rdy_o;
     logic [T_CNT_WIDTH-1:0] stb_period_o;
+	logic stb_req_i = 0;
+	logic stb_valid_o;
+	logic debug_stb_o;
 
-    stb_gen #(
-        .T_CNT_WIDTH (T_CNT_WIDTH)
-    ) dut (.*);
+    stb_gen dut (
+        .sig_i (comp_out),
+        .arst_i(~arst_i),
+        .*
+    );
 
-    initial begin
-        run_det_i = 1;
-        #2 arst_i = 1;
-        #2 arst_i = 0;
-        repeat (10) begin
-            @(posedge rdy_o);
-            $display("%d", stb_period_o * CLK_T);
-            run_det_i = 0;
-            #(CLK_T*2)
-            run_det_i = 1;
-        end
-        $finish;
+    initial forever begin
+        comp_out = 1;
+        #(SIG_WIDTH) comp_out = 0;
+        #(sig_T - SIG_WIDTH);
     end
 
-    initial begin
-        #3
-        forever begin
-            #(SIG_PERIOD-SIG_WIDTH) sig_i = 1;
-            #(SIG_WIDTH) sig_i = 0;
-        end
+
+    initial begin 
+
+        #1 arst_i = 1;
+        #1 arst_i = 0;
+
+        repeat (5)@(posedge debug_stb_o);
+        stb_req_i = 1;
+        @(posedge stb_valid_o);
+        stb_req_i = 0;
+        #50000
+        stb_req_i = 1;
+
+        repeat (5)@(posedge debug_stb_o);
+        $finish;
     end
 
     initial begin 

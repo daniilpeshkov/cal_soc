@@ -12,5 +12,9 @@ stb_gen:
 	iverilog -o test_stb_gen.vvp -g2005-sv stb_gen.sv tb_stb_gen.sv sync_ff.sv two_cycle_32_adder.sv
 	vvp -n test_stb_gen.vvp 
 
+stb_gen2:
+	iverilog -o test_stb_gen2.vvp -g2005-sv stb_gen.sv tb2_stb_gen.sv sync_ff.sv two_cycle_32_adder.sv
+	vvp -n test_stb_gen2.vvp 
+
 clean:
 	rm *.vvp

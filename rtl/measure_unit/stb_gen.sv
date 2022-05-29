@@ -18,16 +18,44 @@ module stb_gen #(
 	output logic err_o,
 	output logic rdy_o,
 	output logic stb_o,
-	output logic [T_CNT_WIDTH-1:0] stb_period_o
+	output logic [T_CNT_WIDTH-1:0] stb_period_o,
+
+	input  logic stb_req_i,
+	output logic stb_valid_o,
+	output logic debug_stb_o
 );
 	localparam T_CNT_WIDTH 			= 32;
 	localparam ZERO_HOLD_CYCLES 	= 1;
 
 	logic int_stb = 0;
-	// assign stb_o = (int_stb & oe_i & ~err_o);
-	assign stb_o = int_stb;
+	assign debug_stb_o = int_stb;
 
 	logic sig_synced;
+
+	//stb req interface
+
+	logic stb_oe; // stb_oe == 1 blocks strobe generation
+	assign stb_o = int_stb | stb_oe;	
+	assign stb_valid_o = stb_oe;
+
+	logic prev_stb_req;
+
+	always_ff @(posedge clk_i) prev_stb_req <= stb_req_i;
+
+	logic req_posedge;
+	assign req_posedge = ~prev_stb_req & stb_req_i;
+
+
+	always_ff @(posedge clk_i, negedge arst_i) begin
+		if (~arst_i) begin
+			stb_oe = 1;
+		end else begin
+			casex ({req_posedge, is_stb_end})			
+				2'bx1:  stb_oe <= 1;
+				2'b1x:	stb_oe <= 0;
+			endcase
+		end
+	end
 
 	sync_ff #(
 		.WIDTH (1),
