@@ -74,10 +74,6 @@ module stb_gen #(
 	assign count_stb_end = (state == COUNT_STROBE ? 1 : 0);
 
 	always_comb begin
-		// next_state = state;
-		// count_zero_hold_begin = 0;
-		// count_stb_end = 0;
-
 		unique case (state) /* sythesis parallel_case*/
 			FIND_EDGE_1:			if (sig_posedge) next_state = FIND_EDGE_2;
 									else next_state = state;
@@ -112,8 +108,7 @@ module stb_gen #(
 	end
 
 	logic [T_CNT_WIDTH-1:0] period_minus_zero_hold;
-	always_ff @(posedge clk_i) period_minus_zero_hold <= stb_period_o - (ZERO_HOLD_CYCLES+4); //magic constat due to computation pipeline
-
+	always_ff @(posedge clk_i) period_minus_zero_hold <= stb_period_o - (ZERO_HOLD_CYCLES+5); //magic constat due to computation pipeline
 
 	two_cycle_32_adder adder_zero_hold_begin (
 		.clk_i 	(clk_i),
@@ -127,7 +122,7 @@ module stb_gen #(
 	two_cycle_32_adder adder_stb_end (
 		.clk_i 	(clk_i),
 		.a_i	(t_cnt),
-		.b_i	(stb_period_o - 4), //magic constat due to computation pipeline
+		.b_i	(stb_period_o - 5), //magic constat due to computation pipeline
 		.valid_i(count_stb_end),
 		.valid_o(stb_end_valid),
 		.res_o	(adder_stb_end_res)
@@ -141,9 +136,22 @@ module stb_gen #(
 
 	logic is_zero_hold_start;
 	logic is_stb_end;
+ 
+	logic is_zero_hold_start_lo;
+	logic is_zero_hold_start_hi;
+	logic is_stb_end_lo;
+	logic is_stb_end_hi;
 
-	always_ff @(posedge clk_i) is_zero_hold_start <=  ~|(t_cnt ^ latched_zero_hold_res);  //t_cnt == latched_zero_hold_res;
-	always_ff @(posedge clk_i) is_stb_end <= ~|(t_cnt ^ latched_stb_end_res); //t_cnt == latched_stb_end_res;
+	always_ff @(posedge clk_i) is_zero_hold_start_lo <=  ~|(t_cnt[15:0] ^ latched_zero_hold_res[15:0]);  //t_cnt == latched_zero_hold_res;
+	always_ff @(posedge clk_i) is_zero_hold_start_hi <=  ~|(t_cnt[31:16] ^ latched_zero_hold_res[31:16]);  //t_cnt == latched_zero_hold_res;
+	always_ff @(posedge clk_i) is_zero_hold_start <= is_zero_hold_start_lo & is_zero_hold_start_hi; 
+
+	// always_ff @(posedge clk_i) is_zero_hold_start <=  ~|(t_cnt ^ latched_zero_hold_res);  //t_cnt == latched_zero_hold_res;
+
+	always_ff @(posedge clk_i) is_stb_end_lo <=  ~|(t_cnt[15:0] ^ latched_stb_end_res[15:0]);  //t_cnt == latched_zero_hold_res;
+	always_ff @(posedge clk_i) is_stb_end_hi <=  ~|(t_cnt[31:16] ^ latched_stb_end_res[31:16]);  //t_cnt == latched_zero_hold_res;
+	always_ff @(posedge clk_i) is_stb_end <= is_stb_end_hi & is_stb_end_lo; 
+	// always_ff @(posedge clk_i) is_stb_end <= ~|(t_cnt ^ latched_stb_end_res); //t_cnt == latched_stb_end_res;
 
 	always_ff @(posedge clk_i, negedge arst_i) begin
 		if (~arst_i) begin
