@@ -47,20 +47,28 @@ module stb_gen #(
 	logic sig_posedge;
 	assign sig_posedge = sig_synced & ~prev_sig;
 
-	typedef enum logic[3:0] { 
-		FIND_EDGE_1, FIND_EDGE_2, WRITE_START,
-		FIND_EDGE_3, WRITE_END, COUNT_PERIOD, 
-		WAIT_COUNT_PERIOD, COUNT_STROBE,
-		WAIT_STB_END
+	typedef enum logic[8:0] { 
+		FIND_EDGE_1 		= 9'b000000001, 
+		FIND_EDGE_2 		= 9'b000000010,
+		WRITE_START 		= 9'b000000100,
+		FIND_EDGE_3 		= 9'b000001000, 
+		WRITE_END			= 9'b000010000,
+		COUNT_PERIOD 		= 9'b000100000, 
+		WAIT_COUNT_PERIOD 	= 9'b001000000,
+		COUNT_STROBE 		= 9'b010000000,
+		WAIT_STB_END 		= 9'b100000000
 	} stb_gen_state;
 
 	stb_gen_state state = FIND_EDGE_1;
 
-	logic [T_CNT_WIDTH-1 : 0] t_cnt;
+	logic [T_CNT_WIDTH-1 : 0] t_cnt /* synthesis syn_keep=1 syn_preserve=1 syn_ramstyle="registers" */;
 	logic [T_CNT_WIDTH-1 : 0] t_start;
 	logic [T_CNT_WIDTH-1 : 0] t_end;
 	stb_gen_state next_state;
 
+
+	logic count_zero_hold_begin, zero_hold_begin_valid;
+	logic count_stb_end, stb_end_valid;
 
 	assign count_zero_hold_begin = (state == COUNT_STROBE ? 1 : 0);
 	assign count_stb_end = (state == COUNT_STROBE ? 1 : 0);
@@ -70,7 +78,7 @@ module stb_gen #(
 		// count_zero_hold_begin = 0;
 		// count_stb_end = 0;
 
-		unique case (state)
+		unique case (state) /* sythesis parallel_case*/
 			FIND_EDGE_1:			if (sig_posedge) next_state = FIND_EDGE_2;
 									else next_state = state;
 			FIND_EDGE_2:			if (sig_posedge) next_state = WRITE_START;
@@ -88,8 +96,8 @@ module stb_gen #(
 		endcase
 	end
 
-	always_ff @(posedge clk_i, posedge arst_i) begin
-		if (arst_i) begin
+	always_ff @(posedge clk_i, negedge arst_i) begin
+		if (~arst_i) begin
 			state = FIND_EDGE_1;
 		end else begin
 			state <= next_state;
@@ -106,8 +114,6 @@ module stb_gen #(
 	logic [T_CNT_WIDTH-1:0] period_minus_zero_hold;
 	always_ff @(posedge clk_i) period_minus_zero_hold <= stb_period_o - (ZERO_HOLD_CYCLES+4); //magic constat due to computation pipeline
 
-	logic count_zero_hold_begin, zero_hold_begin_valid;
-	logic count_stb_end, stb_end_valid;
 
 	two_cycle_32_adder adder_zero_hold_begin (
 		.clk_i 	(clk_i),
@@ -139,8 +145,8 @@ module stb_gen #(
 	always_ff @(posedge clk_i) is_zero_hold_start <=  ~|(t_cnt ^ latched_zero_hold_res);  //t_cnt == latched_zero_hold_res;
 	always_ff @(posedge clk_i) is_stb_end <= ~|(t_cnt ^ latched_stb_end_res); //t_cnt == latched_stb_end_res;
 
-	always_ff @(posedge clk_i, posedge arst_i) begin
-		if (arst_i) begin
+	always_ff @(posedge clk_i, negedge arst_i) begin
+		if (~arst_i) begin
 			int_stb = 0;
 		end else begin
 			case (1) 
@@ -151,8 +157,8 @@ module stb_gen #(
 		end
 	end
 
-	always_ff @(posedge clk_i, posedge arst_i) begin
-		if (arst_i) rdy_o = 0;
+	always_ff @(posedge clk_i, negedge arst_i) begin
+		if (~arst_i) rdy_o = 0;
 		else rdy_o <= (state == COUNT_STROBE ? 1 : rdy_o);
 	end
 
@@ -166,39 +172,39 @@ module stb_gen #(
 
 	// pipelined counter
 
-	logic [T_CNT_WIDTH/2-1 : 0] high_bytes = 0;
-	logic [T_CNT_WIDTH/2-1 : 0] latched_low_bytes = 0;
-	logic [T_CNT_WIDTH/2-1 : 0] low_bytes = 0;
+	logic [T_CNT_WIDTH/2-1 : 0] high_bytes = 0 			/* synthesis syn_keep=1 syn_preserve=1 syn_ramstyle="registers" */;
+	logic [T_CNT_WIDTH/2-1 : 0] latched_low_bytes = 0 	/* synthesis syn_keep=1 syn_preserve=1 syn_ramstyle="registers" */;
+	logic [T_CNT_WIDTH/2-1 : 0] low_bytes = 0 			/* synthesis syn_keep=1 syn_preserve=1 syn_ramstyle="registers" */;
 	logic [T_CNT_WIDTH/2-1 : 0] low_bytes_plus_1;
 	logic carry;
 
 	assign {carry, low_bytes_plus_1} = low_bytes + 1;
 
 	//incrementing low bytes
-	always_ff @(posedge clk_i, posedge arst_i) 
-		if (arst_i) low_bytes = 0;
+	always_ff @(posedge clk_i, negedge arst_i) 
+		if (~arst_i) low_bytes = 0;
 		else low_bytes <= low_bytes_plus_1;
 
 	//latching low bytes for 1 cycle
-	always_ff @(posedge clk_i, posedge arst_i) 
-		if (arst_i) latched_low_bytes = 0;
+	always_ff @(posedge clk_i, negedge arst_i) 
+		if (~arst_i) latched_low_bytes = 0;
 		else latched_low_bytes <= low_bytes;
 
 	logic latched_carry = 0;
 
 	//latching carry
-	always_ff @(posedge clk_i, posedge arst_i) 
-		if (arst_i) latched_carry = 0;
+	always_ff @(posedge clk_i, negedge arst_i) 
+		if (~arst_i) latched_carry = 0;
 		else latched_carry <= carry;
 
 	//adding latched carry to high bytes
-	always_ff @(posedge clk_i, posedge arst_i)
-		if (arst_i) high_bytes = 0;
+	always_ff @(posedge clk_i, negedge arst_i)
+		if (~arst_i) high_bytes = 0;
 		else high_bytes <= high_bytes + latched_carry;
 
 	//seting t_cnt
-	always_ff @(posedge clk_i, posedge arst_i) 
-		if (arst_i) t_cnt = 0;
+	always_ff @(posedge clk_i, negedge arst_i) 
+		if (~arst_i) t_cnt = 0;
 		else t_cnt <= {high_bytes, latched_low_bytes};
 
 endmodule

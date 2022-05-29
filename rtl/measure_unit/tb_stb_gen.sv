@@ -25,6 +25,7 @@ module tb_stb_gen();
 
     stb_gen dut (
         .sig_i (comp_out),
+        .arst_i(~arst_i),
         .*
     );
     // initial #524400 $finish;
