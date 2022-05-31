@@ -35,7 +35,10 @@ module stb_gen #(
 	//stb req interface
 
 	logic stb_oe; // stb_oe == 1 blocks strobe generation
-	assign stb_o = int_stb | stb_oe;	
+
+	assign stb_o = (rdy_o ? int_stb | stb_oe : int_stb);	
+	// assign stb_o = 0;
+
 	assign stb_valid_o = stb_oe;
 
 	logic prev_stb_req;
@@ -48,7 +51,7 @@ module stb_gen #(
 
 	always_ff @(posedge clk_i, negedge arst_i) begin
 		if (~arst_i) begin
-			stb_oe = 1;
+			stb_oe = 0;
 		end else begin
 			casex ({req_posedge, is_stb_end})			
 				2'bx1:  stb_oe <= 1;

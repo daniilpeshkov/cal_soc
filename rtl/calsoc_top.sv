@@ -45,7 +45,7 @@ module calsoc_top (
 
 	assign delay1_le_o = 0;
 	assign debug_uart_rx = 0;
-	assign debug_uart_tx = delay1_stb;
+	// assign debug_uart_tx = delay1_stb;
 ////////////////////////////
 // CLOCK
 ////////////////////////////
@@ -189,7 +189,9 @@ module calsoc_top (
 		.delay1_stb_o	(delay1_stb),
 		.delay2_stb_o	(delay2_stb),
 		.cmp1_out_i		(cmp1_out),
-		.cmp2_out_i		(cmp2_out_i)
+		.cmp2_out_i		(cmp2_out_i),
+
+		.debug_stb_o	(debug_uart_tx)
 	);
 
 	wb_ram #(
@@ -207,20 +209,20 @@ module calsoc_top (
 		.wb_ack_o	(ram_wb_ack_o)
 	);
 
-	// wb_ram #(
-	// 	.WORD_COUNT('h1000)
-	// ) prg_ram (
-	// 	.clk_i		(wb_clk_i),
-	// 	.rst_i		(wb_rst_i),
-	// 	.wb_cyc_i	(prg_ram_wb_cyc_i),
-	// 	.wb_adr_i	(prg_ram_wb_adr_i),
-	// 	.wb_dat_i	(prg_ram_wb_dat_i),
-	// 	.wb_sel_i	(prg_ram_wb_sel_i), 
-	// 	.wb_we_i	(prg_ram_wb_we_i),
-	// 	.wb_stb_i	(prg_ram_wb_stb_i),
-	// 	.wb_dat_o	(prg_ram_wb_dat_o), 
-	// 	.wb_ack_o	(prg_ram_wb_ack_o)
-	// );
+	wb_ram #(
+		.WORD_COUNT('h1000)
+	) prg_ram (
+		.clk_i		(wb_clk_i),
+		.rst_i		(wb_rst_i),
+		.wb_cyc_i	(prg_ram_wb_cyc_i),
+		.wb_adr_i	(prg_ram_wb_adr_i),
+		.wb_dat_i	(prg_ram_wb_dat_i),
+		.wb_sel_i	(prg_ram_wb_sel_i), 
+		.wb_we_i	(prg_ram_wb_we_i),
+		.wb_stb_i	(prg_ram_wb_stb_i),
+		.wb_dat_o	(prg_ram_wb_dat_o), 
+		.wb_ack_o	(prg_ram_wb_ack_o)
+	);
 
 	logic tmp_uart;
 

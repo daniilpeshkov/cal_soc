@@ -26,6 +26,8 @@ module measure_unit #(
 //Delay Line
 	output logic [9:0] delay1_code_o, delay2_code_o,
 	output logic 	   delay1_stb_o, delay2_stb_o,
+
+	output logic 	   debug_stb_o,
 //CMP
 	input logic cmp1_out_i, cmp2_out_i
 );
@@ -188,14 +190,15 @@ module measure_unit #(
 
 	stb_gen stb_gen_inst (
 		.clk_i 			(hclk_i),
-		.arst_i			(stb_gen_run),//(wb_rst_i),
+		.arst_i			(~stb_gen_run),//(wb_rst_i),
 		.sig_i			(stb_gen_cmp_sel ? cmp2_out_i : cmp1_out_i),
    		.run_det_i		(/*stb_gen_run*/),
    		.oe_i			(stb_gen_oe),
    		.err_o			(stb_gen_err),
    		.rdy_o			(stb_gen_rdy),
 		.stb_o			(internal_stb),
-		.stb_period_o	(stb_period)
+		.stb_period_o	(stb_period),
+		.debug_stb_o	(debug_stb_o)
 	);
 
 ///////////////////////////////////////////////////////////////////////////////////////

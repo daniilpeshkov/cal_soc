@@ -9,17 +9,19 @@ void delay(unsigned int n)  {
 }
 
 int main(void) {
-	GPIOA->oe = 0xffffffff;
 	uart_init(UART1, 19200);
 
 	pp_printf("WR Calibrator \r\n");
 
-	int dac = 0xFFFF / 8;
+	// int dac = 0x4d93; 
+	int dac = 0;
 
 	pp_printf("Writing to dac %x \r\n", dac);
-	MU1->threshold = dac;	
-
-	while( !MU1->threshold);
+	while (1) {
+		MU1->threshold = dac;	
+		while( !MU1->threshold);
+		dac += 0x100;
+	}
 
 	MU1->stb_gen_ctl = 1;
 	while (1) {
@@ -36,9 +38,7 @@ int main(void) {
 		}
 
 	}
-	// pp_printf("%x\r\n", MU1->stb_gen);
 
-	// while(1);
 	while(1);
 	return 0;
 }
