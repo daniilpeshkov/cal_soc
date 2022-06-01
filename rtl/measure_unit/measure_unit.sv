@@ -225,51 +225,63 @@ module measure_unit #(
 		w_data[31:24] = (wb_sel_i[3] ? wb_dat_i[31:24] : w_reg[31:24]);
 	end
 
+	logic wb_req;
+	assign wb_req = wb_cyc_i & wb_stb_i;
+
 	always_ff @(posedge wb_clk_i, posedge wb_rst_i) begin
 		if (wb_rst_i) begin
 			ch_ctl_delta_reg = {default_ctl_d_code_delta, default_ctl_threshold_delta};
-			wb_dac_wre = 0;
-			stb_gen_run = 0;
 		end else begin
-			wb_ack_o <= 0;
-			stb_gen_run <= 0;
-			wb_dac_wre <= 0;
-			if (wb_cyc_i && wb_stb_i) begin
-				wb_ack_o <= 1;
-				case (addr)
-					CH_CTL_DELTA_REG: begin
-						if (wb_we_i) begin
-							ch_ctl_delta_reg <= w_data; //TODO check for 0 in each delta
-						end else begin
-							wb_dat_o <= ch_ctl_delta_reg;
-						end
-					end
-					STB_GEN_CTL: begin
-						if (wb_we_i) begin
-							stb_gen_run <= w_data[0];
-							stb_gen_cmp_sel <= w_data[1];
-						end else begin
-							wb_dat_o <= {stb_gen_err, stb_gen_cmp_sel, stb_gen_rdy};
-						end
-					end
-					W_THRESHOLD_REG: begin
-						if (wb_we_i) begin
-							wb_dac_code <= w_data;
-							wb_dac_wre <= 1;
-						end else begin
-							wb_dat_o <= {dac2_rdy, dac1_rdy};
-						end
-					end
-					STB_GEN_PERIOD: begin
-						if (wb_we_i) begin
-							wb_dat_o <= 0;
-						end else begin
-							wb_dat_o <= stb_period;
-						end
-					end
-				endcase
+			if (wb_we_i & wb_req & (addr == CH_CTL_DELTA_REG)) begin
+				ch_ctl_delta_reg <= wb_dat_i;
+			end else begin
+				ch_ctl_delta_reg <= ch_ctl_delta_reg;
 			end
 		end
 	end
+
+	always_ff @(posedge wb_clk_i, posedge wb_rst_i) begin
+		if (wb_rst_i) begin
+			stb_gen_run = 0;
+			stb_gen_cmp_sel = 0;
+		end else begin
+			if (wb_we_i & wb_req & (addr == STB_GEN_CTL)) begin
+				stb_gen_run <= w_data[0];
+				stb_gen_cmp_sel <= w_data[1];
+			end else begin
+				stb_gen_run <= 0;
+				stb_gen_cmp_sel <= stb_gen_cmp_sel;
+			end
+		end
+	end
+
+	always_ff @(posedge wb_clk_i, posedge wb_rst_i) begin
+		if (wb_rst_i) begin
+			wb_dac_code = 0;
+			wb_dac_wre = 0;
+		end else begin
+			if (wb_we_i & wb_req & (addr == W_THRESHOLD_REG)) begin
+				wb_dac_code <= w_data;
+				wb_dac_wre <= 1;
+			end else begin
+				wb_dac_code <= 0;
+				wb_dac_wre <= 0;
+			end
+		end
+	end
+
+	always_ff @(posedge wb_clk_i) begin : wb_dat_o_comb
+		case (addr)
+			CH_CTL_DELTA_REG:	wb_dat_o <= ch_ctl_delta_reg;
+			STB_GEN_CTL:		wb_dat_o <= {stb_gen_err, stb_gen_cmp_sel, stb_gen_rdy};
+			W_THRESHOLD_REG:	wb_dat_o <= {dac2_rdy, dac1_rdy};
+			STB_GEN_PERIOD:		wb_dat_o <= stb_period;
+			default: 			wb_dat_o <= 0;
+		endcase
+	end
+
+	always_ff @(posedge wb_clk_i, posedge wb_rst_i)
+		if (wb_rst_i) wb_ack_o = 0;
+		else wb_ack_o <= (wb_cyc_i & wb_stb_i ? 1 : 0);
 
 endmodule

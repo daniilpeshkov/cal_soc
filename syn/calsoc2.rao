@@ -4,117 +4,124 @@
     <Mode>Standard</Mode>
     <AoCore index="0" sample_clock="wb_clk_i" trig_type="0" storage_depth="512" window_num="1" capture_amount="512" trigger_pos="10">
         <SignalList>
-            <Bus name="wbm_adr_o[31:0]">
-                <Signal>wbm_adr_o[31]</Signal>
-                <Signal>wbm_adr_o[30]</Signal>
-                <Signal>wbm_adr_o[29]</Signal>
-                <Signal>wbm_adr_o[28]</Signal>
-                <Signal>wbm_adr_o[27]</Signal>
-                <Signal>wbm_adr_o[26]</Signal>
-                <Signal>wbm_adr_o[25]</Signal>
-                <Signal>wbm_adr_o[24]</Signal>
-                <Signal>wbm_adr_o[23]</Signal>
-                <Signal>wbm_adr_o[22]</Signal>
-                <Signal>wbm_adr_o[21]</Signal>
-                <Signal>wbm_adr_o[20]</Signal>
-                <Signal>wbm_adr_o[19]</Signal>
-                <Signal>wbm_adr_o[18]</Signal>
-                <Signal>wbm_adr_o[17]</Signal>
-                <Signal>wbm_adr_o[16]</Signal>
-                <Signal>wbm_adr_o[15]</Signal>
-                <Signal>wbm_adr_o[14]</Signal>
-                <Signal>wbm_adr_o[13]</Signal>
-                <Signal>wbm_adr_o[12]</Signal>
-                <Signal>wbm_adr_o[11]</Signal>
-                <Signal>wbm_adr_o[10]</Signal>
-                <Signal>wbm_adr_o[9]</Signal>
-                <Signal>wbm_adr_o[8]</Signal>
-                <Signal>wbm_adr_o[7]</Signal>
-                <Signal>wbm_adr_o[6]</Signal>
-                <Signal>wbm_adr_o[5]</Signal>
-                <Signal>wbm_adr_o[4]</Signal>
-                <Signal>wbm_adr_o[3]</Signal>
-                <Signal>wbm_adr_o[2]</Signal>
-                <Signal>wbm_adr_o[1]</Signal>
-                <Signal>wbm_adr_o[0]</Signal>
+            <Bus name="measure_unit_inst/wb_dat_i[31:0]">
+                <Signal>measure_unit_inst/wb_dat_i[31]</Signal>
+                <Signal>measure_unit_inst/wb_dat_i[30]</Signal>
+                <Signal>measure_unit_inst/wb_dat_i[29]</Signal>
+                <Signal>measure_unit_inst/wb_dat_i[28]</Signal>
+                <Signal>measure_unit_inst/wb_dat_i[27]</Signal>
+                <Signal>measure_unit_inst/wb_dat_i[26]</Signal>
+                <Signal>measure_unit_inst/wb_dat_i[25]</Signal>
+                <Signal>measure_unit_inst/wb_dat_i[24]</Signal>
+                <Signal>measure_unit_inst/wb_dat_i[23]</Signal>
+                <Signal>measure_unit_inst/wb_dat_i[22]</Signal>
+                <Signal>measure_unit_inst/wb_dat_i[21]</Signal>
+                <Signal>measure_unit_inst/wb_dat_i[20]</Signal>
+                <Signal>measure_unit_inst/wb_dat_i[19]</Signal>
+                <Signal>measure_unit_inst/wb_dat_i[18]</Signal>
+                <Signal>measure_unit_inst/wb_dat_i[17]</Signal>
+                <Signal>measure_unit_inst/wb_dat_i[16]</Signal>
+                <Signal>measure_unit_inst/wb_dat_i[15]</Signal>
+                <Signal>measure_unit_inst/wb_dat_i[14]</Signal>
+                <Signal>measure_unit_inst/wb_dat_i[13]</Signal>
+                <Signal>measure_unit_inst/wb_dat_i[12]</Signal>
+                <Signal>measure_unit_inst/wb_dat_i[11]</Signal>
+                <Signal>measure_unit_inst/wb_dat_i[10]</Signal>
+                <Signal>measure_unit_inst/wb_dat_i[9]</Signal>
+                <Signal>measure_unit_inst/wb_dat_i[8]</Signal>
+                <Signal>measure_unit_inst/wb_dat_i[7]</Signal>
+                <Signal>measure_unit_inst/wb_dat_i[6]</Signal>
+                <Signal>measure_unit_inst/wb_dat_i[5]</Signal>
+                <Signal>measure_unit_inst/wb_dat_i[4]</Signal>
+                <Signal>measure_unit_inst/wb_dat_i[3]</Signal>
+                <Signal>measure_unit_inst/wb_dat_i[2]</Signal>
+                <Signal>measure_unit_inst/wb_dat_i[1]</Signal>
+                <Signal>measure_unit_inst/wb_dat_i[0]</Signal>
             </Bus>
-            <Bus name="wbm_dat_o[31:0]">
-                <Signal>wbm_dat_o[31]</Signal>
-                <Signal>wbm_dat_o[30]</Signal>
-                <Signal>wbm_dat_o[29]</Signal>
-                <Signal>wbm_dat_o[28]</Signal>
-                <Signal>wbm_dat_o[27]</Signal>
-                <Signal>wbm_dat_o[26]</Signal>
-                <Signal>wbm_dat_o[25]</Signal>
-                <Signal>wbm_dat_o[24]</Signal>
-                <Signal>wbm_dat_o[23]</Signal>
-                <Signal>wbm_dat_o[22]</Signal>
-                <Signal>wbm_dat_o[21]</Signal>
-                <Signal>wbm_dat_o[20]</Signal>
-                <Signal>wbm_dat_o[19]</Signal>
-                <Signal>wbm_dat_o[18]</Signal>
-                <Signal>wbm_dat_o[17]</Signal>
-                <Signal>wbm_dat_o[16]</Signal>
-                <Signal>wbm_dat_o[15]</Signal>
-                <Signal>wbm_dat_o[14]</Signal>
-                <Signal>wbm_dat_o[13]</Signal>
-                <Signal>wbm_dat_o[12]</Signal>
-                <Signal>wbm_dat_o[11]</Signal>
-                <Signal>wbm_dat_o[10]</Signal>
-                <Signal>wbm_dat_o[9]</Signal>
-                <Signal>wbm_dat_o[8]</Signal>
-                <Signal>wbm_dat_o[7]</Signal>
-                <Signal>wbm_dat_o[6]</Signal>
-                <Signal>wbm_dat_o[5]</Signal>
-                <Signal>wbm_dat_o[4]</Signal>
-                <Signal>wbm_dat_o[3]</Signal>
-                <Signal>wbm_dat_o[2]</Signal>
-                <Signal>wbm_dat_o[1]</Signal>
-                <Signal>wbm_dat_o[0]</Signal>
+            <Bus name="measure_unit_inst/wb_dat_o[31:0]">
+                <Signal>measure_unit_inst/wb_dat_o[31]</Signal>
+                <Signal>measure_unit_inst/wb_dat_o[30]</Signal>
+                <Signal>measure_unit_inst/wb_dat_o[29]</Signal>
+                <Signal>measure_unit_inst/wb_dat_o[28]</Signal>
+                <Signal>measure_unit_inst/wb_dat_o[27]</Signal>
+                <Signal>measure_unit_inst/wb_dat_o[26]</Signal>
+                <Signal>measure_unit_inst/wb_dat_o[25]</Signal>
+                <Signal>measure_unit_inst/wb_dat_o[24]</Signal>
+                <Signal>measure_unit_inst/wb_dat_o[23]</Signal>
+                <Signal>measure_unit_inst/wb_dat_o[22]</Signal>
+                <Signal>measure_unit_inst/wb_dat_o[21]</Signal>
+                <Signal>measure_unit_inst/wb_dat_o[20]</Signal>
+                <Signal>measure_unit_inst/wb_dat_o[19]</Signal>
+                <Signal>measure_unit_inst/wb_dat_o[18]</Signal>
+                <Signal>measure_unit_inst/wb_dat_o[17]</Signal>
+                <Signal>measure_unit_inst/wb_dat_o[16]</Signal>
+                <Signal>measure_unit_inst/wb_dat_o[15]</Signal>
+                <Signal>measure_unit_inst/wb_dat_o[14]</Signal>
+                <Signal>measure_unit_inst/wb_dat_o[13]</Signal>
+                <Signal>measure_unit_inst/wb_dat_o[12]</Signal>
+                <Signal>measure_unit_inst/wb_dat_o[11]</Signal>
+                <Signal>measure_unit_inst/wb_dat_o[10]</Signal>
+                <Signal>measure_unit_inst/wb_dat_o[9]</Signal>
+                <Signal>measure_unit_inst/wb_dat_o[8]</Signal>
+                <Signal>measure_unit_inst/wb_dat_o[7]</Signal>
+                <Signal>measure_unit_inst/wb_dat_o[6]</Signal>
+                <Signal>measure_unit_inst/wb_dat_o[5]</Signal>
+                <Signal>measure_unit_inst/wb_dat_o[4]</Signal>
+                <Signal>measure_unit_inst/wb_dat_o[3]</Signal>
+                <Signal>measure_unit_inst/wb_dat_o[2]</Signal>
+                <Signal>measure_unit_inst/wb_dat_o[1]</Signal>
+                <Signal>measure_unit_inst/wb_dat_o[0]</Signal>
             </Bus>
-            <Bus name="wbm_dat_i[31:0]">
-                <Signal>wbm_dat_i[31]</Signal>
-                <Signal>wbm_dat_i[30]</Signal>
-                <Signal>wbm_dat_i[29]</Signal>
-                <Signal>wbm_dat_i[28]</Signal>
-                <Signal>wbm_dat_i[27]</Signal>
-                <Signal>wbm_dat_i[26]</Signal>
-                <Signal>wbm_dat_i[25]</Signal>
-                <Signal>wbm_dat_i[24]</Signal>
-                <Signal>wbm_dat_i[23]</Signal>
-                <Signal>wbm_dat_i[22]</Signal>
-                <Signal>wbm_dat_i[21]</Signal>
-                <Signal>wbm_dat_i[20]</Signal>
-                <Signal>wbm_dat_i[19]</Signal>
-                <Signal>wbm_dat_i[18]</Signal>
-                <Signal>wbm_dat_i[17]</Signal>
-                <Signal>wbm_dat_i[16]</Signal>
-                <Signal>wbm_dat_i[15]</Signal>
-                <Signal>wbm_dat_i[14]</Signal>
-                <Signal>wbm_dat_i[13]</Signal>
-                <Signal>wbm_dat_i[12]</Signal>
-                <Signal>wbm_dat_i[11]</Signal>
-                <Signal>wbm_dat_i[10]</Signal>
-                <Signal>wbm_dat_i[9]</Signal>
-                <Signal>wbm_dat_i[8]</Signal>
-                <Signal>wbm_dat_i[7]</Signal>
-                <Signal>wbm_dat_i[6]</Signal>
-                <Signal>wbm_dat_i[5]</Signal>
-                <Signal>wbm_dat_i[4]</Signal>
-                <Signal>wbm_dat_i[3]</Signal>
-                <Signal>wbm_dat_i[2]</Signal>
-                <Signal>wbm_dat_i[1]</Signal>
-                <Signal>wbm_dat_i[0]</Signal>
+            <Bus name="measure_unit_inst/addr[2:0]">
+                <Signal>measure_unit_inst/addr[2]</Signal>
+                <Signal>measure_unit_inst/addr[1]</Signal>
+                <Signal>measure_unit_inst/addr[0]</Signal>
             </Bus>
-            <Signal>wbm_we_o</Signal>
-            <Signal>wbm_stb_o</Signal>
-            <Signal>wbm_ack_i</Signal>
-            <Signal>wbm_cyc_o</Signal>
+            <Bus name="measure_unit_inst/w_reg[31:0]">
+                <Signal>measure_unit_inst/w_reg[31]</Signal>
+                <Signal>measure_unit_inst/w_reg[30]</Signal>
+                <Signal>measure_unit_inst/w_reg[29]</Signal>
+                <Signal>measure_unit_inst/w_reg[28]</Signal>
+                <Signal>measure_unit_inst/w_reg[27]</Signal>
+                <Signal>measure_unit_inst/w_reg[26]</Signal>
+                <Signal>measure_unit_inst/w_reg[25]</Signal>
+                <Signal>measure_unit_inst/w_reg[24]</Signal>
+                <Signal>measure_unit_inst/w_reg[23]</Signal>
+                <Signal>measure_unit_inst/w_reg[22]</Signal>
+                <Signal>measure_unit_inst/w_reg[21]</Signal>
+                <Signal>measure_unit_inst/w_reg[20]</Signal>
+                <Signal>measure_unit_inst/w_reg[19]</Signal>
+                <Signal>measure_unit_inst/w_reg[18]</Signal>
+                <Signal>measure_unit_inst/w_reg[17]</Signal>
+                <Signal>measure_unit_inst/w_reg[16]</Signal>
+                <Signal>measure_unit_inst/w_reg[15]</Signal>
+                <Signal>measure_unit_inst/w_reg[14]</Signal>
+                <Signal>measure_unit_inst/w_reg[13]</Signal>
+                <Signal>measure_unit_inst/w_reg[12]</Signal>
+                <Signal>measure_unit_inst/w_reg[11]</Signal>
+                <Signal>measure_unit_inst/w_reg[10]</Signal>
+                <Signal>measure_unit_inst/w_reg[9]</Signal>
+                <Signal>measure_unit_inst/w_reg[8]</Signal>
+                <Signal>measure_unit_inst/w_reg[7]</Signal>
+                <Signal>measure_unit_inst/w_reg[6]</Signal>
+                <Signal>measure_unit_inst/w_reg[5]</Signal>
+                <Signal>measure_unit_inst/w_reg[4]</Signal>
+                <Signal>measure_unit_inst/w_reg[3]</Signal>
+                <Signal>measure_unit_inst/w_reg[2]</Signal>
+                <Signal>measure_unit_inst/w_reg[1]</Signal>
+                <Signal>measure_unit_inst/w_reg[0]</Signal>
+            </Bus>
+            <Signal>measure_unit_inst/wb_dac_wre</Signal>
+            <Signal>measure_unit_inst/dac1_rdy</Signal>
+            <Signal>measure_unit_inst/stb_gen_run</Signal>
+            <Signal>measure_unit_inst/stb_gen_rdy</Signal>
+            <Signal>measure_unit_inst/wb_ack_o</Signal>
+            <Signal>measure_unit_inst/wb_req</Signal>
         </SignalList>
         <Triggers>
             <Trigger index="0">
                 <SignalList>
-                    <Signal>wbm_ack_i</Signal>
+                    <Signal>measure_unit_inst/wb_stb_i</Signal>
                 </SignalList>
             </Trigger>
             <Trigger index="1"/>
@@ -155,5 +162,5 @@
             <Expression>M0</Expression>
         </Expressions>
     </AoCore>
-    <GAO_ID>0111100001101100</GAO_ID>
+    <GAO_ID>0010010111011001</GAO_ID>
 </GAO_CONFIG>

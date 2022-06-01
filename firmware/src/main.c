@@ -13,15 +13,10 @@ int main(void) {
 
 	pp_printf("WR Calibrator \r\n");
 
-	// int dac = 0x4d93; 
-	int dac = 0;
+	int dac = 0x4d93; 
+	// int dac = 0;
 
-	pp_printf("Writing to dac %x \r\n", dac);
-	while (1) {
-		MU1->threshold = dac;	
-		while( !MU1->threshold);
-		dac += 0x100;
-	}
+	MU1->threshold = dac;	
 
 	MU1->stb_gen_ctl = 1;
 	while (1) {
