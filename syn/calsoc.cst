@@ -4,24 +4,25 @@
 //GOWIN Version: 1.9.8
 //Part Number: GW1NR-UV9QN88C6/I5
 //Device: GW1NR-9
-//Created Time: Sat 05 28 12:40:41 2022
+//Created Time: Wed 06 01 17:11:57 2022
 
 IO_LOC "debug_led" 3;
 IO_PORT "debug_led" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8;
+IO_PORT "delay2_le_o" IO_TYPE=LVCMOS33;
 IO_LOC "delay1_le_o" 47;
 IO_PORT "delay1_le_o" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8;
 IO_PORT "delay2_stb_n_o" IO_TYPE=LVCMOS33;
 IO_PORT "delay2_stb_p_o" IO_TYPE=LVCMOS33;
-IO_PORT "delay2_code_p_o[9]" IO_TYPE=LVCMOS33;
-IO_PORT "delay2_code_p_o[8]" IO_TYPE=LVCMOS33;
-IO_PORT "delay2_code_p_o[7]" IO_TYPE=LVCMOS33;
-IO_PORT "delay2_code_p_o[6]" IO_TYPE=LVCMOS33;
-IO_PORT "delay2_code_p_o[5]" IO_TYPE=LVCMOS33;
-IO_PORT "delay2_code_p_o[4]" IO_TYPE=LVCMOS33;
-IO_PORT "delay2_code_p_o[3]" IO_TYPE=LVCMOS33;
-IO_PORT "delay2_code_p_o[2]" IO_TYPE=LVCMOS33;
-IO_PORT "delay2_code_p_o[1]" IO_TYPE=LVCMOS33;
-IO_PORT "delay2_code_p_o[0]" IO_TYPE=LVCMOS33;
+IO_PORT "delay2_code_o[9]" IO_TYPE=LVCMOS33;
+IO_PORT "delay2_code_o[8]" IO_TYPE=LVCMOS33;
+IO_PORT "delay2_code_o[7]" IO_TYPE=LVCMOS33;
+IO_PORT "delay2_code_o[6]" IO_TYPE=LVCMOS33;
+IO_PORT "delay2_code_o[5]" IO_TYPE=LVCMOS33;
+IO_PORT "delay2_code_o[4]" IO_TYPE=LVCMOS33;
+IO_PORT "delay2_code_o[3]" IO_TYPE=LVCMOS33;
+IO_PORT "delay2_code_o[2]" IO_TYPE=LVCMOS33;
+IO_PORT "delay2_code_o[1]" IO_TYPE=LVCMOS33;
+IO_PORT "delay2_code_o[0]" IO_TYPE=LVCMOS33;
 IO_LOC "delay1_code_o[9]" 57;
 IO_PORT "delay1_code_o[9]" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8;
 IO_LOC "delay1_code_o[8]" 56;
@@ -69,4 +70,3 @@ IO_LOC "clk_p_i" 25,26;
 IO_PORT "clk_p_i" PULL_MODE=NONE;
 IO_LOC "node_clk_i" 11;
 IO_PORT "node_clk_i" IO_TYPE=LVCMOS33 PULL_MODE=UP;
-

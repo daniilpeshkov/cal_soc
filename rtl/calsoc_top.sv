@@ -29,11 +29,12 @@ module calsoc_top (
 	output	logic			dac1_sclk_o, dac2_sclk_o,
 	output	logic			dac1_sdi_o, dac2_sdi_o,
 //Delay Line
-	output logic [9:0] delay1_code_o, delay2_code_p_o,
+	output logic [9:0] delay1_code_o, delay2_code_o,
 	output logic 	   delay1_stb_p_o, delay2_stb_p_o,
 	output logic 	   delay1_stb_n_o, delay2_stb_n_o,
 
 	output logic		delay1_le_o,
+	output logic		delay2_le_o,
 //CMP
 	input logic cmp1_out_p_i,
 	input logic cmp1_out_n_i,
@@ -45,7 +46,6 @@ module calsoc_top (
 
 	assign delay1_le_o = 0;
 	assign debug_uart_rx = 0;
-	// assign debug_uart_tx = delay1_stb;
 ////////////////////////////
 // CLOCK
 ////////////////////////////
@@ -159,15 +159,17 @@ module calsoc_top (
 		.i_serr		({bootrom_wb_err_o,   ram_wb_err_o,   gpioa_wb_err_o,   uart1_wb_err_o,   prg_ram_wb_err_o,   mu_wb_err_o}),
 		.i_sstall	({bootrom_wb_stall_o, ram_wb_stall_o, gpioa_wb_stall_o, uart1_wb_stall_o, prg_ram_wb_stall_o, mu_wb_stall_o})
 	);
-	assign delay1_code_o = {10{1'b1}};
+
+	assign delay1_stb = int_stb;
+	assign delay2_stb = int_stb;
+
 	measure_unit #(
 		.DAC_SPI_CLK_DIV(10),
 		.DAC_SPI_WAIT_CYCLES(3),
-		.STROBE_ZERO_HOLD_CYCLES(5),
 		.DEFAULT_DELAY_CODE_DELTA(10'h1),
 		.DEFAULT_THRESHOLD_DELTA(16'h1)
 	) measure_unit_inst (
-		.hclk_i			(hclk),//(hclk),
+		.hclk_i			(hclk),
 		.wb_clk_i 		(wb_clk_i),
 		.wb_rst_i		(wb_rst_i),			
 		.wb_dat_i		(mu_wb_dat_i),
@@ -184,10 +186,9 @@ module calsoc_top (
 		.dac2_sclk_o	(dac2_sclk_o),
 		.dac1_sdi_o		(dac1_sdi_o),
 		.dac2_sdi_o		(dac2_sdi_o),
-		.delay1_code_o	(/*delay1_code_o*/),
+		.delay1_code_o	(delay1_code_o),
 		.delay2_code_o	(delay2_code_o),
-		.delay1_stb_o	(delay1_stb),
-		.delay2_stb_o	(delay2_stb),
+		.stb_o			(int_stb),
 		.cmp1_out_i		(cmp1_out),
 		.cmp2_out_i		(cmp2_out_i),
 

@@ -12,8 +12,6 @@ module stb_gen #(
 	input wire arst_i,
 
 	input wire sig_i,
-	input wire run_det_i,
-	input wire oe_i,
 
 	output logic err_o,
 	output logic rdy_o,
@@ -37,7 +35,6 @@ module stb_gen #(
 	logic stb_oe; // stb_oe == 1 blocks strobe generation
 
 	assign stb_o = (rdy_o ? int_stb | stb_oe : int_stb);	
-	// assign stb_o = 0;
 
 	assign stb_valid_o = stb_oe;
 

@@ -2,7 +2,6 @@
 module measure_unit #(
 	parameter DAC_SPI_CLK_DIV = 3,
 	parameter DAC_SPI_WAIT_CYCLES = 3,
-	parameter STROBE_ZERO_HOLD_CYCLES = 3,
 	parameter DEFAULT_DELAY_CODE_DELTA = 10'h1,
 	parameter DEFAULT_THRESHOLD_DELTA = 16'h1
 ) (
@@ -25,7 +24,7 @@ module measure_unit #(
 	output dac1_sdi_o, 	dac2_sdi_o,
 //Delay Line
 	output logic [9:0] delay1_code_o, delay2_code_o,
-	output logic 	   delay1_stb_o, delay2_stb_o,
+	output logic 	   stb_o,
 
 	output logic 	   debug_stb_o,
 //CMP
@@ -58,7 +57,7 @@ module measure_unit #(
 //	 w	|        x        |  x  | mux | run |
 //	    +-----------------+-----+-----+-----+
 //
-//		err		- strobe generator overflow (input signal has frequency < 1 PPS)
+//		err		- (DEPRECATED) strobe generator overflow (input signal has frequency < 1 PPS)
 //		mux		- changes the sync channel (0 - ch 1, 1 - ch 2)
 //		rdy		- indicates that strobes are generating with ``period`` (if not 0)
 //		run		- writing 1 starts input frequency measurement
@@ -67,7 +66,7 @@ module measure_unit #(
 	
 //		     1           0 
 //		+----------+----------+
-//	 r	| dac2 rdy | dac2 rdy |
+//	 r	| dac2 rdy | dac1 rdy |
 //		+----------+----------+
 //       15                              0
 //		+-----------------------------------+
@@ -88,22 +87,22 @@ module measure_unit #(
 //
 //		period 	- count of 125 Mhz cycles per input signal period	
 ///////////////////////////////////////////////////////////////////////////////////////
-// CH_CTL_DELTA_REG
-///////////////////////////////////////////////////////////////////////////////////////
 
 	logic [25:0] ch_ctl_delta_reg;
-
 	logic [15:0] ctl_threshold_delta, default_ctl_threshold_delta;
-
 	logic [9:0] ctl_d_code_delta, default_ctl_d_code_delta;
-
 	assign default_ctl_d_code_delta = DEFAULT_DELAY_CODE_DELTA;
 	assign default_ctl_threshold_delta = DEFAULT_THRESHOLD_DELTA;
-
 	assign ctl_threshold_delta = ch_ctl_delta_reg[15:0];
 	assign ctl_d_code_delta = ch_ctl_delta_reg[25:16];
 
-///////////////////////////////////////////////////////////////////////////////////////
+	logic [STB_GEN_CNT_WIDTH-1:0] stb_period; 	// measured period of signal
+	logic stb_gen_cmp_sel = 0;					// selects channel to sync strobes
+	logic stb_gen_run = 0;					
+	logic stb_gen_oe;							// not used for now
+	assign stb_gen_oe = 1;
+	logic stb_gen_err;							// not used for now
+	logic stb_gen_rdy;							// indicates that stb_gen is ready to generate strobes
 
 	logic [DAC_CODE_WIDTH-1 : 0] ctl1_dac_code, ctl2_dac_code;
 	logic [DAC_CODE_WIDTH-1 : 0] wb_dac_code; // write from wb bus
@@ -111,18 +110,7 @@ module measure_unit #(
 	logic dac_src_sel;
 	logic ctl1_dac_wre, ctl2_dac_wre;
 	logic dac1_rdy, dac2_rdy;
-	logic internal_stb;
 	logic ctl_run;
-	logic [STB_GEN_CNT_WIDTH-1:0] stb_period;
-	logic stb_gen_cmp_sel = 0;
-	logic stb_gen_run = 0;
-	logic stb_gen_oe;
-	assign stb_gen_oe = 1;
-	logic stb_gen_err;
-	logic stb_gen_rdy;
-
-	assign delay1_stb_o = internal_stb;
-	assign delay2_stb_o = internal_stb;
 
 	spi_master_o #(
 		.DATA_WIDTH	(DAC_DATA_WIDTH),
@@ -192,11 +180,9 @@ module measure_unit #(
 		.clk_i 			(hclk_i),
 		.arst_i			(~stb_gen_run),//(wb_rst_i),
 		.sig_i			(stb_gen_cmp_sel ? cmp2_out_i : cmp1_out_i),
-   		.run_det_i		(/*stb_gen_run*/),
-   		.oe_i			(stb_gen_oe),
    		.err_o			(stb_gen_err),
    		.rdy_o			(stb_gen_rdy),
-		.stb_o			(internal_stb),
+		.stb_o			(stb_o),
 		.stb_period_o	(stb_period),
 		.debug_stb_o	(debug_stb_o)
 	);
