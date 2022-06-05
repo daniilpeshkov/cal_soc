@@ -1,15 +1,18 @@
 `timescale 1ns/1ns
 
 
+`include "stb_gen.sv"
+`include "sync_ff.sv"
+`include "two_cycle_32_adder.sv"
+
+`define DUMPVARS
+`undef DUMPVARS    
+
 module tb_stb_gen();
 
     localparam CLK_T = 8; // clk period
     localparam SIG_WIDTH = 20;
-
     localparam T_CNT_WIDTH = 32;
-
-`define DUMPVARS
-// `undef DUMPVARS    
 
     int freqs[] = { 100, 20000,200000, 1333333};
 
@@ -31,7 +34,7 @@ module tb_stb_gen();
         .arst_i(~arst_i),
         .*
     );
-    // initial #524400 $finish;
+
     initial begin 
         int t;
 

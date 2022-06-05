@@ -36,7 +36,7 @@ module stb_gen #(
 
 	assign stb_o = (rdy_o ? int_stb | stb_oe : int_stb);	
 
-	assign stb_valid_o = stb_oe;
+	assign stb_valid_o = stb_oe & rdy_o;
 
 	logic prev_stb_req;
 

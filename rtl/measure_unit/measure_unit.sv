@@ -7,6 +7,7 @@ module measure_unit #(
 ) (
 //Clock for measure part
 	input	logic		hclk_i,
+	input 	logic		ext_hclk_i,
 //Wihbone
 	input   logic        wb_clk_i,
 	input   logic        wb_rst_i,			
@@ -48,19 +49,20 @@ module measure_unit #(
 ///////////////////////////////////////////////////////////////////////////////////////
 	localparam STB_GEN_CTL 			= 1;
 //
-//      30             3    2     1     0
-//	    +-----------------+-----+-----+-----+
-//	 r	|        x        | err | mux | rdy |
-//	    +-----------------+-----+-----+-----+
-//       30             3    2     1     0
-//	    +-----------------+-----+-----+-----+
-//	 w	|        x        |  x  | mux | run |
-//	    +-----------------+-----+-----+-----+
+//	    +-----------------+---------+-----+-----+
+//	 r	|        x        | clk_sel | mux | rdy |
+//	    +-----------------+---------+-----+-----+
+
+//      30             3       2       1     0
+//	    +-----------------+---------+-----+-----+
+//	 w	|        x        | clk_sel | mux | rdy |
+//	    +-----------------+---------+-----+-----+
 //
 //		err		- (DEPRECATED) strobe generator overflow (input signal has frequency < 1 PPS)
 //		mux		- changes the sync channel (0 - ch 1, 1 - ch 2)
 //		rdy		- indicates that strobes are generating with ``period`` (if not 0)
 //		run		- writing 1 starts input frequency measurement
+//		clk_sel - selects source of clk signal
 ///////////////////////////////////////////////////////////////////////////////////////
 	localparam W_THRESHOLD_REG		= 2;
 	
@@ -104,6 +106,7 @@ module measure_unit #(
 	logic stb_gen_err;							// not used for now
 	logic stb_gen_rdy;							// indicates that stb_gen is ready to generate strobes
 
+
 	logic [DAC_CODE_WIDTH-1 : 0] ctl1_dac_code, ctl2_dac_code;
 	logic [DAC_CODE_WIDTH-1 : 0] wb_dac_code; // write from wb bus
 	logic wb_dac_wre;
@@ -142,22 +145,21 @@ module measure_unit #(
 	// 	.sync_o	(dac2_sync_o)
 	// );
 
-	// ch_measure_ctl ch_ctl1_inst(
-	// 	.clk_i 					(),//(hclk_i),
-	// 	.arst_i					(wb_rst_i),
-	// 	.stb_i					(internal_stb),
-	// 	.cmp_out_i				(cmp1_out_i),
-	// 	.threshold_delta_i 		(ctl_threshold_delta),
-	// 	.d_code_delta_i			(ctl_d_code_delta),
-	// 	.threshold_o			(ctl1_dac_code),
-	// 	.threshold_wre_o		(ctl1_dac_wre),
-	// 	.threshold_rdy_i		(dac1_rdy),
-	// 	.d_code_o				(delay1_code_o),
-	// 	.run_i					(ctl_run),
-	// 	.point_rdy_o			(),
-	// 	.point_v_o				(),
-	// 	.point_t_o				()
-	// );
+	ch_measure_ctl ch_ctl1_inst(
+		.clk_i 					(wb_clk_i),
+		.arst_i					(wb_rst_i),
+		.cmp_out_i				(cmp1_out_i),
+		.threshold_delta_i 		(ctl_threshold_delta),
+		.d_code_delta_i			(ctl_d_code_delta),
+		.threshold_o			(ctl1_dac_code),
+		.threshold_wre_o		(ctl1_dac_wre),
+		.threshold_rdy_i		(dac1_rdy),
+		.d_code_o				(delay1_code_o),
+		.run_i					(ctl_run),
+		.point_rdy_o			(),
+		.point_v_o				(),
+		.point_t_o				()
+	);
 
 	// ch_measure_ctl ch_ctl2_inst(
 	// 	.clk_i 					(),//(hclk_i),
@@ -176,9 +178,22 @@ module measure_unit #(
 	// 	.point_t_o				()
 	// );
 
+	logic stb_gen_hclk;
+	logic stb_gen_hclk_sel;
+
+// PLATFORM DEPENDENT
+	DCS stb_gen_dcs_inst (
+		.CLKSEL		({3'b000, stb_gen_hclk_sel}),
+		.CLK0		(hclk_i),
+		.CLK1		(ext_hclk_i),
+		.CLKOUT		(stb_gen_hclk)
+	);
+//////////////////
+
+
 	stb_gen stb_gen_inst (
-		.clk_i 			(hclk_i),
-		.arst_i			(~stb_gen_run),//(wb_rst_i),
+		.clk_i 			(stb_gen_hclk),
+		.arst_i			(~stb_gen_run),
 		.sig_i			(stb_gen_cmp_sel ? cmp2_out_i : cmp1_out_i),
    		.err_o			(stb_gen_err),
    		.rdy_o			(stb_gen_rdy),
@@ -230,10 +245,12 @@ module measure_unit #(
 		if (wb_rst_i) begin
 			stb_gen_run = 0;
 			stb_gen_cmp_sel = 0;
+			stb_gen_hclk_sel = 0;
 		end else begin
 			if (wb_we_i & wb_req & (addr == STB_GEN_CTL)) begin
 				stb_gen_run <= w_data[0];
 				stb_gen_cmp_sel <= w_data[1];
+				stb_gen_hclk_sel <= w_data[2];
 			end else begin
 				stb_gen_run <= 0;
 				stb_gen_cmp_sel <= stb_gen_cmp_sel;
@@ -259,7 +276,7 @@ module measure_unit #(
 	always_ff @(posedge wb_clk_i) begin : wb_dat_o_comb
 		case (addr)
 			CH_CTL_DELTA_REG:	wb_dat_o <= ch_ctl_delta_reg;
-			STB_GEN_CTL:		wb_dat_o <= {stb_gen_err, stb_gen_cmp_sel, stb_gen_rdy};
+			STB_GEN_CTL:		wb_dat_o <= {stb_gen_hclk_sel, stb_gen_cmp_sel, stb_gen_rdy};
 			W_THRESHOLD_REG:	wb_dat_o <= {dac2_rdy, dac1_rdy};
 			STB_GEN_PERIOD:		wb_dat_o <= stb_period;
 			default: 			wb_dat_o <= 0;

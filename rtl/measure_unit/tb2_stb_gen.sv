@@ -1,14 +1,17 @@
 `timescale 1ns/1ns
 
+`include "stb_gen.sv"
+`include "sync_ff.sv"
+`include "two_cycle_32_adder.sv"
+
+`define DUMPVARS
+// `undef DUMPVARS    
+
 module tb_stb_gen();
 
     localparam CLK_T = 8; // clk period
     localparam SIG_WIDTH = 20;
-
     localparam T_CNT_WIDTH = 32;
-
-`define DUMPVARS
-// `undef DUMPVARS    
 
     int sig_T = 20000;
 
@@ -37,6 +40,13 @@ module tb_stb_gen();
         #(sig_T - SIG_WIDTH);
     end
 
+    initial begin
+        stb_req_i = 1;
+        @(posedge stb_valid_o);
+        stb_req_i = 0;
+        #50000
+        stb_req_i = 1;
+    end
 
     initial begin 
 
@@ -44,11 +54,6 @@ module tb_stb_gen();
         #1 arst_i = 0;
 
         repeat (5)@(posedge debug_stb_o);
-        stb_req_i = 1;
-        @(posedge stb_valid_o);
-        stb_req_i = 0;
-        #50000
-        stb_req_i = 1;
 
         repeat (5)@(posedge debug_stb_o);
         $finish;
