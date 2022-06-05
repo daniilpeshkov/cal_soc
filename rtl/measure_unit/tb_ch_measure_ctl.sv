@@ -1,4 +1,4 @@
-`timescale 1ns/1ns
+`timescale 1ns/1ps
 
 `include "ch_measure_ctl.sv"
 `include "stb_gen.sv"
@@ -7,13 +7,13 @@
 
 module tb_ch_measure_ctl();
 
-initial #50000 $finish;
+initial #900000 $finish;
 
 `define DUMPVARS
 // `undef DUMPVARS    
 
 	parameter int SIG_MAX = 'hFF;
-	parameter int SIG_FREQ = 5000000; //Hz
+	parameter int SIG_FREQ = 1000000; //Hz
 	parameter real PI_2 = 3.14159265359 * 2;
 	parameter  CLK_T =  40; // clk period
 	parameter HCLK_T = 8;
@@ -26,7 +26,7 @@ initial #50000 $finish;
 	logic arst_i = 0;
 
 	always begin
-		#1 sig = (SIG_MAX * $sin($time / 1000000000.0 * PI_2 * SIG_FREQ) + SIG_MAX) / 2 + 10;
+		#0.01 sig = (SIG_MAX * $sin($realtime / 1000000000.0 * PI_2 * SIG_FREQ) + SIG_MAX) / 2 + 10;
 	end
 
 	logic stb_gen_sig_i;
@@ -83,7 +83,7 @@ initial #50000 $finish;
 	logic stb_delayed = 0;
 
 	always @(stb_gen_stb_o) begin
-		stb_delayed <= #(d_code_o) stb_gen_stb_o;
+		stb_delayed <= #(d_code_o * 0.1) stb_gen_stb_o;
 	end
 	
 	always @(threshold, sig) begin
@@ -112,8 +112,8 @@ initial #50000 $finish;
 	initial f = $fopen("points.csv", "w");
 
 	always @(posedge point_rdy_o) begin
-		$display( "%d", point_v_o);
-		$fwrite(f, "%d,%d\n",point_t_o, point_v_o);
+		$display( "%d", dut_threshold_o);
+		$fwrite(f, "%d,%d\n",d_code_o, dut_threshold_o);
 		if (point_t_o == 1023) $finish;
 	end
 

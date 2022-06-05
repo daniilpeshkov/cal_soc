@@ -170,6 +170,7 @@ module calsoc_top (
 		.DEFAULT_THRESHOLD_DELTA(16'h1)
 	) measure_unit_inst (
 		.hclk_i			(hclk),
+		.ext_hclk_i		(node_clk_i),
 		.wb_clk_i 		(wb_clk_i),
 		.wb_rst_i		(wb_rst_i),			
 		.wb_dat_i		(mu_wb_dat_i),

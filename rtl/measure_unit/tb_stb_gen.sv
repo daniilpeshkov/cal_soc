@@ -25,7 +25,7 @@ module tb_stb_gen();
     logic oe_i = 1;
     logic rdy_o;
     logic [T_CNT_WIDTH-1:0] stb_period_o;
-	logic stb_req_i;
+	logic stb_req_i = 0;
 	logic stb_valid_o;
 	logic debug_stb_o;
 

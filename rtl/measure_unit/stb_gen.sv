@@ -6,7 +6,8 @@
 //------------------------------------------------------
 
 module stb_gen #(
-	parameter OFFSET = 20
+	parameter OFFSET = 20,
+	parameter T_CNT_WIDTH = 32
 ) (
 	input wire clk_i,
 	input wire arst_i,
@@ -22,7 +23,7 @@ module stb_gen #(
 	output logic stb_valid_o,
 	output logic debug_stb_o
 );
-	localparam T_CNT_WIDTH 			= 32;
+	// localparam T_CNT_WIDTH 			= 32;
 	localparam ZERO_HOLD_CYCLES 	= 1;
 
 	logic int_stb = 0;
@@ -45,6 +46,8 @@ module stb_gen #(
 	logic req_posedge;
 	assign req_posedge = ~prev_stb_req & stb_req_i;
 
+	logic is_zero_hold_start;
+	logic is_stb_end;
 
 	always_ff @(posedge clk_i, negedge arst_i) begin
 		if (~arst_i) begin
@@ -162,8 +165,6 @@ module stb_gen #(
 	always_ff @(posedge clk_i) latched_zero_hold_res <= (zero_hold_begin_valid ? adder_zero_hold_res : latched_zero_hold_res);
 	always_ff @(posedge clk_i) latched_stb_end_res <= (stb_end_valid ? adder_stb_end_res : latched_stb_end_res);
 
-	logic is_zero_hold_start;
-	logic is_stb_end;
  
 	logic is_zero_hold_start_lo;
 	logic is_zero_hold_start_hi;
