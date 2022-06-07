@@ -2,7 +2,7 @@
 <GAO_CONFIG>
     <Version>3.0</Version>
     <Mode>Standard</Mode>
-    <AoCore index="0" sample_clock="wb_clk_i" trig_type="0" storage_depth="512" window_num="1" capture_amount="512" trigger_pos="10">
+    <AoCore index="0" sample_clock="wb_clk_i" trig_type="0" storage_depth="1024" window_num="1" capture_amount="1024" trigger_pos="10">
         <SignalList>
             <Bus name="measure_unit_inst/wb_dat_i[31:0]">
                 <Signal>measure_unit_inst/wb_dat_i[31]</Signal>
@@ -162,5 +162,5 @@
             <Expression>M0</Expression>
         </Expressions>
     </AoCore>
-    <GAO_ID>0010010111011001</GAO_ID>
+    <GAO_ID>0000111101011111</GAO_ID>
 </GAO_CONFIG>

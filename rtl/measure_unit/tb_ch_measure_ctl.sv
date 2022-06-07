@@ -7,7 +7,7 @@
 
 module tb_ch_measure_ctl();
 
-initial #900000 $finish;
+// initial #900000 $finish;
 
 `define DUMPVARS
 // `undef DUMPVARS    
@@ -26,7 +26,8 @@ initial #900000 $finish;
 	logic arst_i = 0;
 
 	always begin
-		#0.01 sig = (SIG_MAX * $sin($realtime / 1000000000.0 * PI_2 * SIG_FREQ) + SIG_MAX) / 2 + 10;
+		#0.01 sig = (SIG_MAX * $sin(($realtime % 10000) / 1000000000.0 * PI_2 * SIG_FREQ) + SIG_MAX) / 2 + 10;
+		// #0.01 sig = ($realtime % 1000);
 	end
 
 	logic stb_gen_sig_i;
@@ -83,7 +84,7 @@ initial #900000 $finish;
 	logic stb_delayed = 0;
 
 	always @(stb_gen_stb_o) begin
-		stb_delayed <= #(d_code_o * 0.1) stb_gen_stb_o;
+		stb_delayed <= #(d_code_o * 0.01) stb_gen_stb_o;
 	end
 	
 	always @(threshold, sig) begin

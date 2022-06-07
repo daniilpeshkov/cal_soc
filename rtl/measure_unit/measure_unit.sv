@@ -115,6 +115,10 @@ module measure_unit #(
 	logic dac1_rdy, dac2_rdy;
 	logic ctl_run;
 
+	logic ctl1_stb_req;
+	logic ctl2_stb_req;
+	logic stb_valid;
+
 	spi_master_o #(
 		.DATA_WIDTH	(DAC_DATA_WIDTH),
 		.CLK_DIV 	(DAC_SPI_CLK_DIV),
@@ -130,20 +134,20 @@ module measure_unit #(
 		.sync_o	(dac1_sync_o)
 	);
 
-	// spi_master_o #(
-	// 	.DATA_WIDTH	(DAC_DATA_WIDTH),
-	// 	.CLK_DIV 	(DAC_SPI_CLK_DIV),
-	// 	.WAIT_CYCLES(DAC_SPI_WAIT_CYCLES)
-	// ) dac2_spi_inst (
-	// 	.clk_i 	(hclk_i),
-	// 	.arst_i	(wb_rst_i),
-	// 	.data_i	({8'h00, (wb_dac_wre ? wb_dac_code : ctl2_dac_code)}),
-	// 	.wre_i	(ctl2_dac_wre),
-	// 	.rdy_o	(dac2_rdy),
-	// 	.sdi_o	(dac2_sdi_o),
-	// 	.sclk_o	(dac2_sclk_o),
-	// 	.sync_o	(dac2_sync_o)
-	// );
+	spi_master_o #(
+		.DATA_WIDTH	(DAC_DATA_WIDTH),
+		.CLK_DIV 	(DAC_SPI_CLK_DIV),
+		.WAIT_CYCLES(DAC_SPI_WAIT_CYCLES)
+	) dac2_spi_inst (
+		.clk_i 	(wb_clk_i),
+		.arst_i	(wb_rst_i),
+		.data_i	({8'h00, (wb_dac_wre ? wb_dac_code : ctl2_dac_code)}),
+		.wre_i	(ctl2_dac_wre | wb_dac_wre),
+		.rdy_o	(dac2_rdy),
+		.sdi_o	(dac2_sdi_o),
+		.sclk_o	(dac2_sclk_o),
+		.sync_o	(dac2_sync_o)
+	);
 
 	ch_measure_ctl ch_ctl1_inst(
 		.clk_i 					(wb_clk_i),
@@ -157,36 +161,38 @@ module measure_unit #(
 		.d_code_o				(delay1_code_o),
 		.run_i					(ctl_run),
 		.point_rdy_o			(),
-		.point_v_o				(),
-		.point_t_o				()
+		.stb_req_o				(ctl1_stb_req),
+		.stb_valid_i			(stb_valid)
 	);
 
-	// ch_measure_ctl ch_ctl2_inst(
-	// 	.clk_i 					(),//(hclk_i),
-	// 	.arst_i					(wb_rst_i),
-	// 	.stb_i					(internal_stb),
-	// 	.cmp_out_i				(cmp2_out_i),
-	// 	.threshold_delta_i 		(ctl_threshold_delta),
-	// 	.d_code_delta_i			(ctl_d_code_delta),
-	// 	.threshold_o			(ctl2_dac_code),
-	// 	.threshold_wre_o		(ctl2_dac_wre),
-	// 	.threshold_rdy_i		(dac2_rdy),
-	// 	.d_code_o				(delay2_code_o),
-	// 	.run_i					(ctl_run),
-	// 	.point_rdy_o			(),
-	// 	.point_v_o				(),
-	// 	.point_t_o				()
-	// );
+	ch_measure_ctl ch_ctl2_inst(
+		.clk_i 					(wb_clk_i),
+		.arst_i					(wb_rst_i),
+		.cmp_out_i				(cmp2_out_i),
+		.threshold_delta_i 		(ctl_threshold_delta),
+		.d_code_delta_i			(ctl_d_code_delta),
+		.threshold_o			(ctl2_dac_code),
+		.threshold_wre_o		(ctl2_dac_wre),
+		.threshold_rdy_i		(dac2_rdy),
+		.d_code_o				(delay2_code_o),
+		.run_i					(ctl_run),
+		.point_rdy_o			(),
+		.stb_req_o				(ctl2_stb_req),
+		.stb_valid_i			(stb_valid)
+	);
 
 	logic stb_gen_hclk;
 	logic stb_gen_hclk_sel;
 
 // PLATFORM DEPENDENT
-	DCS stb_gen_dcs_inst (
+	DCS #(
+		.DCS_MODE("CLK0")
+	) stb_gen_dcs_inst (
 		.CLKSEL		({3'b000, stb_gen_hclk_sel}),
 		.CLK0		(hclk_i),
 		.CLK1		(ext_hclk_i),
-		.CLKOUT		(stb_gen_hclk)
+		.CLKOUT		(stb_gen_hclk),
+		.SELFORCE	(1)
 	);
 //////////////////
 
@@ -198,6 +204,8 @@ module measure_unit #(
    		.err_o			(stb_gen_err),
    		.rdy_o			(stb_gen_rdy),
 		.stb_o			(stb_o),
+		.stb_req_i		(ctl1_stb_req & ctl2_stb_req),
+		.stb_valid_o	(stb_valid),
 		.stb_period_o	(stb_period),
 		.debug_stb_o	(debug_stb_o)
 	);
@@ -254,6 +262,7 @@ module measure_unit #(
 			end else begin
 				stb_gen_run <= 0;
 				stb_gen_cmp_sel <= stb_gen_cmp_sel;
+				stb_gen_hclk_sel <= stb_gen_hclk_sel;
 			end
 		end
 	end

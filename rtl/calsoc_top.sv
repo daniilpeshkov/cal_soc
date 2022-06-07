@@ -164,7 +164,7 @@ module calsoc_top (
 	assign delay2_stb = int_stb;
 
 	measure_unit #(
-		.DAC_SPI_CLK_DIV(10),
+		.DAC_SPI_CLK_DIV(3),
 		.DAC_SPI_WAIT_CYCLES(3),
 		.DEFAULT_DELAY_CODE_DELTA(10'h1),
 		.DEFAULT_THRESHOLD_DELTA(16'h1)

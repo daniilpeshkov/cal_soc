@@ -29,20 +29,18 @@ module ch_measure_ctl #(
 	input logic run_i,
 
 	//TODO output measured value
-	output logic point_rdy_o,
-	output logic [15:0] point_v_o,
-	output logic [9:0] point_t_o
+	output logic point_rdy_o
 );
 
-	enum logic[8:0] { 
-		IDLE 		        ,//= 9'b000000001,
-		SET_THRESHOLD 		,//= 9'b000000010,
-		WAIT_THRESHOLD 		,//= 9'b000000100,
-		REQ_STROBE 			,//= 9'b000001000,
-		WAIT_STROBE			,//= 9'b000010000,
-		SAVE_CMP_RES		,//= 9'b000100000
-		PROCESS_RES			,
-		UPDATE_CONF						
+	enum logic[7:0] { 
+		IDLE 		        = 8'b00000001,
+		SET_THRESHOLD 		= 8'b00000010,
+		WAIT_THRESHOLD 		= 8'b00000100,
+		REQ_STROBE 			= 8'b00001000,
+		WAIT_STROBE			= 8'b00010000,
+		SAVE_CMP_RES		= 8'b00100000,
+		PROCESS_RES			= 8'b01000000,
+		UPDATE_CONF			= 8'b10000000
 	} ctl_state, next_ctl_state;
 
 	enum logic [1:0] {

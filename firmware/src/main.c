@@ -13,21 +13,18 @@ int main(void) {
 
 	pp_printf("WR Calibrator \r\n");
 
-	int dac = 0x4d93; 
+	int dac = 0xF84 ;
 	// int dac = 0;
 
 	MU1->threshold = dac;	
-
-	MU1->stb_gen_ctl = 1;
+	while (!MU1->threshold);
+	MU1->stb_gen_ctl = 5;
 	while (1) {
 		// pp_printf("reg %x\r\n", MU1->stb_gen);
 
 		// MU1->threshold = dac;	
 		// while (!MU1->threshold);
-		if (MU1->stb_gen_ctl & STB_GEN_ERR) {
-			pp_printf("err\r\n");
-			delay(900000);
-		} else if (MU1->stb_gen_ctl & STB_GEN_RDY) {
+		if (MU1->stb_gen_ctl & STB_GEN_RDY) {
 			pp_printf("%d\r\n", MU1->stb_gen_period);
 			break;
 		}
