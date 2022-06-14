@@ -55,7 +55,7 @@ module measure_unit #(
 
 //      30             3       2       1     0
 //	    +-----------------+---------+-----+-----+
-//	 w	|        x        | clk_sel | mux | rdy |
+//	 w	|        x        | clk_sel | mux | run |
 //	    +-----------------+---------+-----+-----+
 //
 //		err		- (DEPRECATED) strobe generator overflow (input signal has frequency < 1 PPS)
@@ -63,9 +63,9 @@ module measure_unit #(
 //		rdy		- indicates that strobes are generating with ``period`` (if not 0)
 //		run		- writing 1 starts input frequency measurement
 //		clk_sel - selects source of clk signal
+//
 ///////////////////////////////////////////////////////////////////////////////////////
 	localparam W_THRESHOLD_REG		= 2;
-	
 //		     1           0 
 //		+----------+----------+
 //	 r	| dac2 rdy | dac1 rdy |
@@ -88,8 +88,18 @@ module measure_unit #(
 //	    +-----------------------------------+
 //
 //		period 	- count of 125 Mhz cycles per input signal period	
+//
 ///////////////////////////////////////////////////////////////////////////////////////
-
+	localparam MU_CTL_REG 			= 4;
+//
+//      31                            1     0
+//	    +-----------------------------+-----+
+//	 r	|               x             | run |
+//	    +-----------------------------+-----+
+//
+//		run 	- while set to 1 runs measurement
+//
+///////////////////////////////////////////////////////////////////////////////////////
 	logic [25:0] ch_ctl_delta_reg;
 	logic [15:0] ctl_threshold_delta, default_ctl_threshold_delta;
 	logic [9:0] ctl_d_code_delta, default_ctl_d_code_delta;
@@ -151,7 +161,7 @@ module measure_unit #(
 
 	ch_measure_ctl ch_ctl1_inst(
 		.clk_i 					(wb_clk_i),
-		.arst_i					(wb_rst_i),
+		.arst_i					(~wb_rst_i),
 		.cmp_out_i				(cmp1_out_i),
 		.threshold_delta_i 		(ctl_threshold_delta),
 		.d_code_delta_i			(ctl_d_code_delta),
@@ -165,21 +175,21 @@ module measure_unit #(
 		.stb_valid_i			(stb_valid)
 	);
 
-	ch_measure_ctl ch_ctl2_inst(
-		.clk_i 					(wb_clk_i),
-		.arst_i					(wb_rst_i),
-		.cmp_out_i				(cmp2_out_i),
-		.threshold_delta_i 		(ctl_threshold_delta),
-		.d_code_delta_i			(ctl_d_code_delta),
-		.threshold_o			(ctl2_dac_code),
-		.threshold_wre_o		(ctl2_dac_wre),
-		.threshold_rdy_i		(dac2_rdy),
-		.d_code_o				(delay2_code_o),
-		.run_i					(ctl_run),
-		.point_rdy_o			(),
-		.stb_req_o				(ctl2_stb_req),
-		.stb_valid_i			(stb_valid)
-	);
+	// ch_measure_ctl ch_ctl2_inst(
+	// 	.clk_i 					(wb_clk_i),
+	// 	.arst_i					(wb_rst_i),
+	// 	.cmp_out_i				(cmp2_out_i),
+	// 	.threshold_delta_i 		(ctl_threshold_delta),
+	// 	.d_code_delta_i			(ctl_d_code_delta),
+	// 	.threshold_o			(ctl2_dac_code),
+	// 	.threshold_wre_o		(ctl2_dac_wre),
+	// 	.threshold_rdy_i		(dac2_rdy),
+	// 	.d_code_o				(delay2_code_o),
+	// 	.run_i					(ctl_run),
+	// 	.point_rdy_o			(),
+	// 	.stb_req_o				(ctl2_stb_req),
+	// 	.stb_valid_i			(stb_valid)
+	// );
 
 	logic stb_gen_hclk;
 	logic stb_gen_hclk_sel;
@@ -196,6 +206,9 @@ module measure_unit #(
 	);
 //////////////////
 
+
+	//TMP
+	assign ctl2_stb_req = 1;
 
 	stb_gen stb_gen_inst (
 		.clk_i 			(stb_gen_hclk),
@@ -282,12 +295,23 @@ module measure_unit #(
 		end
 	end
 
+	always_ff @(posedge wb_clk_i, posedge wb_rst_i) begin : mu_ctl_reg_ff
+		if (wb_rst_i) begin
+			ctl_run = 0;
+		end else begin
+			if (wb_we_i & wb_req & (addr == MU_CTL_REG)) begin
+				ctl_run <= w_data[0];
+			end
+		end
+	end
+
 	always_ff @(posedge wb_clk_i) begin : wb_dat_o_comb
 		case (addr)
 			CH_CTL_DELTA_REG:	wb_dat_o <= ch_ctl_delta_reg;
 			STB_GEN_CTL:		wb_dat_o <= {stb_gen_hclk_sel, stb_gen_cmp_sel, stb_gen_rdy};
 			W_THRESHOLD_REG:	wb_dat_o <= {dac2_rdy, dac1_rdy};
 			STB_GEN_PERIOD:		wb_dat_o <= stb_period;
+			MU_CTL_REG:			wb_dat_o <= {ctl_run};
 			default: 			wb_dat_o <= 0;
 		endcase
 	end

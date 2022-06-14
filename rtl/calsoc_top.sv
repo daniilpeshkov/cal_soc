@@ -45,6 +45,7 @@ module calsoc_top (
 );
 
 	assign delay1_le_o = 0;
+	assign delay2_le_o = 0;
 	assign debug_uart_rx = 0;
 ////////////////////////////
 // CLOCK
@@ -160,12 +161,15 @@ module calsoc_top (
 		.i_sstall	({bootrom_wb_stall_o, ram_wb_stall_o, gpioa_wb_stall_o, uart1_wb_stall_o, prg_ram_wb_stall_o, mu_wb_stall_o})
 	);
 
-	assign delay1_stb = int_stb;
+	assign delay1_stb = debug_stb;//int_stb;
 	assign delay2_stb = int_stb;
 
+	logic debug_stb;
+	assign debug_uart_tx = debug_stb;
+
 	measure_unit #(
-		.DAC_SPI_CLK_DIV(3),
-		.DAC_SPI_WAIT_CYCLES(3),
+		.DAC_SPI_CLK_DIV(4),
+		.DAC_SPI_WAIT_CYCLES(10),
 		.DEFAULT_DELAY_CODE_DELTA(10'h1),
 		.DEFAULT_THRESHOLD_DELTA(16'h1)
 	) measure_unit_inst (
@@ -193,7 +197,7 @@ module calsoc_top (
 		.cmp1_out_i		(cmp1_out),
 		.cmp2_out_i		(cmp2_out_i),
 
-		.debug_stb_o	(debug_uart_tx)
+		.debug_stb_o	(debug_stb)
 	);
 
 	wb_ram #(
