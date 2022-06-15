@@ -22,5 +22,9 @@ stb_gen2:
 	iverilog -o test_stb_gen2.vvp -g2005-sv tb2_stb_gen.sv 
 	vvp -n test_stb_gen2.vvp 
 
+sc_fifo:
+	iverilog -o test_sc_fifo.vvp -g2005-sv tb_sc_fifo.sv 
+	vvp -n test_sc_fifo.vvp 
+
 clean:
 	rm *.vvp
