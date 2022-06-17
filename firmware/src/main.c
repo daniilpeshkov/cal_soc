@@ -15,7 +15,19 @@ int main(void) {
 
 	pp_printf("WR Calibrator \r\n");
 
-	int dac = 0x100;
+
+
+
+
+	int dac = 1986;
+
+	// while (1) {
+		// MU1->threshold = dac;
+	// 	while (!MU1->threshold);
+	// }
+
+	// while(1);
+
 	while(1) {
 		pp_printf("find edge with threshold %x\r\n", dac);
 		MU1->threshold = dac;
@@ -32,9 +44,19 @@ int main(void) {
 		}
 	}
 
+	MU1->ch_ctl_delta = (0x1 << 16) | (0x10);
+	pp_printf("step %x\r\n", MU1->ch_ctl_delta);
 	MU1->mu_ctl = 1;
-	while(1);
+	int cnt = 0;
 
+	while(1) {
+		if (MU1->mu_ch1_val & 1) {
+			pp_printf("%d\r\n", MU1->mu_ch1_val >> 1);
+			if (++cnt == 1024) break;
+		}
+	}
+
+	while(1);
 	MU1->threshold = dac;	
 
 	return 0;

@@ -168,8 +168,8 @@ module calsoc_top (
 	assign debug_uart_tx = debug_stb;
 
 	measure_unit #(
-		.DAC_SPI_CLK_DIV(4),
-		.DAC_SPI_WAIT_CYCLES(10),
+		.DAC_SPI_CLK_DIV(3),
+		.DAC_SPI_WAIT_CYCLES(256),
 		.DEFAULT_DELAY_CODE_DELTA(10'h1),
 		.DEFAULT_THRESHOLD_DELTA(16'h1)
 	) measure_unit_inst (

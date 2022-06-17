@@ -94,8 +94,18 @@ module measure_unit #(
 //
 //      31                            1     0
 //	    +-----------------------------+-----+
-//	 r	|               x             | run |
+//	r/w	|               x             | run |
 //	    +-----------------------------+-----+
+//
+//		run 	- while set to 1 runs measurement
+//
+///////////////////////////////////////////////////////////////////////////////////////
+	localparam MU_CH1_VAL_REG 			= 5;
+//
+//      16                          1       0
+//	    +---------------------------+-------+
+//	 r	|       measured point      | valid |
+//	    +---------------------------+-------+
 //
 //		run 	- while set to 1 runs measurement
 //
@@ -128,6 +138,13 @@ module measure_unit #(
 	logic ctl1_stb_req;
 	logic ctl2_stb_req;
 	logic stb_valid;
+
+	logic ctl1_p_rdy;
+	logic ch1_fifo_n_empty;
+
+	logic [15:0] ch1_fifo_r_val;
+	logic ch1_fifo_re;
+
 
 	spi_master_o #(
 		.DATA_WIDTH	(DAC_DATA_WIDTH),
@@ -170,9 +187,22 @@ module measure_unit #(
 		.threshold_rdy_i		(dac1_rdy),
 		.d_code_o				(delay1_code_o),
 		.run_i					(ctl_run),
-		.point_rdy_o			(),
+		.point_rdy_o			(ctl1_p_rdy),
 		.stb_req_o				(ctl1_stb_req),
 		.stb_valid_i			(stb_valid)
+	);
+
+	sc_fifo #(
+		.WIDTH	(16),
+		.LGFLEN	(10)
+	) ch1_fifo (
+		.clk_i		(wb_clk_i),
+		.arstn_i	(ctl_run),
+		.data_i		(ctl1_dac_code),
+		.wre_i		(ctl1_p_rdy),
+		.data_o		(ch1_fifo_r_val),
+		.re_i		(ch1_fifo_re),
+		.n_empty_o	(ch1_fifo_n_empty)
 	);
 
 	// ch_measure_ctl ch_ctl2_inst(
@@ -211,7 +241,7 @@ module measure_unit #(
 	assign ctl2_stb_req = 1;
 
 	stb_gen stb_gen_inst (
-		.clk_i 			(stb_gen_hclk),
+		.clk_i 			(hclk_i),
 		.arst_i			(~stb_gen_run),
 		.sig_i			(stb_gen_cmp_sel ? cmp2_out_i : cmp1_out_i),
    		.err_o			(stb_gen_err),
@@ -305,6 +335,18 @@ module measure_unit #(
 		end
 	end
 
+	logic prev_ch1_fifo_re;
+	always_ff @(posedge wb_clk_i, posedge wb_rst_i) begin : ch1_fifo_re_ff
+		if (wb_rst_i) begin
+			ch1_fifo_re = 0;
+			prev_ch1_fifo_re = 0;
+		end else begin
+			prev_ch1_fifo_re <= ch1_fifo_re;
+			if (prev_ch1_fifo_re) ch1_fifo_re = 0;
+			else if (!wb_we_i & wb_req & (addr == MU_CH1_VAL_REG)) ch1_fifo_re = 1;
+		end
+	end
+
 	always_ff @(posedge wb_clk_i) begin : wb_dat_o_comb
 		case (addr)
 			CH_CTL_DELTA_REG:	wb_dat_o <= ch_ctl_delta_reg;
@@ -312,6 +354,7 @@ module measure_unit #(
 			W_THRESHOLD_REG:	wb_dat_o <= {dac2_rdy, dac1_rdy};
 			STB_GEN_PERIOD:		wb_dat_o <= stb_period;
 			MU_CTL_REG:			wb_dat_o <= {ctl_run};
+			MU_CH1_VAL_REG:		wb_dat_o <= {ch1_fifo_r_val, ch1_fifo_n_empty};
 			default: 			wb_dat_o <= 0;
 		endcase
 	end

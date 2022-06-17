@@ -24,7 +24,7 @@ module stb_gen #(
 	output logic debug_stb_o
 );
 	// localparam T_CNT_WIDTH 			= 32;
-	localparam ZERO_HOLD_CYCLES 	= 1;
+	localparam ZERO_HOLD_CYCLES 	= 2;
 
 	logic int_stb = 0;
 	assign debug_stb_o = int_stb;

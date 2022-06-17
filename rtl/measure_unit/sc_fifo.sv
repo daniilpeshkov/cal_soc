@@ -14,14 +14,14 @@ module sc_fifo #(
     output logic             n_empty_o
 );
 
-    logic [WIDTH-1:0] cyc_buf [LGFLEN-1:0];
+    logic [WIDTH-1:0] cyc_buf [int'($pow(2, LGFLEN)-1):0];
 
     logic [LGFLEN-1:0] r_addr, w_addr;
 
     assign n_empty_o = (r_addr != w_addr);
     assign data_o = cyc_buf[r_addr];
 
-    always_ff @(posedge clk_i, negedge arstn_i) begin : w_addr_ff
+    always_ff @(posedge clk_i/*, negedge arstn_i*/) begin : w_addr_ff
         if (~arstn_i) begin
             w_addr = 0;
         end else begin
@@ -31,7 +31,7 @@ module sc_fifo #(
         end
     end
 
-    always_ff @(posedge clk_i, negedge arstn_i) begin : r_addr_ff
+    always_ff @(posedge clk_i/*, negedge arstn_i*/) begin : r_addr_ff
         if (~arstn_i) begin
             r_addr = 0;
         end else begin

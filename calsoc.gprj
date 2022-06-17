@@ -14,6 +14,7 @@
         <File path="rtl/measure_unit/dac_spi/clk_divider.sv" type="file.verilog" enable="1"/>
         <File path="rtl/measure_unit/dac_spi/spi_master_o.sv" type="file.verilog" enable="1"/>
         <File path="rtl/measure_unit/measure_unit.sv" type="file.verilog" enable="1"/>
+        <File path="rtl/measure_unit/sc_fifo.sv" type="file.verilog" enable="1"/>
         <File path="rtl/measure_unit/stb_gen.sv" type="file.verilog" enable="1"/>
         <File path="rtl/measure_unit/sync_ff.sv" type="file.verilog" enable="1"/>
         <File path="rtl/measure_unit/two_cycle_32_adder.sv" type="file.verilog" enable="1"/>
