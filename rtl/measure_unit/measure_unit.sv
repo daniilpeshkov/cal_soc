@@ -107,7 +107,6 @@ module measure_unit #(
 //	 r	|       measured point      | valid |
 //	    +---------------------------+-------+
 //
-//		run 	- while set to 1 runs measurement
 //
 ///////////////////////////////////////////////////////////////////////////////////////
 	logic [25:0] ch_ctl_delta_reg;
