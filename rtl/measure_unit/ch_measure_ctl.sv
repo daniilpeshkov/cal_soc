@@ -32,15 +32,16 @@ module ch_measure_ctl #(
 	output logic point_rdy_o
 );
 
-	enum logic[7:0] { 
-		IDLE 		        = 8'b00000001,
-		SET_THRESHOLD 		= 8'b00000010,
-		WAIT_THRESHOLD 		= 8'b00000100,
-		REQ_STROBE 			= 8'b00001000,
-		WAIT_STROBE			= 8'b00010000,
-		SAVE_CMP_RES		= 8'b00100000,
-		PROCESS_RES			= 8'b01000000,
-		UPDATE_CONF			= 8'b10000000
+	enum logic[8:0] { 
+		IDLE 		        = 9'b000000001,
+		SET_THRESHOLD 		= 9'b000000010,
+		WAIT_RDY_NEG		= 9'b000000100,
+		WAIT_THRESHOLD 		= 9'b000001000,
+		REQ_STROBE 			= 9'b000010000,
+		WAIT_STROBE			= 9'b000100000,
+		SAVE_CMP_RES		= 9'b001000000,
+		PROCESS_RES			= 9'b010000000,
+		UPDATE_CONF			= 9'b100000000
 	} ctl_state, next_ctl_state;
 
 	enum logic [1:0] {
@@ -61,7 +62,8 @@ module ch_measure_ctl #(
 		end else begin
 			case (ctl_state)
 				IDLE:   			next_ctl_state = SET_THRESHOLD;
-				SET_THRESHOLD:		next_ctl_state = WAIT_THRESHOLD;
+				SET_THRESHOLD:		next_ctl_state = WAIT_RDY_NEG;
+				WAIT_RDY_NEG:		next_ctl_state = WAIT_THRESHOLD;
 				WAIT_THRESHOLD:		if (threshold_rdy_i) next_ctl_state = REQ_STROBE;
 									else next_ctl_state = ctl_state;
 				REQ_STROBE:			next_ctl_state = WAIT_STROBE;	
@@ -165,7 +167,7 @@ module ch_measure_ctl #(
 		end
 	end
 
-	always_ff @(posedge clk_i, negedge arst_i) begin : threshold_dir_ff
+always_ff @(posedge clk_i, negedge arst_i) begin : threshold_dir_ff
 		if (~arst_i) begin
 			threshold_dir = DIR_UP;
 		end else begin

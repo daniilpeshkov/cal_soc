@@ -19,7 +19,8 @@ int main(void) {
 
 
 
-	int dac = 1986;
+	// int dac = 1986;
+	int dac = 0x300;
 
 	// while (1) {
 		// MU1->threshold = dac;
@@ -44,7 +45,7 @@ int main(void) {
 		}
 	}
 
-	MU1->ch_ctl_delta = (0x1 << 16) | (0x10);
+	MU1->ch_ctl_delta = (0x1 << 16) | (0x100);
 	pp_printf("step %x\r\n", MU1->ch_ctl_delta);
 	MU1->mu_ctl = 1;
 	int cnt = 0;

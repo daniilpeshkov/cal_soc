@@ -17,7 +17,7 @@ module calsoc_top (
 	input 	logic			clk_p_i,
 	input	logic 			clk_n_i,
 	input	logic			rst_i,
-	input 	logic			node_clk_i,
+	output 	logic			node_clk_i,
 
 	input 	logic 			uart1_rx,
 	output 	logic 			uart1_tx,
@@ -43,7 +43,6 @@ module calsoc_top (
 	input logic cmp2_out_n_1,
 	output logic debug_led
 );
-
 	assign delay1_le_o = 0;
 	assign delay2_le_o = 0;
 	assign debug_uart_rx = 0;
@@ -70,6 +69,19 @@ module calsoc_top (
 		.clkin(hclk) //input clkin
 	);
 
+	//DEBUG SIG GEN
+	logic [13:0] debug_sig_div;
+
+	always_ff @(posedge hclk) debug_sig_div <= debug_sig_div + 1;
+
+	always_ff @(posedge hclk) begin 
+		if (debug_sig_div == 0) node_clk_i <= 1;
+		else if (debug_sig_div == 9) node_clk_i <= 0;
+		else node_clk_i <= node_clk_i;
+	end
+
+
+	//
 ////////////////////////////
 	logic cmp1_out;
 	logic cmp2_out;

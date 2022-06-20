@@ -6,7 +6,7 @@
 `include "two_cycle_32_adder.sv"
 
 `define DUMPVARS
-`undef DUMPVARS    
+// `undef DUMPVARS    
 
 module tb_stb_gen();
 

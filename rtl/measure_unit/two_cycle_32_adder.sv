@@ -16,7 +16,11 @@ module two_cycle_32_adder (
         b <= (valid_i ? b_i : b);
     end
 
-    enum logic[1:0] {IDLE, FIRST_STAGE, SECOND_STAGE} state = IDLE, next_state;
+    enum logic[2:0] {
+        IDLE            = 3'b001, 
+        FIRST_STAGE     = 3'b010, 
+        SECOND_STAGE    = 3'b100
+    } state = IDLE, next_state;
 
     always_ff @(posedge clk_i) state <= next_state;
   

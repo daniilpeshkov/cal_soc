@@ -2,7 +2,7 @@
 <GAO_CONFIG>
     <Version>3.0</Version>
     <Mode>Standard</Mode>
-    <AoCore index="0" sample_clock="wb_clk_i" trig_type="0" storage_depth="2048" window_num="1" capture_amount="2048" trigger_pos="10">
+    <AoCore index="0" sample_clock="wb_clk_i" trig_type="0" storage_depth="1024" window_num="1" capture_amount="1024" trigger_pos="10">
         <SignalList>
             <Bus name="measure_unit_inst/delay1_code_o[9:0]">
                 <Signal>measure_unit_inst/delay1_code_o[9]</Signal>
@@ -40,21 +40,57 @@
             <Signal>measure_unit_inst/ctl1_stb_req</Signal>
             <Signal>measure_unit_inst/stb_valid</Signal>
             <Signal>measure_unit_inst/dac1_spi_inst/wre_i</Signal>
-            <Signal>measure_unit_inst/ch_ctl1_inst/ctl_state.IDLE</Signal>
-            <Signal>measure_unit_inst/ch_ctl1_inst/ctl_state.SET_THRESHOLD</Signal>
-            <Signal>measure_unit_inst/ch_ctl1_inst/ctl_state.WAIT_THRESHOLD</Signal>
-            <Signal>measure_unit_inst/ch_ctl1_inst/ctl_state.REQ_STROBE</Signal>
-            <Signal>measure_unit_inst/ch_ctl1_inst/ctl_state.WAIT_STROBE</Signal>
-            <Signal>measure_unit_inst/ch_ctl1_inst/ctl_state.SAVE_CMP_RES</Signal>
-            <Signal>measure_unit_inst/ch_ctl1_inst/ctl_state.PROCESS_RES</Signal>
-            <Signal>measure_unit_inst/ch_ctl1_inst/ctl_state.UPDATE_CONF</Signal>
             <Signal>measure_unit_inst/ch_ctl1_inst/run_i</Signal>
             <Signal>measure_unit_inst/ch_ctl1_inst/point_rdy_o</Signal>
+            <Signal>measure_unit_inst/ch_ctl1_inst/threshold_dir.DIR_UP</Signal>
+            <Signal>measure_unit_inst/ch_ctl1_inst/threshold_dir.DIR_DOWN</Signal>
+            <Signal>measure_unit_inst/ch_ctl1_inst/point_state.FIND_POINT</Signal>
+            <Signal>measure_unit_inst/ch_ctl1_inst/point_state.FIND_DIR</Signal>
+            <Signal>measure_unit_inst/ch_ctl1_inst/cur_cmp_out</Signal>
+            <Signal>measure_unit_inst/ch_ctl1_inst/prev_cmp_out</Signal>
+            <Signal>measure_unit_inst/ch1_fifo/wre_i</Signal>
+            <Signal>measure_unit_inst/ch1_fifo/n_empty_o</Signal>
+            <Bus name="measure_unit_inst/ch1_fifo/data_i[15:0]">
+                <Signal>measure_unit_inst/ch1_fifo/data_i[15]</Signal>
+                <Signal>measure_unit_inst/ch1_fifo/data_i[14]</Signal>
+                <Signal>measure_unit_inst/ch1_fifo/data_i[13]</Signal>
+                <Signal>measure_unit_inst/ch1_fifo/data_i[12]</Signal>
+                <Signal>measure_unit_inst/ch1_fifo/data_i[11]</Signal>
+                <Signal>measure_unit_inst/ch1_fifo/data_i[10]</Signal>
+                <Signal>measure_unit_inst/ch1_fifo/data_i[9]</Signal>
+                <Signal>measure_unit_inst/ch1_fifo/data_i[8]</Signal>
+                <Signal>measure_unit_inst/ch1_fifo/data_i[7]</Signal>
+                <Signal>measure_unit_inst/ch1_fifo/data_i[6]</Signal>
+                <Signal>measure_unit_inst/ch1_fifo/data_i[5]</Signal>
+                <Signal>measure_unit_inst/ch1_fifo/data_i[4]</Signal>
+                <Signal>measure_unit_inst/ch1_fifo/data_i[3]</Signal>
+                <Signal>measure_unit_inst/ch1_fifo/data_i[2]</Signal>
+                <Signal>measure_unit_inst/ch1_fifo/data_i[1]</Signal>
+                <Signal>measure_unit_inst/ch1_fifo/data_i[0]</Signal>
+            </Bus>
+            <Bus name="measure_unit_inst/ch1_fifo/data_o[15:0]">
+                <Signal>measure_unit_inst/ch1_fifo/data_o[15]</Signal>
+                <Signal>measure_unit_inst/ch1_fifo/data_o[14]</Signal>
+                <Signal>measure_unit_inst/ch1_fifo/data_o[13]</Signal>
+                <Signal>measure_unit_inst/ch1_fifo/data_o[12]</Signal>
+                <Signal>measure_unit_inst/ch1_fifo/data_o[11]</Signal>
+                <Signal>measure_unit_inst/ch1_fifo/data_o[10]</Signal>
+                <Signal>measure_unit_inst/ch1_fifo/data_o[9]</Signal>
+                <Signal>measure_unit_inst/ch1_fifo/data_o[8]</Signal>
+                <Signal>measure_unit_inst/ch1_fifo/data_o[7]</Signal>
+                <Signal>measure_unit_inst/ch1_fifo/data_o[6]</Signal>
+                <Signal>measure_unit_inst/ch1_fifo/data_o[5]</Signal>
+                <Signal>measure_unit_inst/ch1_fifo/data_o[4]</Signal>
+                <Signal>measure_unit_inst/ch1_fifo/data_o[3]</Signal>
+                <Signal>measure_unit_inst/ch1_fifo/data_o[2]</Signal>
+                <Signal>measure_unit_inst/ch1_fifo/data_o[1]</Signal>
+                <Signal>measure_unit_inst/ch1_fifo/data_o[0]</Signal>
+            </Bus>
         </SignalList>
         <Triggers>
             <Trigger index="0">
                 <SignalList>
-                    <Signal>measure_unit_inst/stb_valid</Signal>
+                    <Signal>measure_unit_inst/ctl_run</Signal>
                 </SignalList>
             </Trigger>
             <Trigger index="1">
@@ -99,5 +135,5 @@
             <Expression>M0&amp;M1</Expression>
         </Expressions>
     </AoCore>
-    <GAO_ID>0110000111000001</GAO_ID>
+    <GAO_ID>0010010011010010</GAO_ID>
 </GAO_CONFIG>
