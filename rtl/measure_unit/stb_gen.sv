@@ -6,11 +6,10 @@
 //------------------------------------------------------
 
 module stb_gen #(
-	parameter OFFSET = 20,
 	parameter T_CNT_WIDTH = 32
 ) (
 	input wire clk_i,
-	input wire arst_i,
+	input wire arstn_i,
 
 	input wire sig_i,
 
@@ -49,8 +48,8 @@ module stb_gen #(
 	logic is_zero_hold_start;
 	logic is_stb_end;
 
-	always_ff @(posedge clk_i, negedge arst_i) begin
-		if (~arst_i) begin
+	always_ff @(posedge clk_i, negedge arstn_i) begin
+		if (~arstn_i) begin
 			stb_oe = 0;
 		end else begin
 			casex ({req_posedge, is_stb_end})			
@@ -95,6 +94,9 @@ module stb_gen #(
 	logic [T_CNT_WIDTH-1 : 0] t_cnt /* synthesis syn_keep=1 syn_preserve=1 syn_ramstyle="registers" */;
 	logic [T_CNT_WIDTH-1 : 0] t_start;
 	logic [T_CNT_WIDTH-1 : 0] t_end;
+
+	logic [T_CNT_WIDTH-1 : 0] period;
+
 	stb_gen_state next_state;
 
 
@@ -123,8 +125,8 @@ module stb_gen #(
 		endcase
 	end
 
-	always_ff @(posedge clk_i, negedge arst_i) begin
-		if (~arst_i) begin
+	always_ff @(posedge clk_i, negedge arstn_i) begin
+		if (~arstn_i) begin
 			state = FIND_EDGE_1;
 		end else begin
 			state <= next_state;
@@ -138,10 +140,26 @@ module stb_gen #(
 		stb_period_o <= (state == COUNT_PERIOD ? t_end - t_start : stb_period_o);
 	end
 
+	logic offset_fixed;
+	localparam OFFSET = 3;
+
+	always_ff @(posedge clk_i) begin
+		period <= (offset_fixed ?  t_end - t_start : t_end - t_start - OFFSET);
+	end
+
+	always_ff @(posedge clk_i, negedge arstn_i) begin
+		if (~arstn_i) begin
+			offset_fixed = 0;
+		end else begin
+			offset_fixed <= state == COUNT_STROBE; // make first strobe period shorter
+		end
+	end
+
+
 	localparam MAGIC_CONST = 3;
 
 	logic [T_CNT_WIDTH-1:0] period_minus_zero_hold;
-	always_ff @(posedge clk_i) period_minus_zero_hold <= stb_period_o - (ZERO_HOLD_CYCLES+MAGIC_CONST); //magic constat due to computation pipeline
+	always_ff @(posedge clk_i) period_minus_zero_hold <= period - (ZERO_HOLD_CYCLES+MAGIC_CONST); //magic constat due to computation pipeline
 
 	two_cycle_32_adder adder_zero_hold_begin (
 		.clk_i 	(clk_i),
@@ -155,7 +173,7 @@ module stb_gen #(
 	two_cycle_32_adder adder_stb_end (
 		.clk_i 	(clk_i),
 		.a_i	(t_cnt),
-		.b_i	(stb_period_o - MAGIC_CONST), //magic constat due to computation pipeline
+		.b_i	(period - MAGIC_CONST), //magic constat due to computation pipeline
 		.valid_i(count_stb_end),
 		.valid_o(stb_end_valid),
 		.res_o	(adder_stb_end_res)
@@ -181,8 +199,8 @@ module stb_gen #(
 	always_ff @(posedge clk_i) is_stb_end_hi <=  ~|(t_cnt[31:16] ^ latched_stb_end_res[31:16]);  //t_cnt == latched_zero_hold_res;
 	always_ff @(posedge clk_i) is_stb_end <= is_stb_end_hi & is_stb_end_lo; 
 
-	always_ff @(posedge clk_i, negedge arst_i) begin
-		if (~arst_i) begin
+	always_ff @(posedge clk_i, negedge arstn_i) begin
+		if (~arstn_i) begin
 			int_stb = 0;
 		end else begin
 			case (1) 
@@ -193,8 +211,8 @@ module stb_gen #(
 		end
 	end
 
-	always_ff @(posedge clk_i, negedge arst_i) begin
-		if (~arst_i) rdy_o = 0;
+	always_ff @(posedge clk_i, negedge arstn_i) begin
+		if (~arstn_i) rdy_o = 0;
 		else rdy_o <= (state == COUNT_STROBE ? 1 : rdy_o);
 	end
 
@@ -217,30 +235,30 @@ module stb_gen #(
 	assign {carry, low_bytes_plus_1} = low_bytes + 1;
 
 	//incrementing low bytes
-	always_ff @(posedge clk_i, negedge arst_i) 
-		if (~arst_i) low_bytes = 0;
+	always_ff @(posedge clk_i, negedge arstn_i) 
+		if (~arstn_i) low_bytes = 0;
 		else low_bytes <= low_bytes_plus_1;
 
 	//latching low bytes for 1 cycle
-	always_ff @(posedge clk_i, negedge arst_i) 
-		if (~arst_i) latched_low_bytes = 0;
+	always_ff @(posedge clk_i, negedge arstn_i) 
+		if (~arstn_i) latched_low_bytes = 0;
 		else latched_low_bytes <= low_bytes;
 
 	logic latched_carry = 0;
 
 	//latching carry
-	always_ff @(posedge clk_i, negedge arst_i) 
-		if (~arst_i) latched_carry = 0;
+	always_ff @(posedge clk_i, negedge arstn_i) 
+		if (~arstn_i) latched_carry = 0;
 		else latched_carry <= carry;
 
 	//adding latched carry to high bytes
-	always_ff @(posedge clk_i, negedge arst_i)
-		if (~arst_i) high_bytes = 0;
+	always_ff @(posedge clk_i, negedge arstn_i)
+		if (~arstn_i) high_bytes = 0;
 		else high_bytes <= high_bytes + latched_carry;
 
 	//seting t_cnt
-	always_ff @(posedge clk_i, negedge arst_i) 
-		if (~arst_i) t_cnt = 0;
+	always_ff @(posedge clk_i, negedge arstn_i) 
+		if (~arstn_i) t_cnt = 0;
 		else t_cnt <= {high_bytes, latched_low_bytes};
 
 endmodule

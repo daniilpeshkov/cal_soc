@@ -18,7 +18,7 @@ module tb_stb_gen();
 
     logic clk_i = 0;
     logic comp_out = 0;
-    logic arst_i = 0;
+    logic arstn_i = 0;
     logic stb_o;
     logic run_det_i = 0;
     logic err_o;
@@ -31,7 +31,7 @@ module tb_stb_gen();
 
     stb_gen dut (
         .sig_i (comp_out),
-        .arst_i(~arst_i),
+        .arstn_i(~arstn_i),
         .*
     );
 
@@ -40,8 +40,8 @@ module tb_stb_gen();
 
         time start;
         foreach (freqs[i]) begin
-            #1 arst_i = 1;
-            #1 arst_i = 0;
+            #1 arstn_i = 1;
+            #1 arstn_i = 0;
             #10 run_det_i = 1;
             #333 run_det_i = 0;
             #($urandom_range(1, CLK_T));
