@@ -18,6 +18,10 @@ stb_gen:
 	iverilog -o test_stb_gen.vvp -g2005-sv tb_stb_gen.sv 
 	vvp -n test_stb_gen.vvp 
 
+stb_gen_offset:
+	iverilog -o test_stb_gen_offset.vvp -g2005-sv tb_stb_offset.sv 
+	vvp -n test_stb_gen_offset.vvp 
+
 stb_gen2:
 	iverilog -o test_stb_gen2.vvp -g2005-sv tb2_stb_gen.sv 
 	vvp -n test_stb_gen2.vvp 

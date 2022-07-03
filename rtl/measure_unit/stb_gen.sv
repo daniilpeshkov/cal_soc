@@ -141,17 +141,18 @@ module stb_gen #(
 	end
 
 	logic offset_fixed;
-	localparam OFFSET = 3;
+	localparam OFFSET = 6;
 
 	always_ff @(posedge clk_i) begin
 		period <= (offset_fixed ?  t_end - t_start : t_end - t_start - OFFSET);
 	end
 
-	always_ff @(posedge clk_i, negedge arstn_i) begin
+	always_latch begin
 		if (~arstn_i) begin
 			offset_fixed = 0;
 		end else begin
-			offset_fixed <= state == COUNT_STROBE; // make first strobe period shorter
+			if (state == COUNT_STROBE)
+				offset_fixed <= 1; // make first strobe period shorter
 		end
 	end
 
