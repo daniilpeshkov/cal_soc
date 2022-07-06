@@ -6,7 +6,7 @@
 //------------------------------------------------------
 
 module stb_gen #(
-	parameter T_CNT_WIDTH = 32
+	parameter T_CNT_WIDTH = 32 //do not change
 ) (
 	input wire clk_i,
 	input wire arstn_i,
