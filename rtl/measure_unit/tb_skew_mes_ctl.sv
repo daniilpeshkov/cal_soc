@@ -1,5 +1,5 @@
 
-`timescale 1ns/10ps
+`timescale 1ns/1ps
 
 
 `include "stb_gen.sv"
@@ -8,7 +8,7 @@
 `include "two_cycle_32_adder.sv"
 
 `define DUMPVARS
-// `undef DUMPVARS    
+`undef DUMPVARS    
 
 module tb_stb_gen();
 
@@ -16,26 +16,28 @@ module tb_stb_gen();
 	localparam HCLK_T = 8;
 	localparam T_CNT_WIDTH = 32;
 
+	localparam TEST_CASE_N = 100;
+
+	real SKEW = 0.090;
+	real SKEW_STEP = 0.010;
+
 	logic clk = 0;
 	logic hclk = 0;
 	logic arstn = 0;
-
 	logic cmp_out_1 = 0;
 	logic cmp_out_2;
-
 	logic stb;
 	logic err;
 	logic stb_gen_rdy;
 	logic [T_CNT_WIDTH-1:0] stb_period;
-
 	logic ctl_stb_req;
 	logic ctl_stb_valid;
-
 	logic [9:0] delay_code;
-
 	logic stb_req_i = 0;
 	logic stb_valid_o;
 	logic debug_stb;
+	logic run = 0;
+	logic ctl_rdy, ctl_err;
 
 	stb_gen stb_gen_inst (
 		.clk_i          (hclk),
@@ -52,13 +54,15 @@ module tb_stb_gen();
 
 	skew_mes_ctl skew_mes_ctl_inst (
 		.clk_i          (clk),
-		.arstn_i        (arstn),
+		.arstn_i        (~arstn),
 
 		.cmp_out_i      (cmp_out_2),
 		.delay_code_o   (delay_code),
 		.stb_req_o		(ctl_stb_req),
-		.stb_valid_i	(ctl_stb_valid)
-
+		.stb_valid_i	(ctl_stb_valid),
+		.run_i			(run),
+		.rdy_o			(ctl_rdy),
+		.err_o			(ctl_err)
 	);
 
 	//generate master signal
@@ -76,8 +80,6 @@ module tb_stb_gen();
 		endcase
 	end
 
-	real SKEW = 0.100;
-
 ////////////////////////////////////////////////////////////////
 // making offset on channel 2
 ////////////////////////////////////////////////////////////////
@@ -87,31 +89,49 @@ module tb_stb_gen();
 // delaying stb with specified value
 ////////////////////////////////////////////////////////////////
 	logic stb_delayed;
-	always @(stb) stb_delayed <= #(delay_code * 0.01) stb;
+	always @(stb) stb_delayed <= #(delay_code * SKEW_STEP) stb;
 
 ////////////////////////////////////////////////////////////////
 // latch logic on channel 2
 ////////////////////////////////////////////////////////////////
 	always_latch begin
-		if (!stb_delayed) cmp_out_2 = cmp_out_1_skew;
+		if (!stb_delayed) cmp_out_2 <= cmp_out_1_skew;
 	end
 ////////////////////////////////////////////////////////////////
 
+
 	initial begin 
-		int t;
+		real mes_skew;
 
-		time start;
-		#1 arstn = 1;
-		#1 arstn = 0;
+		repeat (TEST_CASE_N) begin
+			SKEW = $urandom_range(1, 9999) / 1000.0;
+			#1 arstn = 1;
+			#1 arstn = 0;
 
-		repeat (10)@(posedge debug_stb);
-		start = $time;
-		@(posedge debug_stb);
-		t = $time - start;
-		$display("generated strobe T= %d ns", t);
-		$display("counted period=%d", stb_period * CLK_T);
-		$display("");
-		$display("OK!");
+			repeat (2)@(posedge debug_stb);
+			run <= 1;
+			
+
+			@(posedge ctl_rdy, posedge ctl_err);
+			if (ctl_rdy) begin
+
+				mes_skew = delay_code * 10;
+				$display("measured skew = %d ps", mes_skew);
+				$display("actual skew = %d ps", SKEW * 1000);
+				$display("err = %d ps", SKEW * 1000 - mes_skew);
+
+				if ($abs(int'(mes_skew - SKEW * 1000)) > int'(SKEW_STEP * 1000)) begin
+					$display("err is greater than skew measure step!");
+					$fatal(1);
+				end else begin
+					$display("OK!");
+				end
+			end else begin
+				$display("module set err_o signal");
+				$fatal(1);
+			end
+		end
+		$display("all tests passed!");
 		$finish;
 	end
 
@@ -122,7 +142,7 @@ module tb_stb_gen();
 `endif
 	end
 
-	always #(CLK_T/2) clk = ~clk;
-	always #(HCLK_T/2) hclk = ~hclk;
+	always #(CLK_T/2) clk <= ~clk;
+	always #(HCLK_T/2) hclk <= ~hclk;
 
 endmodule

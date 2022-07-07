@@ -53,8 +53,8 @@ module stb_gen #(
 			stb_oe = 0;
 		end else begin
 			casex ({req_posedge, is_stb_end})			
-				2'bx1:  stb_oe <= 1;
 				2'b1x:	stb_oe <= 0;
+				2'bx1:  stb_oe <= 1;
 			endcase
 		end
 	end
