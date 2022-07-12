@@ -169,15 +169,22 @@ module stb_gen #(
 		.b_i	(stb_period_o - OFFSET),
 		.valid_i(count_gen_start),
 		.valid_o(gen_start_valid),
-		.res_o	()
+		.res_o	(adder_gen_start_res)
 	);
 
 
 	logic [T_CNT_WIDTH-1:0] latched_zero_hold_res;
 	logic [T_CNT_WIDTH-1:0] latched_stb_end_res;
+	logic [T_CNT_WIDTH-1:0] latched_gen_start_res;
 
-	always_ff @(posedge clk_i) latched_zero_hold_res <= (zero_hold_begin_valid ? adder_zero_hold_res : latched_zero_hold_res);
-	always_ff @(posedge clk_i) latched_stb_end_res <= (stb_end_valid ? adder_stb_end_res : latched_stb_end_res);
+	always_ff @(posedge clk_i)
+		if (zero_hold_begin_valid) latched_zero_hold_res <= adder_zero_hold_res;
+
+	always_ff @(posedge clk_i)
+		if (stb_end_valid) latched_stb_end_res <= adder_stb_end_res;
+
+	always_ff @(posedge clk_i)
+		if (gen_start_valid) latched_gen_start_res <= adder_gen_start_res;
 
 	pipelined_equal_32 is_zero_hold_start_eq_inst (
 		.clk_i	(clk_i),
