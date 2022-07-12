@@ -36,23 +36,26 @@ module tb_stb_gen();
         .*
     );
 
+    int cur_sig_width = 1000;
+
+    initial forever begin
+        comp_out = 1;
+        #(SIG_WIDTH) comp_out = 0;
+        #(cur_sig_width - SIG_WIDTH);
+    end
+
     initial begin 
         int t;
 
         time start;
         foreach (freqs[i]) begin
+            cur_sig_width = freqs[i];
             #1 arstn_i = 1;
             #1 arstn_i = 0;
             #10 run_det_i = 1;
             #333 run_det_i = 0;
-            #($urandom_range(1, CLK_T));
-            while (!rdy_o) begin
-                comp_out = 1;
-                #(SIG_WIDTH) comp_out = 0;
-                #(freqs[i] - SIG_WIDTH);
-            end
 
-            repeat (10)@(posedge debug_stb_o);
+            repeat (10) @(posedge debug_stb_o);
             start = $time;
             @(posedge debug_stb_o);
             t = $time - start;
@@ -61,7 +64,7 @@ module tb_stb_gen();
             $display("err=%d ns\tclk T= %3d ns", t - freqs[i], CLK_T);
             $display("counted period=%d", stb_period_o * CLK_T);
             $display("");
-            if ($abs(t - freqs[i]) >= CLK_T) begin
+            if ($max(t, freqs[i]) - $min(t, freqs[i]) >= CLK_T) begin
                 #100
                 $fatal(1, "error is more than clk T");
             end
