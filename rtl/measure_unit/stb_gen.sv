@@ -91,11 +91,20 @@ module stb_gen #(
 
 	stb_gen_state state = FIND_EDGE_1;
 
-	logic [T_CNT_WIDTH-1 : 0] t_cnt /* synthesis syn_keep=1 syn_preserve=1 syn_ramstyle="registers" */;
-	logic [T_CNT_WIDTH-1 : 0] t_start;
-	logic [T_CNT_WIDTH-1 : 0] t_end;
+	logic offset_fixed;
+	localparam OFFSET = 6;
 
-	logic [T_CNT_WIDTH-1 : 0] period;
+	logic [T_CNT_WIDTH-1 : 0] t_cnt /* synthesis syn_keep=1 syn_preserve=1 syn_ramstyle="registers" */;
+	logic [T_CNT_WIDTH-1 : 0] t_start /* synthesis syn_keep=1 syn_preserve=1 syn_ramstyle="registers" */;
+	logic [T_CNT_WIDTH-1 : 0] t_end /* synthesis syn_keep=1 syn_preserve=1 syn_ramstyle="registers" */;
+
+	logic [T_CNT_WIDTH-1 : 0] period /* synthesis syn_keep=1 syn_preserve=1 syn_ramstyle="registers" */;
+	logic [T_CNT_WIDTH-1 : 0] period_minus_offset /* synthesis syn_keep=1 syn_preserve=1 syn_ramstyle="registers" */;
+	
+	logic [T_CNT_WIDTH-1 : 0] cur_period;
+
+	assign cur_period = (offset_fixed ? period : period_minus_offset);
+	
 
 	stb_gen_state next_state;
 
@@ -136,16 +145,22 @@ module stb_gen #(
 	logic [T_CNT_WIDTH-1:0] adder_zero_hold_res;
 	logic [T_CNT_WIDTH-1:0] adder_stb_end_res;
 
-	always_ff @(posedge clk_i) begin
-		stb_period_o <= (state == COUNT_PERIOD ? t_end - t_start : stb_period_o);
+//	always_ff @(posedge clk_i) begin
+//		stb_period_o <= (state == COUNT_PERIOD ? t_end - t_start : stb_period_o);
+//		period <= (state == COUNT_PERIOD ? t_end - t_start : period);
+//		period_minus_offset <= (state == COUNT_PERIOD ? t_end - t_start - OFFSET : period_minus_offset);
+//	end
+
+	always_latch begin
+		if (state == COUNT_PERIOD) begin
+			period = t_end - t_start;
+			period_minus_offset = t_end - t_start - OFFSET;
+		end
 	end
 
-	logic offset_fixed;
-	localparam OFFSET = 6;
-
-	always_ff @(posedge clk_i) begin
-		period <= (offset_fixed ?  t_end - t_start : t_end - t_start - OFFSET);
-	end
+//	always_ff @(posedge clk_i) begin
+//		period <= (offset_fixed ?  t_end - t_start : t_end - t_start - OFFSET);
+//	end
 
 	always_latch begin
 		if (~arstn_i) begin

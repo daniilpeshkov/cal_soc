@@ -241,7 +241,7 @@ module measure_unit #(
 
 	stb_gen stb_gen_inst (
 		.clk_i 			(hclk_i),
-		.arst_i			(~stb_gen_run),
+		.arstn_i			(~stb_gen_run),
 		.sig_i			(stb_gen_cmp_sel ? cmp2_out_i : cmp1_out_i),
    		.err_o			(stb_gen_err),
    		.rdy_o			(stb_gen_rdy),
