@@ -77,40 +77,27 @@ module stb_gen #(
 	logic sig_posedge;
 	assign sig_posedge = sig_synced & ~prev_sig;
 
-	typedef enum logic[8:0] { 
-		FIND_EDGE_1 		= 9'b000000001, 
-		FIND_EDGE_2 		= 9'b000000010,
-		WRITE_START 		= 9'b000000100,
-		FIND_EDGE_3 		= 9'b000001000, 
-		WRITE_END			= 9'b000010000,
-		COUNT_PERIOD 		= 9'b000100000, 
-		WAIT_COUNT_PERIOD 	= 9'b001000000,
-		COUNT_STROBE 		= 9'b010000000,
-		WAIT_STB_END 		= 9'b100000000
-	} stb_gen_state;
-
-	stb_gen_state state = FIND_EDGE_1;
-
-	logic offset_fixed;
-	localparam OFFSET = 6;
+	enum logic[8:0] { 
+		FIND_EDGE_1 		,//= 9'b000000001, 
+		FIND_EDGE_2 		,//= 9'b000000010,
+		WRITE_START 		,//= 9'b000000100,
+		FIND_EDGE_3 		,//= 9'b000001000, 
+		WRITE_END			,//= 9'b000010000,
+		COUNT_PERIOD 		,//= 9'b000100000, 
+		WAIT_COUNT_PERIOD 	,//= 9'b001000000,
+		COUNT_GEN_START		,
+		WAIT_GEN_START		,
+		COUNT_STROBE 		,//= 9'b010000000,
+		WAIT_STB_END 		//= 9'b100000000
+	} state = FIND_EDGE_1, next_state;
 
 	logic [T_CNT_WIDTH-1 : 0] t_cnt /* synthesis syn_keep=1 syn_preserve=1 syn_ramstyle="registers" */;
 	logic [T_CNT_WIDTH-1 : 0] t_start /* synthesis syn_keep=1 syn_preserve=1 syn_ramstyle="registers" */;
 	logic [T_CNT_WIDTH-1 : 0] t_end /* synthesis syn_keep=1 syn_preserve=1 syn_ramstyle="registers" */;
 
-	logic [T_CNT_WIDTH-1 : 0] period /* synthesis syn_keep=1 syn_preserve=1 syn_ramstyle="registers" */;
-	logic [T_CNT_WIDTH-1 : 0] period_minus_offset /* synthesis syn_keep=1 syn_preserve=1 syn_ramstyle="registers" */;
-	
-	logic [T_CNT_WIDTH-1 : 0] cur_period;
-
-	assign cur_period = (offset_fixed ? period : period_minus_offset);
-	
-
-	stb_gen_state next_state;
-
-
 	logic count_zero_hold_begin, zero_hold_begin_valid;
 	logic count_stb_end, stb_end_valid;
+	logic count_gen_start, gen_start_valid;
 
 	assign count_zero_hold_begin = (state == COUNT_STROBE ? 1 : 0);
 	assign count_stb_end = (state == COUNT_STROBE ? 1 : 0);
@@ -144,38 +131,19 @@ module stb_gen #(
 
 	logic [T_CNT_WIDTH-1:0] adder_zero_hold_res;
 	logic [T_CNT_WIDTH-1:0] adder_stb_end_res;
-
-//	always_ff @(posedge clk_i) begin
-//		stb_period_o <= (state == COUNT_PERIOD ? t_end - t_start : stb_period_o);
-//		period <= (state == COUNT_PERIOD ? t_end - t_start : period);
-//		period_minus_offset <= (state == COUNT_PERIOD ? t_end - t_start - OFFSET : period_minus_offset);
-//	end
+	logic [T_CNT_WIDTH-1:0] adder_gen_start_res;
 
 	always_latch begin
 		if (state == COUNT_PERIOD) begin
-			period = t_end - t_start;
-			period_minus_offset = t_end - t_start - OFFSET;
+			stb_period_o = t_end - t_start;
 		end
 	end
-
-//	always_ff @(posedge clk_i) begin
-//		period <= (offset_fixed ?  t_end - t_start : t_end - t_start - OFFSET);
-//	end
-
-	always_latch begin
-		if (~arstn_i) begin
-			offset_fixed = 0;
-		end else begin
-			if (state == COUNT_STROBE)
-				offset_fixed <= 1; // make first strobe period shorter
-		end
-	end
-
 
 	localparam MAGIC_CONST = 3;
+	localparam OFFSET = 6;
 
 	logic [T_CNT_WIDTH-1:0] period_minus_zero_hold;
-	always_ff @(posedge clk_i) period_minus_zero_hold <= period - (ZERO_HOLD_CYCLES+MAGIC_CONST); //magic constat due to computation pipeline
+	always_ff @(posedge clk_i) period_minus_zero_hold <= stb_period_o - (ZERO_HOLD_CYCLES+MAGIC_CONST); //magic constat due to computation pipeline
 
 	two_cycle_32_adder adder_zero_hold_begin (
 		.clk_i 	(clk_i),
@@ -189,11 +157,21 @@ module stb_gen #(
 	two_cycle_32_adder adder_stb_end (
 		.clk_i 	(clk_i),
 		.a_i	(t_cnt),
-		.b_i	(period - MAGIC_CONST), //magic constat due to computation pipeline
+		.b_i	(stb_period_o - MAGIC_CONST), //magic constat due to computation pipeline
 		.valid_i(count_stb_end),
 		.valid_o(stb_end_valid),
 		.res_o	(adder_stb_end_res)
 	);
+
+	two_cycle_32_adder adder_gen_start (
+		.clk_i 	(clk_i),
+		.a_i	(t_cnt),
+		.b_i	(stb_period_o - OFFSET),
+		.valid_i(count_gen_start),
+		.valid_o(gen_start_valid),
+		.res_o	()
+	);
+
 
 	logic [T_CNT_WIDTH-1:0] latched_zero_hold_res;
 	logic [T_CNT_WIDTH-1:0] latched_stb_end_res;
@@ -201,19 +179,19 @@ module stb_gen #(
 	always_ff @(posedge clk_i) latched_zero_hold_res <= (zero_hold_begin_valid ? adder_zero_hold_res : latched_zero_hold_res);
 	always_ff @(posedge clk_i) latched_stb_end_res <= (stb_end_valid ? adder_stb_end_res : latched_stb_end_res);
 
- 
-	logic is_zero_hold_start_lo;
-	logic is_zero_hold_start_hi;
-	logic is_stb_end_lo;
-	logic is_stb_end_hi;
+	pipelined_equal_32 is_zero_hold_start_eq_inst (
+		.clk_i	(clk_i),
+		.a_i	(t_cnt),
+		.b_i	(latched_zero_hold_res),
+		.eq_o	(is_zero_hold_start)
+	);
 
-	always_ff @(posedge clk_i) is_zero_hold_start_lo <=  ~|(t_cnt[15:0] ^ latched_zero_hold_res[15:0]);  //t_cnt == latched_zero_hold_res;
-	always_ff @(posedge clk_i) is_zero_hold_start_hi <=  ~|(t_cnt[31:16] ^ latched_zero_hold_res[31:16]);  //t_cnt == latched_zero_hold_res;
-	always_ff @(posedge clk_i) is_zero_hold_start <= is_zero_hold_start_lo & is_zero_hold_start_hi; 
-
-	always_ff @(posedge clk_i) is_stb_end_lo <=  ~|(t_cnt[15:0] ^ latched_stb_end_res[15:0]);  //t_cnt == latched_zero_hold_res;
-	always_ff @(posedge clk_i) is_stb_end_hi <=  ~|(t_cnt[31:16] ^ latched_stb_end_res[31:16]);  //t_cnt == latched_zero_hold_res;
-	always_ff @(posedge clk_i) is_stb_end <= is_stb_end_hi & is_stb_end_lo; 
+	pipelined_equal_32 is_stb_end_eq_inst (
+		.clk_i	(clk_i),
+		.a_i	(t_cnt),
+		.b_i	(latched_stb_end_res),
+		.eq_o	(is_stb_end)
+	);
 
 	always_ff @(posedge clk_i, negedge arstn_i) begin
 		if (~arstn_i) begin

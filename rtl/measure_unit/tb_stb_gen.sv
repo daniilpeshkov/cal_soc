@@ -4,6 +4,7 @@
 `include "stb_gen.sv"
 `include "sync_ff.sv"
 `include "two_cycle_32_adder.sv"
+`include "pipelined_equal_32.sv"
 
 `define DUMPVARS
 // `undef DUMPVARS    
