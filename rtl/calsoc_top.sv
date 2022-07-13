@@ -14,34 +14,110 @@ logic			``prefix``_wb_stall_o;
 `define RAM_WB_MEM_SIZE 'h100
 
 module calsoc_top (
-	input 	logic			clk_i,
+	input 	logic			clk_p_i,
+	input	logic 			clk_n_i,
 	input	logic			rst_i,
-	output	logic [7:0]  	gpioa_o,
+	output 	logic			node_clk_i,
 
 	input 	logic 			uart1_rx,
 	output 	logic 			uart1_tx,
+
+	output	logic			debug_uart_tx,
+	output	logic			debug_uart_rx,
 //DAC
-	output dac1_sync_o, dac2_sync_o,
-	output dac1_sclk_o, dac2_sclk_o,
-	output dac1_sdi_o, 	dac2_sdi_o,
+	output 	logic			dac1_sync_o, dac2_sync_o,
+	output	logic			dac1_sclk_o, dac2_sclk_o,
+	output	logic			dac1_sdi_o, dac2_sdi_o,
 //Delay Line
-	// output logic [9:0] delay1_code_o, delay2_code_o,
-	 output logic 	   delay1_stb_o, delay2_stb_o
+	output logic [9:0] delay1_code_o, delay2_code_o,
+	output logic 	   delay1_stb_p_o, delay2_stb_p_o,
+	output logic 	   delay1_stb_n_o, delay2_stb_n_o,
+
+	output logic		delay1_le_o,
+	output logic		delay2_le_o,
 //CMP
-	// input logic cmp1_out_i, cmp2_out_i
+	input logic cmp1_out_p_i,
+	input logic cmp1_out_n_i,
+
+	input logic cmp2_out_p_1,
+	input logic cmp2_out_n_1,
+	output logic debug_led
 );
-// TODO FOR DEBUG BOARD
+	assign delay1_le_o = 0;
+	assign delay2_le_o = 0;
+	assign debug_uart_rx = 0;
+////////////////////////////
+// CLOCK
+////////////////////////////
 	logic wb_rst_i;
 	logic wb_clk_i;
 	logic hclk;
 
-	assign wb_rst_i = ~rst_i;
-	assign wb_clk_i = clk_i;
+	assign wb_rst_i = rst_i;
+	assign debug_led = 0;
 
-	Gowin_rPLL rPLL_inst (
-		.clkout(hclk), //output clkout
-		.clkin(clk_i) //input clkin
+	TLVDS_IBUF hclk_lvds_IBUF_inst (
+		.I	(clk_p_i),
+		.IB	(clk_n_i),
+		.O	(hclk)
 	);
+
+	// assign hclk = node_clk_i;
+
+	Gowin_rPLL hclk_rPLL_inst (
+		.clkout(wb_clk_i), //output clkout
+		.clkin(hclk) //input clkin
+	);
+
+	//DEBUG SIG GEN
+	logic [13:0] debug_sig_div;
+
+	always_ff @(posedge hclk) debug_sig_div <= debug_sig_div + 1;
+
+	always_ff @(posedge hclk) begin 
+		if (debug_sig_div == 0) node_clk_i <= 1;
+		else if (debug_sig_div == 9) node_clk_i <= 0;
+		else node_clk_i <= node_clk_i;
+	end
+
+
+	//
+////////////////////////////
+	logic cmp1_out;
+	logic cmp2_out;
+
+	TLVDS_IBUF cmp1_out_lvds_IBUF_inst (
+		.I	(cmp1_out_p_i),
+		.IB	(cmp1_out_n_i),
+		.O	(cmp1_out)
+	);
+
+	// TLVDS_IBUF cmp2_out_lvds_IBUF_inst (
+	// 	.I	(cmp2_out_p_i),
+	// 	.IB	(cmp2_out_n_i),
+	// 	.O	(cmp2_out)
+	// );
+
+
+////////////////////////////
+// DELAY LINE
+////////////////////////////
+
+	logic delay1_stb, delay2_stb;
+
+	TLVDS_OBUF delay1_stb_lvds_OBUF_inst (
+		.O	(delay1_stb_n_o),
+		.OB	(delay1_stb_p_o),
+		.I	(~delay1_stb)
+	);
+
+	// TLVDS_OBUF delay2_stb_lvds_OBUF_inst (
+	// 	.O	(delay2_stb_p_o),
+	// 	.OB	(delay2_stb_n_o),
+	// 	.I	(delay2_stb)
+	// );
+
+
 ////////////////////////////////////////
 	//picorv32_wb wb
 	logic [31:0] 	wbm_adr_o;
@@ -96,15 +172,21 @@ module calsoc_top (
 		.i_serr		({bootrom_wb_err_o,   ram_wb_err_o,   gpioa_wb_err_o,   uart1_wb_err_o,   prg_ram_wb_err_o,   mu_wb_err_o}),
 		.i_sstall	({bootrom_wb_stall_o, ram_wb_stall_o, gpioa_wb_stall_o, uart1_wb_stall_o, prg_ram_wb_stall_o, mu_wb_stall_o})
 	);
-	
+
+	assign delay1_stb = debug_stb;//int_stb;
+	assign delay2_stb = int_stb;
+
+	logic debug_stb;
+	assign debug_uart_tx = debug_stb;
+
 	measure_unit #(
 		.DAC_SPI_CLK_DIV(3),
-		.DAC_SPI_WAIT_CYCLES(3),
-		.STROBE_ZERO_HOLD_CYCLES(3),
+		.DAC_SPI_WAIT_CYCLES(256),
 		.DEFAULT_DELAY_CODE_DELTA(10'h1),
 		.DEFAULT_THRESHOLD_DELTA(16'h1)
 	) measure_unit_inst (
 		.hclk_i			(hclk),
+		.ext_hclk_i		(node_clk_i),
 		.wb_clk_i 		(wb_clk_i),
 		.wb_rst_i		(wb_rst_i),			
 		.wb_dat_i		(mu_wb_dat_i),
@@ -123,26 +205,13 @@ module calsoc_top (
 		.dac2_sdi_o		(dac2_sdi_o),
 		.delay1_code_o	(delay1_code_o),
 		.delay2_code_o	(delay2_code_o),
-		.delay1_stb_o	(delay1_stb_o),
-		.delay2_stb_o	(delay2_stb_o),
-		.cmp1_out_i		(cmp1_out_i),
-		.cmp2_out_i		(cmp2_out_i)
+		.stb_o			(int_stb),
+		.cmp1_out_i		(cmp1_out),
+		.cmp2_out_i		(cmp2_out_i),
+
+		.debug_stb_o	(debug_stb)
 	);
-	
-	gpio_top gpioa (
-		.wb_clk_i	(wb_clk_i),
-		.wb_rst_i	(wb_rst_i),
-		.wb_cyc_i	(gpioa_wb_cyc_i),
-		.wb_adr_i	(gpioa_wb_adr_i[5:0]),
-		.wb_dat_i	(gpioa_wb_dat_i),
-		.wb_sel_i	(gpioa_wb_sel_i), 
-		.wb_we_i	(gpioa_wb_we_i),
-		.wb_stb_i	(gpioa_wb_stb_i),
-		.wb_dat_o	(gpioa_wb_dat_o), 
-		.wb_ack_o	(gpioa_wb_ack_o),
-		.ext_pad_o	(gpioa_o)
-	);
-	
+
 	wb_ram #(
 		.WORD_COUNT(`RAM_WB_MEM_SIZE)
 	) ram (
@@ -172,6 +241,8 @@ module calsoc_top (
 		.wb_dat_o	(prg_ram_wb_dat_o), 
 		.wb_ack_o	(prg_ram_wb_ack_o)
 	);
+
+	logic tmp_uart;
 
 	wbuart #(
 		.LGFLEN('ha)

@@ -1,7 +1,7 @@
 #ifndef _WBUART32_H_
 #define _WBUART32_H_
 
-#define F_UART 12000000
+#define F_UART 25000000
 
 typedef struct {
     volatile unsigned int setup;

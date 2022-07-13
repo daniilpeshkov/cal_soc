@@ -1,123 +1,209 @@
 
 module ch_measure_ctl #(
-    parameter DEFAULT_THRESHOLD_DELTA = 1,
-    parameter DEFAULT_D_CODE_DELTA = 1    
+	parameter DEFAULT_THRESHOLD_DELTA = 1,
+	parameter DEFAULT_D_CODE_DELTA = 1    
 ) (
-    input logic clk_i,
-    input logic arst_i,
+	input logic clk_i,
+	input logic arst_i,
 
-    //internal strobe generator
-    input logic stb_i,
+	//stb request interface
+	output logic stb_req_o,
+	input  logic stb_valid_i,
 
-    //CMP input
-    input logic cmp_out_i,
+	//CMP input
+	input logic cmp_out_i,
 
-    //control threshold and delay delta
-    input logic [15:0] threshold_delta_i,
-    input logic [9:0] d_code_delta_i,
+	//control threshold and delay delta
+	input logic [15:0] threshold_delta_i,
+	input logic [9:0] d_code_delta_i,
 
-    //dac (threshold) output
-    output logic [15:0] threshold_o,
-    output logic threshold_wre_o,
-    input logic threshold_rdy_i,
+	//dac (threshold) output
+	output logic [15:0] threshold_o,
+	output logic threshold_wre_o,
+	input logic threshold_rdy_i,
 
-    //delay line
-    output logic [9:0] d_code_o,
+	//delay line
+	output logic [9:0] d_code_o,
 
-    //ctl
-    input logic run_i,
+	//ctl
+	input logic run_i,
 
-    //TODO output measured value
-    output logic point_rdy_o,
-    output logic [15:0] point_v_o,
-    output logic [9:0] point_t_o
+	//TODO output measured value
+	output logic point_rdy_o
 );
 
-    typedef enum logic[1:0] { IDLE, RUN  } ctl_state_t;
-    ctl_state_t state = IDLE;
+	enum logic[8:0] { 
+		IDLE 		        = 9'b000000001,
+		SET_THRESHOLD 		= 9'b000000010,
+		WAIT_RDY_NEG		= 9'b000000100,
+		WAIT_THRESHOLD 		= 9'b000001000,
+		REQ_STROBE 			= 9'b000010000,
+		WAIT_STROBE			= 9'b000100000,
+		SAVE_CMP_RES		= 9'b001000000,
+		PROCESS_RES			= 9'b010000000,
+		UPDATE_CONF			= 9'b100000000
+	} ctl_state, next_ctl_state;
 
-////////////////////////////////////////////////////////////////////////////////////
-    logic stb_posedge;
-    logic stb_prev;
+	enum logic [1:0] {
+		DIR_UP		= 2'b01,
+		DIR_DOWN	= 2'b10
+	} threshold_dir;
 
-    assign stb_posedge = (stb_prev == 0 && stb_i == 1);
-    // TODO may be used to make latency after stb posedge
-    always_ff @(posedge clk_i, posedge arst_i) begin
-        if (arst_i) begin
-            stb_prev = 0;
-        end else begin
-            stb_prev <= stb_i;
-        end
-    end
+	enum logic [1:0] {
+		FIND_DIR	= 2'b01,
+		FIND_POINT	= 2'b10
+	} point_state, next_point_state;
 
-////////////////////////////////////////////////////////////////////////////////////
-    
-    //previously latched data 
-    logic cmp_out_prev = 0;
+	logic cur_cmp_out, prev_cmp_out;
 
-    typedef enum logic [1:0] { FIND_DIRECTION, FIND_VAL } measure_state_t;
-    typedef enum logic {UP, DOWN} direction_t;
+	always_comb begin : next_ctl_state_comb
+		if (~run_i) begin
+			next_ctl_state = IDLE;
+		end else begin
+			case (ctl_state)
+				IDLE:   			next_ctl_state = SET_THRESHOLD;
+				SET_THRESHOLD:		next_ctl_state = WAIT_RDY_NEG;
+				WAIT_RDY_NEG:		next_ctl_state = WAIT_THRESHOLD;
+				WAIT_THRESHOLD:		if (threshold_rdy_i) next_ctl_state = REQ_STROBE;
+									else next_ctl_state = ctl_state;
+				REQ_STROBE:			next_ctl_state = WAIT_STROBE;	
+				WAIT_STROBE:		if (stb_valid_i) next_ctl_state = SAVE_CMP_RES;
+									else next_ctl_state = ctl_state;
 
-    measure_state_t measure_state = FIND_VAL;
-    direction_t dir = UP;
+				SAVE_CMP_RES:		next_ctl_state = PROCESS_RES;
+				PROCESS_RES:		next_ctl_state = UPDATE_CONF;
+				UPDATE_CONF:		next_ctl_state = SET_THRESHOLD;
 
-    always_ff @(posedge clk_i, posedge arst_i) begin
-        if (arst_i) begin
-            cmp_out_prev <= 1;
-        end else begin
-            if (stb_posedge && threshold_rdy_i) cmp_out_prev <= cmp_out_i;
-        end
-    end
+			endcase
+		end
+	end
 
+	always_comb begin : next_point_state_comb
+		if (ctl_state == PROCESS_RES) begin
+			case (point_state) /* synthesis full_case */
+				FIND_POINT: if (cur_cmp_out != prev_cmp_out) next_point_state = FIND_DIR;
+							else next_point_state = point_state;
+				FIND_DIR:	next_point_state = FIND_POINT;
+			endcase
+		end else begin
+			next_point_state = point_state;
+		end
+	end
 
-    always_ff @(posedge clk_i, posedge arst_i) begin
-        if (arst_i) begin
-            state = IDLE;
-        end else begin
-            threshold_wre_o <= 0;
-            point_rdy_o <= 0;
-            if (run_i && state == IDLE) begin
-                state <= RUN;
-                threshold_o <= 0;
-                d_code_o <= 0;
-                threshold_wre_o <= 1;
+	always_ff @(posedge clk_i, negedge arst_i) begin
+		if (~arst_i) begin
+			cur_cmp_out = 1;
+		end else if (ctl_state == SAVE_CMP_RES) begin
+			cur_cmp_out <= cmp_out_i;
+			prev_cmp_out <= cur_cmp_out;
+		end
+	end
 
-                measure_state <= FIND_VAL;
-                dir <= UP;
-            end
+	always_ff @(posedge clk_i, negedge arst_i) begin : ctl_state_ff
+		if (~arst_i) begin
+			ctl_state = IDLE;
+		end else begin
+			ctl_state <= next_ctl_state;
+		end
+	end
 
-            if (state == RUN) begin
-                case (measure_state)
-                    FIND_VAL: begin
-                        if (stb_posedge && threshold_rdy_i) begin
-                            if (cmp_out_i != cmp_out_prev) begin
-                                point_rdy_o <= 1;
-                                point_t_o <= d_code_o;
-                                point_v_o <= threshold_o;
+	logic [15:0] next_threshold;
+	logic [9:0]	 next_d_code;
 
-                                d_code_o <= d_code_o + d_code_delta_i;
-                                measure_state <= FIND_DIRECTION;
-                            end else begin
-                                threshold_o <= threshold_o + (dir == UP ? threshold_delta_i : -threshold_delta_i);
-                                threshold_wre_o <= 1;
-                            end
-                        end
-                    end
-                    FIND_DIRECTION: begin
-                        if (stb_posedge && threshold_rdy_i) begin
-                            if (cmp_out_i == 1 && cmp_out_prev == 0) dir <= UP;
-                            else if (cmp_out_i == 0 && cmp_out_prev == 1) dir <= DOWN;
-                            else begin 
-                                if (dir == UP) dir <= DOWN;
-                                else dir <= UP;
-                            end
-                            measure_state <= FIND_VAL;
-                        end
-                    end 
-                endcase
-            end
-        end
-    end
+	always_comb begin : next_threshold_comb
+		case (ctl_state)
+			IDLE:			next_threshold = 0;
+			UPDATE_CONF:	if (point_state == FIND_POINT) begin
+								case (threshold_dir) /* synthesis full_case */
+									DIR_UP: 	next_threshold = threshold_o + threshold_delta_i;
+									DIR_DOWN:	next_threshold = threshold_o - threshold_delta_i;	
+								endcase
+							end else begin
+								next_threshold = threshold_o;
+							end
+			default:		next_threshold = threshold_o;
+		endcase
+	end
 
+	always_comb begin : next_d_code_comb
+		case (ctl_state)
+			IDLE:			next_d_code = 0;
+			UPDATE_CONF:	if (point_state == FIND_DIR) begin
+				   				next_d_code = d_code_o + d_code_delta_i;
+							end else begin
+								next_d_code = d_code_o;
+							end
+			default:		next_d_code = d_code_o;
+		endcase
+	end
+
+	always_ff @(posedge clk_i, negedge arst_i) begin : threshold_ff
+		if (~arst_i) begin
+			threshold_o = 0;
+		end else begin
+			threshold_o <= next_threshold;
+		end
+	end
+
+	always_ff @(posedge clk_i, negedge arst_i) begin : threshold_wre_ff
+		if (~arst_i) begin
+			threshold_wre_o = 0;
+		end else begin
+			case (ctl_state)
+				SET_THRESHOLD:  threshold_wre_o <= 1;
+				default:        threshold_wre_o <= 0; 
+			endcase
+		end
+	end
+
+	always_ff @(posedge clk_i, negedge arst_i) begin : stb_req_ff
+		if (~arst_i) begin
+			stb_req_o = 0;
+		end else begin
+			case (ctl_state)
+				REQ_STROBE: stb_req_o <= 1;
+				default:	stb_req_o <= 0;
+			endcase
+		end
+	end
+
+always_ff @(posedge clk_i, negedge arst_i) begin : threshold_dir_ff
+		if (~arst_i) begin
+			threshold_dir = DIR_UP;
+		end else begin
+			if (ctl_state == PROCESS_RES & point_state == FIND_DIR) begin
+				case ({cur_cmp_out, prev_cmp_out})
+					2'b10:		threshold_dir <= DIR_DOWN;	
+					2'b01:		threshold_dir <= DIR_UP;	
+					default: 	threshold_dir <= (threshold_dir == DIR_DOWN ? DIR_UP : DIR_DOWN);
+				endcase
+			end
+		end
+	end
+
+	always_ff @(posedge clk_i, negedge arst_i) begin : point_state_ff
+		if (~arst_i) begin
+			point_state = FIND_POINT;
+		end else begin
+			point_state <= next_point_state;
+		end
+	end
+
+	always_ff @(posedge clk_i, negedge arst_i) begin : d_code_ff
+		if (~arst_i) begin
+			d_code_o = 0;
+		end else begin
+			d_code_o <= next_d_code;
+		end
+	end
+
+	always_ff @(posedge clk_i, negedge arst_i) begin : point_rdy_ff
+		if (~arst_i) begin
+			point_rdy_o = 0;
+		end else begin
+			if (ctl_state == PROCESS_RES & cur_cmp_out != prev_cmp_out) point_rdy_o <= 1;
+			else point_rdy_o <= 0;
+		end
+	end
 
 endmodule

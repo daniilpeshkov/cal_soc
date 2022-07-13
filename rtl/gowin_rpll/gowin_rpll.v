@@ -2,9 +2,9 @@
 //All rights reserved.
 //File Title: IP file
 //GOWIN Version: V1.9.8
-//Part Number: GW1NR-LV9QN88C6/I5
+//Part Number: GW1NR-UV9QN88C6/I5
 //Device: GW1NR-9
-//Created Time: Thu Apr 21 22:09:15 2022
+//Created Time: Tue May 17 17:48:02 2022
 
 module Gowin_rPLL (clkout, clkin);
 
@@ -37,13 +37,13 @@ rPLL rpll_inst (
     .FDLY({gw_gnd,gw_gnd,gw_gnd,gw_gnd})
 );
 
-defparam rpll_inst.FCLKIN = "12";
+defparam rpll_inst.FCLKIN = "125";
 defparam rpll_inst.DYN_IDIV_SEL = "false";
-defparam rpll_inst.IDIV_SEL = 2;
+defparam rpll_inst.IDIV_SEL = 4;
 defparam rpll_inst.DYN_FBDIV_SEL = "false";
-defparam rpll_inst.FBDIV_SEL = 4;
+defparam rpll_inst.FBDIV_SEL = 0;
 defparam rpll_inst.DYN_ODIV_SEL = "false";
-defparam rpll_inst.ODIV_SEL = 48;
+defparam rpll_inst.ODIV_SEL = 32;
 defparam rpll_inst.PSDA_SEL = "0000";
 defparam rpll_inst.DYN_DA_EN = "true";
 defparam rpll_inst.DUTYDA_SEL = "1000";

@@ -1,9 +1,9 @@
-#define F_CPU 	12000000L
-#define BAUD 	19200
+#define F_CPU 	25000000L
+#define BAUD 	19200L
 
-#define GPIO_BASE 0x02000000
-#define GPIO_OE *(unsigned int*)(GPIO_BASE + 0x8)
-#define GPIO_OUT *(unsigned int*)(GPIO_BASE + 0x4)
+// #define GPIO_BASE 0x02000000
+// #define GPIO_OE *(unsigned int*)(GPIO_BASE + 0x8)
+// #define GPIO_OUT *(unsigned int*)(GPIO_BASE + 0x4)
 
 #define UART1_BASE 0x03000000 
 #define UART1_SETUP *(unsigned int*)(UART1_BASE + 0x0)
@@ -43,34 +43,26 @@ void main(void) {
 	b_state state = IDLE_STATE;
 
 	// TODO check bootmode
-	
-
-	GPIO_OE = 0xffffffff;
-	GPIO_OUT = 0xaa;
 
 	//init uart
 	UART1_SETUP = F_CPU / BAUD;
 	char in;
 	while (1) {
 		in = getchar_();
-		GPIO_OUT = 7;
 		if (in == ESCAPE) {
 			in = getchar_();
 		} else {
 			switch (in) {
 				case LOAD:
 					cur_addr = 0;
-					GPIO_OUT = 1;
 					for (int i = 0; i < 4; i++) { //get 4 bytes of address
 					 	cur_addr <<= 8;
 						cur_addr |= ((unsigned int)getchar_());
 					}
-					GPIO_OUT = 2;
 					state = LOAD_STATE;
 					continue;
 
 				case EXIT:
-					GPIO_OUT = 0xff;
 					__asm__("li ra, 0x04000000; ret");
 					while(1);
 
@@ -91,7 +83,6 @@ void main(void) {
 				data = 0;
 				b_cnt = 0;
 				cur_addr += 4;
-				GPIO_OUT += 1;
 			}
 			break;
 		}

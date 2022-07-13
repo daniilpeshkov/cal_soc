@@ -28,12 +28,16 @@ module spi_master_o #(
 		.negedge_o(sclk_neg)
 	);
 ////////////////////////////////////////////////////////////////////////////
-	typedef enum  logic [1:0] {IDLE, SEND, WAIT} spi_master_state;
+	typedef enum  logic [2:0] {
+		IDLE = 3'b001, 
+		SEND = 3'b010, 
+		WAIT = 3'b100
+	} spi_master_state;
 
 	spi_master_state state;
 	logic [DATA_WIDTH:0] shift_reg;
 	logic [$clog2(DATA_WIDTH) : 0] bit_cnt;
-
+	logic [$clog2(WAIT_CYCLES):0] wait_cnt;
 	assign rdy_o = (state == IDLE);
 	assign sdi_o = shift_reg[DATA_WIDTH];
 
@@ -61,13 +65,13 @@ module spi_master_o #(
 						if (bit_cnt == 0) begin
 							sync_o <= 1;
 							state = WAIT;
-							bit_cnt <= WAIT_CYCLES - 1;
+							wait_cnt = WAIT_CYCLES - 1;
 						end
 					end
 				end
 				WAIT: begin 
-					bit_cnt <= bit_cnt - 1;
-					if (bit_cnt == 0) begin 
+					wait_cnt <= wait_cnt - 1;
+					if (wait_cnt == 0) begin 
 						state <= IDLE;
 					end		
 				end

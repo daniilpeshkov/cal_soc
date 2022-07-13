@@ -1,7 +1,7 @@
 -series GW1NR
 -device GW1NR-9
 -package QFN88
--part_number GW1NR-LV9QN88C6/I5
+-part_number GW1NR-UV9QN88C6/I5
 
 
 -mod_name Gowin_rPLL
@@ -12,15 +12,15 @@
 -file_type vlg
 -dev_type GW1NR-9
 -dyn_idiv_sel false
--idiv_sel 3
+-idiv_sel 5
 -dyn_fbdiv_sel false
--fbdiv_sel 5
+-fbdiv_sel 1
 -dyn_odiv_sel false
--odiv_sel 48
+-odiv_sel 32
 -dyn_da_en true
 -rst_sig false
 -rst_sig_p false
--fclkin 12
+-fclkin 125
 -clkfb_sel 0
 -en_lock false
 -clkout_bypass false
