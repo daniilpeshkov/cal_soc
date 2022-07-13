@@ -39,14 +39,31 @@ module stb_gen #(
 	assign stb_valid_o = stb_oe & rdy_o;
 
 	logic prev_stb_req;
-
-	always_ff @(posedge clk_i) prev_stb_req <= stb_req_i;
+	logic prev_sig; //edge detect
 
 	logic req_posedge;
 	assign req_posedge = ~prev_stb_req & stb_req_i;
 
+	logic sig_posedge;
+	assign sig_posedge = sig_synced & ~prev_sig;
+
 	logic is_zero_hold_start;
 	logic is_stb_end;
+	logic is_gen_start;
+
+	logic [T_CNT_WIDTH-1 : 0] t_cnt /* synthesis syn_keep=1 syn_preserve=1 syn_ramstyle="registers" */;
+	logic [T_CNT_WIDTH-1 : 0] t_start /* synthesis syn_keep=1 syn_preserve=1 syn_ramstyle="registers" */;
+	logic [T_CNT_WIDTH-1 : 0] t_end /* synthesis syn_keep=1 syn_preserve=1 syn_ramstyle="registers" */;
+
+	logic count_zero_hold_begin, zero_hold_begin_valid;
+	logic count_stb_end, stb_end_valid;
+	logic count_gen_start, gen_start_valid;
+
+	logic [T_CNT_WIDTH-1:0] adder_zero_hold_res;
+	logic [T_CNT_WIDTH-1:0] adder_stb_end_res;
+	logic [T_CNT_WIDTH-1:0] adder_gen_start_res;
+
+	always_ff @(posedge clk_i) prev_stb_req <= stb_req_i;
 
 	always_ff @(posedge clk_i, negedge arstn_i) begin
 		if (~arstn_i) begin
@@ -68,14 +85,9 @@ module stb_gen #(
 		.data_o(sig_synced)
 	);
 
-	logic prev_sig; //edge detect
-
 	always_ff @(posedge clk_i) begin
 		prev_sig <= sig_synced;
 	end
-
-	logic sig_posedge;
-	assign sig_posedge = sig_synced & ~prev_sig;
 
 	enum logic[8:0] { 
 		FIND_EDGE_1 		,//= 9'b000000001, 
@@ -91,13 +103,6 @@ module stb_gen #(
 		WAIT_STB_END 		//= 9'b100000000
 	} state = FIND_EDGE_1, next_state;
 
-	logic [T_CNT_WIDTH-1 : 0] t_cnt /* synthesis syn_keep=1 syn_preserve=1 syn_ramstyle="registers" */;
-	logic [T_CNT_WIDTH-1 : 0] t_start /* synthesis syn_keep=1 syn_preserve=1 syn_ramstyle="registers" */;
-	logic [T_CNT_WIDTH-1 : 0] t_end /* synthesis syn_keep=1 syn_preserve=1 syn_ramstyle="registers" */;
-
-	logic count_zero_hold_begin, zero_hold_begin_valid;
-	logic count_stb_end, stb_end_valid;
-	logic count_gen_start, gen_start_valid;
 
 	assign count_zero_hold_begin = (state == COUNT_STROBE ? 1 : 0);
 	assign count_stb_end = (state == COUNT_STROBE ? 1 : 0);
@@ -129,11 +134,8 @@ module stb_gen #(
 		end
 	end
 
-	logic [T_CNT_WIDTH-1:0] adder_zero_hold_res;
-	logic [T_CNT_WIDTH-1:0] adder_stb_end_res;
-	logic [T_CNT_WIDTH-1:0] adder_gen_start_res;
 
-	always_latch begin
+	always_ff @(posedge clk_i) begin
 		if (state == COUNT_PERIOD) begin
 			stb_period_o = t_end - t_start;
 		end
@@ -172,7 +174,6 @@ module stb_gen #(
 		.res_o	(adder_gen_start_res)
 	);
 
-
 	logic [T_CNT_WIDTH-1:0] latched_zero_hold_res;
 	logic [T_CNT_WIDTH-1:0] latched_stb_end_res;
 	logic [T_CNT_WIDTH-1:0] latched_gen_start_res;
@@ -198,6 +199,13 @@ module stb_gen #(
 		.a_i	(t_cnt),
 		.b_i	(latched_stb_end_res),
 		.eq_o	(is_stb_end)
+	);
+
+	pipelined_equal_32 is_gen_start_eq_inst (
+		.clk_i	(clk_i),
+		.a_i	(t_cnt),
+		.b_i	(latched_gen_start_res),
+		.eq_o	(is_gen_start)
 	);
 
 	always_ff @(posedge clk_i, negedge arstn_i) begin
