@@ -106,6 +106,7 @@ module stb_gen #(
 
 	assign count_zero_hold_begin = (state == COUNT_STROBE ? 1 : 0);
 	assign count_stb_end = (state == COUNT_STROBE ? 1 : 0);
+	assign count_gen_start = (state == COUNT_GEN_START ? 1 : 0);
 
 	always_comb begin
 		unique case (state) /* sythesis parallel_case*/
@@ -118,7 +119,11 @@ module stb_gen #(
 									else next_state = state;
 			WRITE_END:				next_state = COUNT_PERIOD;
 			COUNT_PERIOD:			next_state = WAIT_COUNT_PERIOD;
-			WAIT_COUNT_PERIOD:		next_state = COUNT_STROBE;
+			// COUNT_PERIOD:			next_state = WAIT_COUNT_PERIOD;
+			WAIT_COUNT_PERIOD:		next_state = COUNT_GEN_START;
+			COUNT_GEN_START:		next_state = WAIT_GEN_START;
+			WAIT_GEN_START:			if (is_gen_start) next_state = COUNT_STROBE;
+									else next_state = state;
 			COUNT_STROBE:			next_state = WAIT_STB_END;
 			WAIT_STB_END:			if (is_stb_end) next_state = COUNT_STROBE;
 									else next_state = state;
@@ -142,7 +147,7 @@ module stb_gen #(
 	end
 
 	localparam MAGIC_CONST = 3;
-	localparam OFFSET = 6;
+	localparam OFFSET = 9;
 
 	logic [T_CNT_WIDTH-1:0] period_minus_zero_hold;
 	always_ff @(posedge clk_i) period_minus_zero_hold <= stb_period_o - (ZERO_HOLD_CYCLES+MAGIC_CONST); //magic constat due to computation pipeline
@@ -222,7 +227,8 @@ module stb_gen #(
 
 	always_ff @(posedge clk_i, negedge arstn_i) begin
 		if (~arstn_i) rdy_o = 0;
-		else rdy_o <= (state == COUNT_STROBE ? 1 : rdy_o);
+		else if (is_stb_end) rdy_o <= 1;
+		// else rdy_o <= (state == COUNT_STROBE ? 1 : rdy_o);
 	end
 
 	always_ff @(posedge clk_i) begin

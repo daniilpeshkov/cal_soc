@@ -15,7 +15,7 @@ module tb_stb_gen();
     localparam SIG_WIDTH = 20;
     localparam T_CNT_WIDTH = 32;
 
-    int freqs[] = { 20};
+    int freqs[] = { 13};
 
     logic clk_i = 0;
     logic comp_out = 0;
