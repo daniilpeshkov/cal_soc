@@ -175,21 +175,21 @@ module measure_unit #(
 		.sync_o	(dac2_sync_o)
 	);
 
-	ch_measure_ctl ch_ctl1_inst(
-		.clk_i 					(wb_clk_i),
-		.arst_i					(~wb_rst_i),
-		.cmp_out_i				(cmp1_out_i),
-		.threshold_delta_i 		(ctl_threshold_delta),
-		.d_code_delta_i			(ctl_d_code_delta),
-		.threshold_o			(ctl1_dac_code),
-		.threshold_wre_o		(ctl1_dac_wre),
-		.threshold_rdy_i		(dac1_rdy),
-		.d_code_o				(delay1_code_o),
-		.run_i					(ctl_run),
-		.point_rdy_o			(ctl1_p_rdy),
-		.stb_req_o				(ctl1_stb_req),
-		.stb_valid_i			(stb_valid)
-	);
+	// ch_measure_ctl ch_ctl1_inst(
+	// 	.clk_i 					(wb_clk_i),
+	// 	.arst_i					(~wb_rst_i),
+	// 	.cmp_out_i				(cmp1_out_i),
+	// 	.threshold_delta_i 		(ctl_threshold_delta),
+	// 	.d_code_delta_i			(ctl_d_code_delta),
+	// 	.threshold_o			(ctl1_dac_code),
+	// 	.threshold_wre_o		(ctl1_dac_wre),
+	// 	.threshold_rdy_i		(dac1_rdy),
+	// 	.d_code_o				(delay1_code_o),
+	// 	.run_i					(ctl_run),
+	// 	.point_rdy_o			(ctl1_p_rdy),
+	// 	.stb_req_o				(ctl1_stb_req),
+	// 	.stb_valid_i			(stb_valid)
+	// );
 
 	sc_fifo #(
 		.WIDTH	(16),

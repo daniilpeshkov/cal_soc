@@ -62,6 +62,7 @@ module stb_gen #(
 	logic [T_CNT_WIDTH-1:0] adder_zero_hold_res;
 	logic [T_CNT_WIDTH-1:0] adder_stb_end_res;
 	logic [T_CNT_WIDTH-1:0] adder_gen_start_res;
+	logic [T_CNT_WIDTH-1:0] adder_period_res;
 
 	always_ff @(posedge clk_i) prev_stb_req <= stb_req_i;
 
@@ -142,17 +143,18 @@ module stb_gen #(
 
 	always_ff @(posedge clk_i) begin
 		if (state == COUNT_PERIOD) begin
-			stb_period_o = t_end - t_start;
+			// stb_period_o = t_end - t_start;
+			stb_period_o <= adder_period_res;
 		end
 	end
 
-	localparam MAGIC_CONST = 3;
-	localparam OFFSET = 9;
+	localparam MAGIC_CONST = 1;
+	localparam OFFSET = 7;
 
 	logic [T_CNT_WIDTH-1:0] period_minus_zero_hold;
 	always_ff @(posedge clk_i) period_minus_zero_hold <= stb_period_o - (ZERO_HOLD_CYCLES+MAGIC_CONST); //magic constat due to computation pipeline
 
-	two_cycle_32_adder adder_zero_hold_begin (
+	pipelined_adder_32 adder_zero_hold_begin (
 		.clk_i 	(clk_i),
 		.a_i	(t_cnt),
 		.b_i	(period_minus_zero_hold),
@@ -161,7 +163,7 @@ module stb_gen #(
 		.res_o	(adder_zero_hold_res)
 	);
 
-	two_cycle_32_adder adder_stb_end (
+	pipelined_adder_32 adder_stb_end (
 		.clk_i 	(clk_i),
 		.a_i	(t_cnt),
 		.b_i	(stb_period_o - MAGIC_CONST), //magic constat due to computation pipeline
@@ -170,13 +172,22 @@ module stb_gen #(
 		.res_o	(adder_stb_end_res)
 	);
 
-	two_cycle_32_adder adder_gen_start (
+	pipelined_adder_32 adder_gen_start (
 		.clk_i 	(clk_i),
 		.a_i	(t_cnt),
 		.b_i	(stb_period_o - OFFSET),
 		.valid_i(count_gen_start),
 		.valid_o(gen_start_valid),
 		.res_o	(adder_gen_start_res)
+	);
+
+	pipelined_adder_32 adder_period (
+		.clk_i 	(clk_i),
+		.a_i	(t_cnt),
+		.b_i	(-t_start),
+		.valid_i(1'b1),
+		.valid_o(),
+		.res_o	(adder_period_res)
 	);
 
 	logic [T_CNT_WIDTH-1:0] latched_zero_hold_res;

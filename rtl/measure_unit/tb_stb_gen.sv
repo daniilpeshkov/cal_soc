@@ -1,10 +1,10 @@
 `timescale 1ns/1ns
 
 
+`include "pipelined_adder_32.sv"
+`include "pipelined_equal_32.sv"
 `include "stb_gen.sv"
 `include "sync_ff.sv"
-`include "two_cycle_32_adder.sv"
-`include "pipelined_equal_32.sv"
 
 `define DUMPVARS
 // `undef DUMPVARS    
