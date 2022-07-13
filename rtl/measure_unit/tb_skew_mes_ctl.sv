@@ -2,13 +2,14 @@
 `timescale 1ns/1ps
 
 
+`include "pipelined_adder_32.sv"
+`include "pipelined_equal_32.sv"
 `include "stb_gen.sv"
 `include "skew_mes_ctl.sv"
 `include "sync_ff.sv"
-`include "two_cycle_32_adder.sv"
 
 `define DUMPVARS
-`undef DUMPVARS    
+// `undef DUMPVARS    
 
 module tb_stb_gen();
 

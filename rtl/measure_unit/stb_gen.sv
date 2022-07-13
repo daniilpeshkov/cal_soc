@@ -51,9 +51,9 @@ module stb_gen #(
 	logic is_stb_end;
 	logic is_gen_start;
 
-	logic [T_CNT_WIDTH-1 : 0] t_cnt /* synthesis syn_keep=1 syn_preserve=1 syn_ramstyle="registers" */;
-	logic [T_CNT_WIDTH-1 : 0] t_start /* synthesis syn_keep=1 syn_preserve=1 syn_ramstyle="registers" */;
-	logic [T_CNT_WIDTH-1 : 0] t_end /* synthesis syn_keep=1 syn_preserve=1 syn_ramstyle="registers" */;
+	logic [T_CNT_WIDTH-1 : 0] t_cnt;
+	logic [T_CNT_WIDTH-1 : 0] t_start;
+	logic [T_CNT_WIDTH-1 : 0] t_end;
 
 	logic count_zero_hold_begin, zero_hold_begin_valid;
 	logic count_stb_end, stb_end_valid;
@@ -91,17 +91,17 @@ module stb_gen #(
 	end
 
 	enum logic[8:0] { 
-		FIND_EDGE_1 		,//= 9'b000000001, 
-		FIND_EDGE_2 		,//= 9'b000000010,
-		WRITE_START 		,//= 9'b000000100,
-		FIND_EDGE_3 		,//= 9'b000001000, 
-		WRITE_END			,//= 9'b000010000,
-		COUNT_PERIOD 		,//= 9'b000100000, 
-		WAIT_COUNT_PERIOD 	,//= 9'b001000000,
-		COUNT_GEN_START		,
-		WAIT_GEN_START		,
-		COUNT_STROBE 		,//= 9'b010000000,
-		WAIT_STB_END 		//= 9'b100000000
+		FIND_EDGE_1 		= 9'b000000001, 
+		FIND_EDGE_2 		= 9'b000000010,
+		WRITE_START 		= 9'b000000100,
+		FIND_EDGE_3 		= 9'b000001000, 
+		// WRITE_END			,
+		COUNT_PERIOD 		= 9'b000010000, 
+		// WAIT_COUNT_PERIOD 	,
+		COUNT_GEN_START		= 9'b000100000,
+		WAIT_GEN_START		= 9'b001000000,
+		COUNT_STROBE 		= 9'b010000000,
+		WAIT_STB_END 		= 9'b100000000
 	} state = FIND_EDGE_1, next_state;
 
 
@@ -116,12 +116,12 @@ module stb_gen #(
 			FIND_EDGE_2:			if (sig_posedge) next_state = WRITE_START;
 									else next_state = state;
 			WRITE_START:			next_state = FIND_EDGE_3;
-			FIND_EDGE_3:			if (sig_posedge) next_state = WRITE_END;
+			FIND_EDGE_3:			if (sig_posedge) next_state = COUNT_PERIOD;
 									else next_state = state;
-			WRITE_END:				next_state = COUNT_PERIOD;
-			COUNT_PERIOD:			next_state = WAIT_COUNT_PERIOD;
+			// WRITE_END:				next_state = COUNT_PERIOD;
+			COUNT_PERIOD:			next_state = COUNT_GEN_START;
 			// COUNT_PERIOD:			next_state = WAIT_COUNT_PERIOD;
-			WAIT_COUNT_PERIOD:		next_state = COUNT_GEN_START;
+			// WAIT_COUNT_PERIOD:		next_state = COUNT_GEN_START;
 			COUNT_GEN_START:		next_state = WAIT_GEN_START;
 			WAIT_GEN_START:			if (is_gen_start) next_state = COUNT_STROBE;
 									else next_state = state;
@@ -141,15 +141,16 @@ module stb_gen #(
 	end
 
 
-	always_ff @(posedge clk_i) begin
-		if (state == COUNT_PERIOD) begin
+	always_ff @(posedge clk_i, negedge arstn_i) begin
+		if (~arstn_i) stb_period_o = 0;
+		else if (state == COUNT_PERIOD) begin
 			// stb_period_o = t_end - t_start;
 			stb_period_o <= adder_period_res;
 		end
 	end
 
-	localparam MAGIC_CONST = 1;
-	localparam OFFSET = 7;
+	localparam MAGIC_CONST = 0;
+	localparam OFFSET = 4;
 
 	logic [T_CNT_WIDTH-1:0] period_minus_zero_hold;
 	always_ff @(posedge clk_i) period_minus_zero_hold <= stb_period_o - (ZERO_HOLD_CYCLES+MAGIC_CONST); //magic constat due to computation pipeline
@@ -203,25 +204,35 @@ module stb_gen #(
 	always_ff @(posedge clk_i)
 		if (gen_start_valid) latched_gen_start_res <= adder_gen_start_res;
 
+	logic gen_start_eq_ena;
+
+	always_ff @(posedge clk_i, negedge arstn_i) begin
+		if (~arstn_i) gen_start_eq_ena = 0;
+		else if (gen_start_valid) gen_start_eq_ena <= 1;
+	end
+
 	pipelined_equal_32 is_zero_hold_start_eq_inst (
 		.clk_i	(clk_i),
 		.a_i	(t_cnt),
 		.b_i	(latched_zero_hold_res),
-		.eq_o	(is_zero_hold_start)
+		.eq_o	(is_zero_hold_start),
+		.ena_i	(1'b1)
 	);
 
 	pipelined_equal_32 is_stb_end_eq_inst (
 		.clk_i	(clk_i),
 		.a_i	(t_cnt),
 		.b_i	(latched_stb_end_res),
-		.eq_o	(is_stb_end)
+		.eq_o	(is_stb_end),
+		.ena_i	(1'b1)
 	);
 
 	pipelined_equal_32 is_gen_start_eq_inst (
 		.clk_i	(clk_i),
 		.a_i	(t_cnt),
 		.b_i	(latched_gen_start_res),
-		.eq_o	(is_gen_start)
+		.eq_o	(is_gen_start),
+		.ena_i	(gen_start_eq_ena)
 	);
 
 	always_ff @(posedge clk_i, negedge arstn_i) begin
@@ -246,7 +257,7 @@ module stb_gen #(
 		err_o <= (state == FIND_EDGE_1 ? 0 : err_o);
 	end
 
-	always_ff @(posedge clk_i) t_end <= (state == WRITE_END ? t_cnt : t_end);
+	// always_ff @(posedge clk_i) t_end <= (state == WRITE_END ? t_cnt : t_end);
 
 	always_ff @(posedge clk_i) t_start <= (state == WRITE_START ? t_cnt : t_start);
 
