@@ -175,6 +175,8 @@ module measure_unit #(
 		.sync_o	(dac2_sync_o)
 	);
 
+	assign delay2_code_o = 0;
+
 	ch_measure_ctl ch_ctl1_inst(
 		.clk_i 					(wb_clk_i),
 		.arst_i					(~wb_rst_i),

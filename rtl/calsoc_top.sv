@@ -39,8 +39,8 @@ module calsoc_top (
 	input logic cmp1_out_p_i,
 	input logic cmp1_out_n_i,
 
-	input logic cmp2_out_p_1,
-	input logic cmp2_out_n_1,
+	input logic cmp2_out_p_i,
+	input logic cmp2_out_n_i,
 	output logic debug_led
 );
 	assign delay1_le_o = 0;
@@ -92,11 +92,11 @@ module calsoc_top (
 		.O	(cmp1_out)
 	);
 
-	// TLVDS_IBUF cmp2_out_lvds_IBUF_inst (
-	// 	.I	(cmp2_out_p_i),
-	// 	.IB	(cmp2_out_n_i),
-	// 	.O	(cmp2_out)
-	// );
+	TLVDS_IBUF cmp2_out_lvds_IBUF_inst (
+		.I	(cmp2_out_p_i),
+		.IB	(cmp2_out_n_i),
+		.O	(cmp2_out)
+	);
 
 
 ////////////////////////////
@@ -111,11 +111,11 @@ module calsoc_top (
 		.I	(~delay1_stb)
 	);
 
-	// TLVDS_OBUF delay2_stb_lvds_OBUF_inst (
-	// 	.O	(delay2_stb_p_o),
-	// 	.OB	(delay2_stb_n_o),
-	// 	.I	(delay2_stb)
-	// );
+	TLVDS_OBUF delay2_stb_lvds_OBUF_inst (
+		.O	(delay2_stb_p_o),
+		.OB	(delay2_stb_n_o),
+		.I	(delay2_stb)
+	);
 
 
 ////////////////////////////////////////
@@ -142,7 +142,7 @@ module calsoc_top (
 	`DEFINE_WB_SLAVE_WIRE(prg_ram)
 	// measure unit wb
 	`DEFINE_WB_SLAVE_WIRE(mu)
-		
+
 	wbxbar #(
 		.NM			(1),
 		.NS			(6),
@@ -173,8 +173,8 @@ module calsoc_top (
 		.i_sstall	({bootrom_wb_stall_o, ram_wb_stall_o, gpioa_wb_stall_o, uart1_wb_stall_o, prg_ram_wb_stall_o, mu_wb_stall_o})
 	);
 
-	assign delay1_stb = debug_stb;//int_stb;
-	assign delay2_stb = int_stb;
+	assign delay1_stb = int_stb;
+	assign delay2_stb =	int_stb;
 
 	logic debug_stb;
 	assign debug_uart_tx = debug_stb;
@@ -207,7 +207,7 @@ module calsoc_top (
 		.delay2_code_o	(delay2_code_o),
 		.stb_o			(int_stb),
 		.cmp1_out_i		(cmp1_out),
-		.cmp2_out_i		(cmp2_out_i),
+		.cmp2_out_i		(cmp2_out),
 
 		.debug_stb_o	(debug_stb)
 	);
@@ -304,3 +304,23 @@ module calsoc_top (
 	);
 	 
 endmodule
+
+interface wb_bus();
+	logic [31:0]	adr;
+	logic [31:0]	m_dat;
+	logic [31:0]	s_dat;
+	logic			we;
+	logic [3:0] 	sel;
+	logic 			stb;
+	logic 			ack;
+	logic 			cyc;
+	logic			err;
+	logic			stall;
+
+	modport master (
+		input	s_dat, ack, err, stall, 
+		output 	m_dat, adr, we, sel, cyc
+	);
+
+
+endinterface
