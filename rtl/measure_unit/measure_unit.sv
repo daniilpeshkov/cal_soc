@@ -1,13 +1,11 @@
 
 module measure_unit #(
 	parameter DAC_SPI_CLK_DIV = 3,
-	parameter DAC_SPI_WAIT_CYCLES = 3,
-	parameter DEFAULT_DELAY_CODE_DELTA = 10'h1,
-	parameter DEFAULT_THRESHOLD_DELTA = 16'h1
+	parameter DAC_SPI_WAIT_CYCLES = 3
 ) (
 //Clock for measure part
 	input	logic		hclk_i,
-	input 	logic		ext_hclk_i,
+	output	logic 		clk_sel_o, // selects clock for hclk_i
 //Wihbone
 	input   logic        wb_clk_i,
 	input   logic        wb_rst_i,			
@@ -37,17 +35,7 @@ module measure_unit #(
 ///////////////////////////////////////////////////////////////////////////////////////
 // Wishbone registers
 ///////////////////////////////////////////////////////////////////////////////////////
-	localparam CH_CTL_DELTA_REG 	= 0;
-//
-//      25          16 15              0
-//      +-------------+-----------------+
-//	r/w	| delay delta | threshold delta |
-//	    +-------------+-----------------+
-//
-//		delay delta 		- delay code change step
-//		threshold delta		- threshold dac code change step
-///////////////////////////////////////////////////////////////////////////////////////
-	localparam STB_GEN_CTL 			= 1;
+	localparam STB_GEN_CTL 			= 0;
 //
 //	    +-----------------+---------+-----+-----+
 //	 r	|        x        | clk_sel | mux | rdy |
@@ -65,7 +53,7 @@ module measure_unit #(
 //		clk_sel - selects source of clk signal
 //
 ///////////////////////////////////////////////////////////////////////////////////////
-	localparam W_THRESHOLD_REG		= 2;
+	localparam W_THRESHOLD_REG		= 1;
 //		     1           0 
 //		+----------+----------+
 //	 r	| dac2 rdy | dac1 rdy |
@@ -80,7 +68,7 @@ module measure_unit #(
 //		threshold	- writing to this register cause setting threshold on dac1 and dac2
 //
 ///////////////////////////////////////////////////////////////////////////////////////
-	localparam STB_GEN_PERIOD 			= 3;
+	localparam STB_GEN_PERIOD 			= 2;
 //
 //      31                                 0
 //	    +-----------------------------------+
@@ -90,8 +78,8 @@ module measure_unit #(
 //		period 	- count of 125 Mhz cycles per input signal period	
 //
 ///////////////////////////////////////////////////////////////////////////////////////
-	localparam MU_CTL_REG 			= 4;
-//
+	localparam MU_SKEW_MES_CTL 			= 3;
+// TODO update register description
 //      31                            1     0
 //	    +-----------------------------+-----+
 //	r/w	|               x             | run |
@@ -100,50 +88,30 @@ module measure_unit #(
 //		run 	- while set to 1 runs measurement
 //
 ///////////////////////////////////////////////////////////////////////////////////////
-	localparam MU_CH1_VAL_REG 			= 5;
-//
-//      16                          1       0
-//	    +---------------------------+-------+
-//	 r	|       measured point      | valid |
-//	    +---------------------------+-------+
-//
-//
-///////////////////////////////////////////////////////////////////////////////////////
-	logic [25:0] ch_ctl_delta_reg;
-	logic [15:0] ctl_threshold_delta, default_ctl_threshold_delta;
-	logic [9:0] ctl_d_code_delta, default_ctl_d_code_delta;
-	assign default_ctl_d_code_delta = DEFAULT_DELAY_CODE_DELTA;
-	assign default_ctl_threshold_delta = DEFAULT_THRESHOLD_DELTA;
-	assign ctl_threshold_delta = ch_ctl_delta_reg[15:0];
-	assign ctl_d_code_delta = ch_ctl_delta_reg[25:16];
 
 	logic [STB_GEN_CNT_WIDTH-1:0] stb_period; 	// measured period of signal
 	logic stb_gen_cmp_sel = 0;					// selects channel to sync strobes
+	logic stb_gen_hclk_sel;
 	logic stb_gen_run = 0;					
-	logic stb_gen_oe;							// not used for now
-	assign stb_gen_oe = 1;
 	logic stb_gen_err;							// not used for now
 	logic stb_gen_rdy;							// indicates that stb_gen is ready to generate strobes
-
-
-	logic [DAC_CODE_WIDTH-1 : 0] ctl1_dac_code, ctl2_dac_code;
-	logic [DAC_CODE_WIDTH-1 : 0] wb_dac_code; // write from wb bus
-	logic wb_dac_wre;
-	logic dac_src_sel;
-	logic ctl1_dac_wre, ctl2_dac_wre;
-	logic dac1_rdy, dac2_rdy;
-	logic ctl_run;
-
-	logic ctl1_stb_req;
-	logic ctl2_stb_req;
 	logic stb_valid;
 
-	logic ctl1_p_rdy;
-	logic ch1_fifo_n_empty;
+	logic [DAC_CODE_WIDTH-1 : 0] wb_dac_code; // write from wb bus
+	logic wb_dac_wre;
+	logic ctl1_dac_wre, ctl2_dac_wre;
+	logic dac1_rdy, dac2_rdy;
 
-	logic [15:0] ch1_fifo_r_val;
-	logic ch1_fifo_re;
+	logic skew_mes_ctl_run;
+	logic skew_mes_ctl_master_ch_sel;
+	logic skew_mes_ctl_cmp_out;
+	logic skew_mes_ctl_stb_req;
+	logic skew_mes_cmp_out;
+	logic [9:0] skew_mes_delay_code;
+	logic skew_mes_ctl_err;
+	logic skew_mes_ctl_rdy;
 
+	assign clk_sel_o = stb_gen_hclk_sel;
 
 	spi_master_o #(
 		.DATA_WIDTH	(DAC_DATA_WIDTH),
@@ -152,8 +120,8 @@ module measure_unit #(
 	) dac1_spi_inst (
 		.clk_i 	(wb_clk_i),
 		.arst_i	(wb_rst_i),
-		.data_i	({8'h00, (wb_dac_wre ? wb_dac_code : ctl1_dac_code)}),
-		.wre_i	(ctl1_dac_wre | wb_dac_wre),
+		.data_i	({8'h00, (wb_dac_wre ? wb_dac_code : '0)}),
+		.wre_i	(wb_dac_wre),
 		.rdy_o	(dac1_rdy),
 		.sdi_o	(dac1_sdi_o),
 		.sclk_o	(dac1_sclk_o),
@@ -167,92 +135,43 @@ module measure_unit #(
 	) dac2_spi_inst (
 		.clk_i 	(wb_clk_i),
 		.arst_i	(wb_rst_i),
-		.data_i	({8'h00, (wb_dac_wre ? wb_dac_code : ctl2_dac_code)}),
-		.wre_i	(ctl2_dac_wre | wb_dac_wre),
+		.data_i	({8'h00, (wb_dac_wre ? wb_dac_code : '0)}),
+		.wre_i	(wb_dac_wre),
 		.rdy_o	(dac2_rdy),
 		.sdi_o	(dac2_sdi_o),
 		.sclk_o	(dac2_sclk_o),
 		.sync_o	(dac2_sync_o)
 	);
 
-	assign delay2_code_o = 0;
-
-	ch_measure_ctl ch_ctl1_inst(
-		.clk_i 					(wb_clk_i),
-		.arst_i					(~wb_rst_i),
-		.cmp_out_i				(cmp1_out_i),
-		.threshold_delta_i 		(ctl_threshold_delta),
-		.d_code_delta_i			(ctl_d_code_delta),
-		.threshold_o			(ctl1_dac_code),
-		.threshold_wre_o		(ctl1_dac_wre),
-		.threshold_rdy_i		(dac1_rdy),
-		.d_code_o				(delay1_code_o),
-		.run_i					(ctl_run),
-		.point_rdy_o			(ctl1_p_rdy),
-		.stb_req_o				(ctl1_stb_req),
-		.stb_valid_i			(stb_valid)
-	);
-
-	sc_fifo #(
-		.WIDTH	(16),
-		.LGFLEN	(10)
-	) ch1_fifo (
-		.clk_i		(wb_clk_i),
-		.arstn_i	(ctl_run),
-		.data_i		(ctl1_dac_code),
-		.wre_i		(ctl1_p_rdy),
-		.data_o		(ch1_fifo_r_val),
-		.re_i		(ch1_fifo_re),
-		.n_empty_o	(ch1_fifo_n_empty)
-	);
-
-	// ch_measure_ctl ch_ctl2_inst(
-	// 	.clk_i 					(wb_clk_i),
-	// 	.arst_i					(wb_rst_i),
-	// 	.cmp_out_i				(cmp2_out_i),
-	// 	.threshold_delta_i 		(ctl_threshold_delta),
-	// 	.d_code_delta_i			(ctl_d_code_delta),
-	// 	.threshold_o			(ctl2_dac_code),
-	// 	.threshold_wre_o		(ctl2_dac_wre),
-	// 	.threshold_rdy_i		(dac2_rdy),
-	// 	.d_code_o				(delay2_code_o),
-	// 	.run_i					(ctl_run),
-	// 	.point_rdy_o			(),
-	// 	.stb_req_o				(ctl2_stb_req),
-	// 	.stb_valid_i			(stb_valid)
-	// );
-
-	logic stb_gen_hclk;
-	logic stb_gen_hclk_sel;
-
-// PLATFORM DEPENDENT
-	DCS #(
-		.DCS_MODE("CLK0")
-	) stb_gen_dcs_inst (
-		.CLKSEL		({3'b000, stb_gen_hclk_sel}),
-		.CLK0		(hclk_i),
-		.CLK1		(ext_hclk_i),
-		.CLKOUT		(stb_gen_hclk),
-		.SELFORCE	(1)
-	);
-//////////////////
-
-
-	//TMP
-	assign ctl2_stb_req = 1;
-
 	stb_gen stb_gen_inst (
 		.clk_i 			(hclk_i),
-		.arstn_i			(~stb_gen_run),
+		.arstn_i		(~stb_gen_run),
 		.sig_i			(stb_gen_cmp_sel ? cmp2_out_i : cmp1_out_i),
    		.err_o			(stb_gen_err),
    		.rdy_o			(stb_gen_rdy),
 		.stb_o			(stb_o),
-		.stb_req_i		(ctl1_stb_req & ctl2_stb_req),
+		.stb_req_i		(skew_mes_ctl_stb_req),
 		.stb_valid_o	(stb_valid),
 		.stb_period_o	(stb_period),
 		.debug_stb_o	(debug_stb_o)
 	);
+
+	skew_mes_ctl skew_mes_ctl_inst (
+		.clk_i			(wb_clk_i),
+		.arstn_i		(~wb_rst_i),
+		.delay_code_o	(skew_mes_delay_code),
+		.cmp_out_i		(skew_mes_cmp_out),
+		.run_i			(skew_mes_ctl_run),
+		.err_o			(skew_mes_ctl_err),
+		.rdy_o			(skew_mes_ctl_rdy),
+		.stb_req_o		(skew_mes_ctl_stb_req),
+		.stb_valid_i	(stb_valid)
+	);
+
+	assign delay1_code_o = (!skew_mes_ctl_master_ch_sel ? 0 : skew_mes_delay_code);
+	assign delay2_code_o = (skew_mes_ctl_master_ch_sel ? 0 : skew_mes_delay_code);
+
+	assign skew_mes_cmp_out = (skew_mes_ctl_master_ch_sel ? cmp1_out_i : cmp2_out_i);
 
 ///////////////////////////////////////////////////////////////////////////////////////
 // Wishbone logic	
@@ -267,9 +186,9 @@ module measure_unit #(
 	always_comb begin
 		logic [31:0] w_reg;
 		case (addr)
-			CH_CTL_DELTA_REG: 	w_reg = ch_ctl_delta_reg;
-			STB_GEN_CTL:		w_reg =	{stb_gen_cmp_sel, stb_gen_run};
+			STB_GEN_CTL:		w_reg =	{clk_sel_o, stb_gen_run};
 			W_THRESHOLD_REG:	w_reg = wb_dac_code;
+			MU_SKEW_MES_CTL:	w_reg = {skew_mes_ctl_master_ch_sel, skew_mes_ctl_run};
 			default: w_reg = 0;
 		endcase
 		w_data[7:0] = (wb_sel_i[0] ? wb_dat_i[7:0] : w_reg[7:0]);
@@ -283,18 +202,6 @@ module measure_unit #(
 
 	always_ff @(posedge wb_clk_i, posedge wb_rst_i) begin
 		if (wb_rst_i) begin
-			ch_ctl_delta_reg = {default_ctl_d_code_delta, default_ctl_threshold_delta};
-		end else begin
-			if (wb_we_i & wb_req & (addr == CH_CTL_DELTA_REG)) begin
-				ch_ctl_delta_reg <= wb_dat_i;
-			end else begin
-				ch_ctl_delta_reg <= ch_ctl_delta_reg;
-			end
-		end
-	end
-
-	always_ff @(posedge wb_clk_i, posedge wb_rst_i) begin
-		if (wb_rst_i) begin
 			stb_gen_run = 0;
 			stb_gen_cmp_sel = 0;
 			stb_gen_hclk_sel = 0;
@@ -303,11 +210,11 @@ module measure_unit #(
 				stb_gen_run <= w_data[0];
 				stb_gen_cmp_sel <= w_data[1];
 				stb_gen_hclk_sel <= w_data[2];
-			end else begin
-				stb_gen_run <= 0;
-				stb_gen_cmp_sel <= stb_gen_cmp_sel;
-				stb_gen_hclk_sel <= stb_gen_hclk_sel;
-			end
+			end// else begin
+			// 	stb_gen_run <= 0;
+			// 	stb_gen_cmp_sel <= stb_gen_cmp_sel;
+			// 	clk_sel_o <= clk_sel_o;
+			// end
 		end
 	end
 
@@ -319,43 +226,31 @@ module measure_unit #(
 			if (wb_we_i & wb_req & (addr == W_THRESHOLD_REG)) begin
 				wb_dac_code <= w_data;
 				wb_dac_wre <= 1;
-			end else begin
-				wb_dac_code <= 0;
-				wb_dac_wre <= 0;
-			end
+			end //else begin
+			// 	wb_dac_code <= 0;
+			// 	wb_dac_wre <= 0;
+			// end
 		end
 	end
 
-	always_ff @(posedge wb_clk_i, posedge wb_rst_i) begin : mu_ctl_reg_ff
+	always_ff @(posedge wb_clk_i, posedge wb_rst_i) begin : mu_skew_mes_ctl_ff
 		if (wb_rst_i) begin
-			ctl_run = 0;
+			skew_mes_ctl_run = 0;
+			skew_mes_ctl_master_ch_sel = 0;
 		end else begin
-			if (wb_we_i & wb_req & (addr == MU_CTL_REG)) begin
-				ctl_run <= w_data[0];
+			if (wb_we_i & wb_req & (addr == MU_SKEW_MES_CTL)) begin
+				skew_mes_ctl_run <= w_data[0];
+				skew_mes_ctl_master_ch_sel <= w_data[1];
 			end
-		end
-	end
-
-	logic prev_ch1_fifo_re;
-	always_ff @(posedge wb_clk_i, posedge wb_rst_i) begin : ch1_fifo_re_ff
-		if (wb_rst_i) begin
-			ch1_fifo_re = 0;
-			prev_ch1_fifo_re = 0;
-		end else begin
-			prev_ch1_fifo_re <= ch1_fifo_re;
-			if (prev_ch1_fifo_re) ch1_fifo_re = 0;
-			else if (!wb_we_i & wb_req & (addr == MU_CH1_VAL_REG)) ch1_fifo_re = 1;
 		end
 	end
 
 	always_ff @(posedge wb_clk_i) begin : wb_dat_o_comb
 		case (addr)
-			CH_CTL_DELTA_REG:	wb_dat_o <= ch_ctl_delta_reg;
 			STB_GEN_CTL:		wb_dat_o <= {stb_gen_hclk_sel, stb_gen_cmp_sel, stb_gen_rdy};
 			W_THRESHOLD_REG:	wb_dat_o <= {dac2_rdy, dac1_rdy};
 			STB_GEN_PERIOD:		wb_dat_o <= stb_period;
-			MU_CTL_REG:			wb_dat_o <= {ctl_run};
-			MU_CH1_VAL_REG:		wb_dat_o <= {ch1_fifo_r_val, ch1_fifo_n_empty};
+			MU_SKEW_MES_CTL:	wb_dat_o <= {skew_mes_delay_code, skew_mes_ctl_rdy, skew_mes_ctl_master_ch_sel, skew_mes_ctl_run};
 			default: 			wb_dat_o <= 0;
 		endcase
 	end
