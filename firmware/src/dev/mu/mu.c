@@ -8,10 +8,9 @@
 // }
 
 int mu_run_freq_detection(MU_TypeDef *mu_base, char mux, unsigned int threshold) {
-    mu_base->threshold = threshold;
-    while (!mu_base->threshold);
 
-	// mu_base->stb_gen_ctl
+    mu_set_threshold(mu_base, threshold);
+
     //                     clk src     chan src   run
 	mu_base->stb_gen_ctl = (1 << 2) | ((mux & 1) << 1) | 1;
     
@@ -26,5 +25,7 @@ int mu_run_freq_detection(MU_TypeDef *mu_base, char mux, unsigned int threshold)
 	}
 }
 
-int mu_stb_gen_status(MU_TypeDef *mu_base) {
+void mu_set_threshold(MU_TypeDef *mu_base, unsigned int threshold) {
+    mu_base->threshold = threshold;
+    while (!mu_base->threshold);
 }

@@ -179,6 +179,18 @@ module calsoc_top (
 	logic debug_stb;
 	assign debug_uart_tx = debug_stb;
 
+	logic mu_hclk;
+
+	DCS #(
+		.DCS_MODE("CLK0")
+	) stb_gen_dcs_inst (
+		.CLKSEL		({3'b000, stb_gen_hclk_sel}),
+		.CLK0		(hclk),
+		.CLK1		(); //(node_clk_i),
+		.CLKOUT		(mu_hclk),
+		.SELFORCE	(1)
+	);
+
 	measure_unit #(
 		.DAC_SPI_CLK_DIV(3),
 		.DAC_SPI_WAIT_CYCLES(256),
@@ -186,7 +198,7 @@ module calsoc_top (
 		.DEFAULT_THRESHOLD_DELTA(16'h1)
 	) measure_unit_inst (
 		.hclk_i			(hclk),
-		.ext_hclk_i		(node_clk_i),
+		.ext_hclk_i		(mu_hclk),
 		.wb_clk_i 		(wb_clk_i),
 		.wb_rst_i		(wb_rst_i),			
 		.wb_dat_i		(mu_wb_dat_i),

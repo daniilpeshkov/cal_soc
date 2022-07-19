@@ -4,7 +4,7 @@
 #define STB_GEN_RDY (1<<0)
 #define STB_GEN_RUN (1<<0)
 #define STB_GEN_MUX (1<<1)
-#define STB_GEN_ERR (1<<2)
+#define STB_CLK_SEL (1<<2)
 
 #define THRESHOLD_DAC1_RDY (1<<0)
 #define THRESHOLD_DAC2_RDY (1<<1)
@@ -17,17 +17,14 @@
 #define MU_RUN  3
 
 typedef struct {
-    volatile unsigned int ch_ctl_delta;
     volatile unsigned int stb_gen_ctl;
     volatile unsigned int threshold;
     volatile unsigned int stb_gen_period;
-    volatile unsigned int mu_ctl;
-    volatile unsigned int mu_ch1_val;
+    volatile unsigned int skew_mes_ctl;
 } MU_TypeDef;
 
 int mu_run_freq_detection(MU_TypeDef *mu_base, char mux, unsigned int threshold);
 
-int mu_stb_gen_status(MU_TypeDef *mu_base);
-
+void mu_set_threshold(MU_TypeDef *mu_base, unsigned int threshold);
 
 #endif
