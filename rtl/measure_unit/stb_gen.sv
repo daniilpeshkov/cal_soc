@@ -95,9 +95,7 @@ module stb_gen #(
 		FIND_EDGE_2 		= 9'b000000010,
 		WRITE_START 		= 9'b000000100,
 		FIND_EDGE_3 		= 9'b000001000, 
-		// WRITE_END			,
 		COUNT_PERIOD 		= 9'b000010000, 
-		// WAIT_COUNT_PERIOD 	,
 		COUNT_GEN_START		= 9'b000100000,
 		WAIT_GEN_START		= 9'b001000000,
 		COUNT_STROBE 		= 9'b010000000,
@@ -118,10 +116,7 @@ module stb_gen #(
 			WRITE_START:			next_state = FIND_EDGE_3;
 			FIND_EDGE_3:			if (sig_posedge) next_state = COUNT_PERIOD;
 									else next_state = state;
-			// WRITE_END:				next_state = COUNT_PERIOD;
 			COUNT_PERIOD:			next_state = COUNT_GEN_START;
-			// COUNT_PERIOD:			next_state = WAIT_COUNT_PERIOD;
-			// WAIT_COUNT_PERIOD:		next_state = COUNT_GEN_START;
 			COUNT_GEN_START:		next_state = WAIT_GEN_START;
 			WAIT_GEN_START:			if (is_gen_start) next_state = COUNT_STROBE;
 									else next_state = state;
@@ -150,7 +145,7 @@ module stb_gen #(
 	end
 
 	localparam MAGIC_CONST = 0;
-	localparam OFFSET = 5;
+	localparam OFFSET = 6;
 
 	logic [T_CNT_WIDTH-1:0] period_minus_zero_hold;
 	always_ff @(posedge clk_i) period_minus_zero_hold <= stb_period_o - (ZERO_HOLD_CYCLES+MAGIC_CONST); //magic constat due to computation pipeline

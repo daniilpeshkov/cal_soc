@@ -210,11 +210,11 @@ module measure_unit #(
 				stb_gen_run <= w_data[0];
 				stb_gen_cmp_sel <= w_data[1];
 				stb_gen_hclk_sel <= w_data[2];
-			end// else begin
-			// 	stb_gen_run <= 0;
+			end else begin
+				stb_gen_run <= 0;
 			// 	stb_gen_cmp_sel <= stb_gen_cmp_sel;
 			// 	clk_sel_o <= clk_sel_o;
-			// end
+			end
 		end
 	end
 
@@ -250,7 +250,7 @@ module measure_unit #(
 			STB_GEN_CTL:		wb_dat_o <= {stb_gen_hclk_sel, stb_gen_cmp_sel, stb_gen_rdy};
 			W_THRESHOLD_REG:	wb_dat_o <= {dac2_rdy, dac1_rdy};
 			STB_GEN_PERIOD:		wb_dat_o <= stb_period;
-			MU_SKEW_MES_CTL:	wb_dat_o <= {skew_mes_delay_code, skew_mes_ctl_rdy, skew_mes_ctl_master_ch_sel, skew_mes_ctl_run};
+			MU_SKEW_MES_CTL:	wb_dat_o <= {skew_mes_delay_code, skew_mes_ctl_err, skew_mes_ctl_rdy, skew_mes_ctl_master_ch_sel, skew_mes_ctl_run};
 			default: 			wb_dat_o <= 0;
 		endcase
 	end

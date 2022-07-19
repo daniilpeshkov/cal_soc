@@ -70,7 +70,7 @@ module calsoc_top (
 	);
 
 	//DEBUG SIG GEN
-	logic [13:0] debug_sig_div;
+	logic [5:0] debug_sig_div;
 
 	always_ff @(posedge hclk) debug_sig_div <= debug_sig_div + 1;
 
@@ -114,7 +114,7 @@ module calsoc_top (
 	TLVDS_OBUF delay2_stb_lvds_OBUF_inst (
 		.O	(delay2_stb_p_o),
 		.OB	(delay2_stb_n_o),
-		.I	(delay2_stb)
+		.I	(~delay2_stb)
 	);
 
 
@@ -174,31 +174,33 @@ module calsoc_top (
 	);
 
 	assign delay1_stb = int_stb;
-	assign delay2_stb =	int_stb;
+	assign delay2_stb =	debug_stb;
 
 	logic debug_stb;
 	assign debug_uart_tx = debug_stb;
 
 	logic mu_hclk;
+	logic mu_hclk_sel;
 
+
+//FIXME DCS doesn't work
+	assign mu_hclk = hclk;
 	DCS #(
 		.DCS_MODE("CLK0")
 	) stb_gen_dcs_inst (
-		.CLKSEL		({3'b000, stb_gen_hclk_sel}),
+		.CLKSEL		({3'b000, mu_hclk_sel}),
 		.CLK0		(hclk),
-		.CLK1		(); //(node_clk_i),
-		.CLKOUT		(mu_hclk),
+		.CLK1		(), //(node_clk_i),
+		// .CLKOUT		(mu_hclk),
 		.SELFORCE	(1)
 	);
 
 	measure_unit #(
 		.DAC_SPI_CLK_DIV(3),
-		.DAC_SPI_WAIT_CYCLES(256),
-		.DEFAULT_DELAY_CODE_DELTA(10'h1),
-		.DEFAULT_THRESHOLD_DELTA(16'h1)
+		.DAC_SPI_WAIT_CYCLES(256)
 	) measure_unit_inst (
-		.hclk_i			(hclk),
-		.ext_hclk_i		(mu_hclk),
+		.hclk_i			(mu_hclk),//(mu_hclk),
+		.clk_sel_o		(mu_hclk_sel),
 		.wb_clk_i 		(wb_clk_i),
 		.wb_rst_i		(wb_rst_i),			
 		.wb_dat_i		(mu_wb_dat_i),

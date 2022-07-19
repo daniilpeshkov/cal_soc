@@ -9,6 +9,12 @@
 #define THRESHOLD_DAC1_RDY (1<<0)
 #define THRESHOLD_DAC2_RDY (1<<1)
 
+#define MU_CH_1 0
+#define MU_CH_2 1
+
+#define MU_CLK_INT 0
+#define MU_CLK_EXT 1
+
 #define MUX_DAC1    (0<<1)
 #define MUX_DAC2    (1<<1)
 
@@ -23,7 +29,7 @@ typedef struct {
     volatile unsigned int skew_mes_ctl;
 } MU_TypeDef;
 
-int mu_run_freq_detection(MU_TypeDef *mu_base, char mux, unsigned int threshold);
+int mu_run_freq_detection(MU_TypeDef *mu_base, char ch, char clk_sel, unsigned int threshold);
 
 void mu_set_threshold(MU_TypeDef *mu_base, unsigned int threshold);
 
