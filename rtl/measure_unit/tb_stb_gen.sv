@@ -15,18 +15,16 @@ module tb_stb_gen();
     localparam SIG_WIDTH = 20;
     localparam T_CNT_WIDTH = 32;
 
-    int freqs[] = { 13};
+    int freqs[] = { 13, 13};
 
     logic clk_i = 0;
     logic comp_out = 0;
     logic arstn_i = 0;
     logic stb_o;
-    logic run_det_i = 0;
     logic err_o;
-    logic oe_i = 1;
     logic rdy_o;
     logic [T_CNT_WIDTH-1:0] stb_period_o;
-	logic stb_req_i = 0;
+	logic stb_req_i = 1;
 	logic stb_valid_o;
 	logic debug_stb_o;
 
@@ -50,14 +48,13 @@ module tb_stb_gen();
 
     initial begin 
         int t;
-
         time start;
         foreach (freqs[i]) begin
             cur_sig_width = freqs[i];
-            #1 arstn_i = 1;
-            #1 arstn_i = 0;
-            #10 run_det_i = 1;
-            #333 run_det_i = 0;
+            #100
+            @(posedge clk_i) arstn_i <= 1;
+            repeat(5) @(posedge clk_i) ;
+            arstn_i <= 0;
 
             repeat (10) @(posedge debug_stb_o);
             start = $time;

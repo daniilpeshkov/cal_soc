@@ -139,7 +139,6 @@ module stb_gen #(
 	always_ff @(posedge clk_i, negedge arstn_i) begin
 		if (~arstn_i) stb_period_o = 0;
 		else if (state == COUNT_PERIOD) begin
-			// stb_period_o = t_end - t_start;
 			stb_period_o <= adder_period_res;
 		end
 	end
@@ -190,14 +189,17 @@ module stb_gen #(
 	logic [T_CNT_WIDTH-1:0] latched_stb_end_res;
 	logic [T_CNT_WIDTH-1:0] latched_gen_start_res;
 
-	always_ff @(posedge clk_i)
-		if (zero_hold_begin_valid) latched_zero_hold_res <= adder_zero_hold_res;
+	always_ff @(posedge clk_i, negedge arstn_i)
+		if (~arstn_i) latched_zero_hold_res = 0;
+		else if (zero_hold_begin_valid) latched_zero_hold_res <= adder_zero_hold_res;
 
-	always_ff @(posedge clk_i)
-		if (stb_end_valid) latched_stb_end_res <= adder_stb_end_res;
+	always_ff @(posedge clk_i, negedge arstn_i)
+		if (~arstn_i) latched_stb_end_res = 0;
+		else if (stb_end_valid) latched_stb_end_res <= adder_stb_end_res;
 
-	always_ff @(posedge clk_i)
-		if (gen_start_valid) latched_gen_start_res <= adder_gen_start_res;
+	always_ff @(posedge clk_i, negedge arstn_i)
+		if (~arstn_i) latched_gen_start_res = 0;
+		else if (gen_start_valid) latched_gen_start_res <= adder_gen_start_res;
 
 	logic gen_start_eq_ena;
 
@@ -244,8 +246,7 @@ module stb_gen #(
 
 	always_ff @(posedge clk_i, negedge arstn_i) begin
 		if (~arstn_i) rdy_o = 0;
-		else if (is_stb_end) rdy_o <= 1;
-		// else rdy_o <= (state == COUNT_STROBE ? 1 : rdy_o);
+		else if (state == COUNT_STROBE) rdy_o <= 1;
 	end
 
 	always_ff @(posedge clk_i) begin

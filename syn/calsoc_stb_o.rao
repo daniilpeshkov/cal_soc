@@ -41,6 +41,7 @@
             </Bus>
             <Signal>measure_unit_inst/stb_gen_inst/sig_i</Signal>
             <Signal>measure_unit_inst/stb_o</Signal>
+            <Signal>measure_unit_inst/debug_stb_o</Signal>
             <Signal>delay1_stb</Signal>
             <Signal>delay2_stb</Signal>
         </SignalList>
@@ -129,5 +130,5 @@
             <Expression>M0</Expression>
         </Expressions>
     </AoCore>
-    <GAO_ID>0101011011111010</GAO_ID>
+    <GAO_ID>1011001010101100</GAO_ID>
 </GAO_CONFIG>

@@ -22,7 +22,7 @@ void test_chan (char ch) {
 	}
 }
 
-void main(void) {
+int main(void) {
 	uart_init(UART1, 19200);
 
 	pp_printf("WR Calibrator \r\n");

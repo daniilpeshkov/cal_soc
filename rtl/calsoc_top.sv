@@ -174,7 +174,7 @@ module calsoc_top (
 	);
 
 	assign delay1_stb = int_stb;
-	assign delay2_stb =	debug_stb;
+	assign delay2_stb =	int_stb;
 
 	logic debug_stb;
 	assign debug_uart_tx = debug_stb;
