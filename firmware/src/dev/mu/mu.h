@@ -18,6 +18,11 @@
 #define MUX_DAC1    (0<<1)
 #define MUX_DAC2    (1<<1)
 
+#define SKEW_CTL_RDY (1<<2)
+#define SKEW_CTL_ERR (1<<3)
+
+
+
 #define MU_OK   1
 #define MU_ERR  2
 #define MU_RUN  3
@@ -32,5 +37,8 @@ typedef struct {
 int mu_run_freq_detection(MU_TypeDef *mu_base, char ch, char clk_sel, unsigned int threshold);
 
 void mu_set_threshold(MU_TypeDef *mu_base, unsigned int threshold);
+
+int mu_measure_skew(MU_TypeDef *mu_base, char master_ch, unsigned int *res);
+// {skew_mes_delay_code, skew_mes_ctl_err, skew_mes_ctl_rdy, skew_mes_ctl_master_ch_sel, skew_mes_ctl_run};
 
 #endif
