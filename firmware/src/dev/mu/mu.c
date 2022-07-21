@@ -31,12 +31,14 @@ void mu_set_threshold(MU_TypeDef *mu_base, unsigned int threshold) {
 }
 
 int mu_measure_skew(MU_TypeDef *mu_base, char master_ch, unsigned int *res) {
-
+    mu_base->skew_mes_ctl = 0;
     mu_base->skew_mes_ctl = ((master_ch & 1) << 1) | 1;
 
     while (!(mu_base->skew_mes_ctl & SKEW_CTL_RDY) & !(mu_base->skew_mes_ctl & SKEW_CTL_ERR));
+    unsigned int tmp = mu_base->skew_mes_ctl;
 
-    if (mu_base->skew_mes_ctl & SKEW_CTL_ERR) return MU_ERR;
-    *res = mu_base->skew_mes_ctl >> 4;
+
+    if (tmp & SKEW_CTL_ERR) return MU_ERR;
+    *res = tmp >> 4;
     return MU_OK;
 }

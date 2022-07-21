@@ -11,24 +11,9 @@ void delay(unsigned int n)  {
 }
 
 
-void test_chan (char ch) {
-	int mu_stat = mu_run_freq_detection(MU1, ch, MU_CLK_EXT, 0xffff >> 2);
+void test_chan (char master_ch) {
 
-	if (mu_stat == MU_OK) {
-		pp_printf("OK!\r\n");
-		pp_printf("%d\r\n", MU1->stb_gen_period);
-	} else {
-		pp_printf("NOT OK!\r\n");
-	}
-}
-
-int main(void) {
-	uart_init(UART1, 19200);
-
-	pp_printf("WR Calibrator \r\n");
-
-	char master_ch = MU_CH_2;
-	int mu_stat = mu_run_freq_detection(MU1, master_ch, MU_CLK_EXT, 0xffff >> 2);
+	int mu_stat = mu_run_freq_detection(MU1, master_ch, MU_CLK_EXT, 0xffff >> 3);
 
 	if (mu_stat != MU_OK) {
 		pp_printf("can not detect signal from master\r\n");
@@ -46,6 +31,14 @@ int main(void) {
 	if (mu_stat == MU_ERR) {
 		pp_printf("can not measure skew\r\n");
 	}
-	
+}
+
+int main(void) {
+	uart_init(UART1, 19200);
+
+	pp_printf("WR Calibrator \r\n");
+
+	// test_chan(MU_CH_2);
+	test_chan(MU_CH_1);
 	while (1);
 }

@@ -76,7 +76,7 @@ module calsoc_top (
 
 	always_ff @(posedge hclk) begin 
 		if (debug_sig_div == 0) node_clk_i <= 1;
-		else if (debug_sig_div == 9) node_clk_i <= 0;
+		else if (debug_sig_div == 11) node_clk_i <= 0;
 		else node_clk_i <= node_clk_i;
 	end
 

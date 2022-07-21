@@ -56,6 +56,7 @@ module skew_mes_ctl (
 	always_ff @(posedge clk_i, negedge arstn_i) begin : delay_code_ff
 		if (~arstn_i) delay_code_o = 0;
 		else if (state == INC_DELAY) delay_code_o <= delay_code_o + 1;
+		else if (state == IDLE) delay_code_o <= 0;
 	end
 
 	always_ff @(posedge clk_i, negedge arstn_i) begin : stb_req_ff
