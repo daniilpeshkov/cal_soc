@@ -145,6 +145,7 @@ module stb_gen #(
 
 	localparam MAGIC_CONST = 0;
 	localparam OFFSET = 6;
+	// localparam OFFSET = 5;
 
 	logic [T_CNT_WIDTH-1:0] period_minus_zero_hold;
 	always_ff @(posedge clk_i) period_minus_zero_hold <= stb_period_o - (ZERO_HOLD_CYCLES+MAGIC_CONST); //magic constat due to computation pipeline

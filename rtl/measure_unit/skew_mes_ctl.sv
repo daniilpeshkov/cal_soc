@@ -3,7 +3,8 @@ module skew_mes_ctl (
 	input logic clk_i,
 	input logic arstn_i,
 
-	input 	logic 		cmp_out_i,
+	input 	logic 		m_cmp_out_i,
+	input	logic		s_cmp_out_i,
 	output 	logic [9:0] delay_code_o,
 
 	input 	logic 		run_i,
@@ -36,7 +37,7 @@ module skew_mes_ctl (
 				REQ_STB:		next_state = WAIT_STB;
 				WAIT_STB:		if (stb_valid_i) next_state = PROCESS_RES;
 								else next_state = state;
-				PROCESS_RES:	if (cmp_out_i) 
+				PROCESS_RES:	if (s_cmp_out_i) 
 									if (~|delay_code_o) next_state = ERR; 
 									else next_state = READY;
 								else next_state = INC_DELAY;

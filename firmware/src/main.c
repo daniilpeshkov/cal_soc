@@ -38,7 +38,7 @@ int main(void) {
 
 	pp_printf("WR Calibrator \r\n");
 
-	// test_chan(MU_CH_2);
-	test_chan(MU_CH_1);
+	// test_chan(MU_CH_1);
+	test_chan(MU_CH_2);
 	while (1);
 }

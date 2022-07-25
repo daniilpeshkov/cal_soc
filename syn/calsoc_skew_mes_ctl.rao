@@ -4,7 +4,6 @@
     <Mode>Standard</Mode>
     <AoCore index="0" sample_clock="wb_clk_i" trig_type="0" storage_depth="2048" window_num="1" capture_amount="2048" trigger_pos="2039">
         <SignalList>
-            <Signal>measure_unit_inst/skew_mes_ctl_inst/cmp_out_i</Signal>
             <Bus name="measure_unit_inst/skew_mes_ctl_inst/delay_code_o[9:0]">
                 <Signal>measure_unit_inst/skew_mes_ctl_inst/delay_code_o[9]</Signal>
                 <Signal>measure_unit_inst/skew_mes_ctl_inst/delay_code_o[8]</Signal>
@@ -57,6 +56,8 @@
                 <Signal>measure_unit_inst/delay2_code_o[1]</Signal>
                 <Signal>measure_unit_inst/delay2_code_o[0]</Signal>
             </Bus>
+            <Signal>measure_unit_inst/skew_mes_ctl_inst/s_cmp_out_i</Signal>
+            <Signal>measure_unit_inst/skew_mes_ctl_inst/m_cmp_out_i</Signal>
         </SignalList>
         <Triggers>
             <Trigger index="0">
@@ -66,7 +67,7 @@
             </Trigger>
             <Trigger index="1">
                 <SignalList>
-                    <Signal>measure_unit_inst/stb_gen_inst/int_stb</Signal>
+                    <Signal>measure_unit_inst/skew_mes_ctl_inst/err_o</Signal>
                 </SignalList>
             </Trigger>
             <Trigger index="2">
@@ -123,7 +124,7 @@
         </Triggers>
         <MatchUnits>
             <MatchUnit index="0" enabled="1" match_type="3" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="R" value1="0" trigger="0"/>
-            <MatchUnit index="1" enabled="0" match_type="3" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="F" value1="0" trigger="1"/>
+            <MatchUnit index="1" enabled="1" match_type="3" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="R" value1="0" trigger="1"/>
             <MatchUnit index="2" enabled="0" match_type="2" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="00000000000000000000000000000000" value1="00000000000000000000000000000000" trigger="2"/>
             <MatchUnit index="3" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
             <MatchUnit index="4" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
@@ -140,8 +141,8 @@
             <MatchUnit index="15" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
         </MatchUnits>
         <Expressions type="Static">
-            <Expression>M0</Expression>
+            <Expression>M0|M1</Expression>
         </Expressions>
     </AoCore>
-    <GAO_ID>1111010100101110</GAO_ID>
+    <GAO_ID>0111010000010101</GAO_ID>
 </GAO_CONFIG>

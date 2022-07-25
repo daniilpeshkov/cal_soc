@@ -106,7 +106,8 @@ module measure_unit #(
 	logic skew_mes_ctl_master_ch_sel;
 	logic skew_mes_ctl_cmp_out;
 	logic skew_mes_ctl_stb_req;
-	logic skew_mes_cmp_out;
+	logic skew_mes_m_cmp_out;
+	logic skew_mes_s_cmp_out;
 	logic [9:0] skew_mes_delay_code;
 	logic skew_mes_ctl_err;
 	logic skew_mes_ctl_rdy;
@@ -160,7 +161,8 @@ module measure_unit #(
 		.clk_i			(wb_clk_i),
 		.arstn_i		(~wb_rst_i),
 		.delay_code_o	(skew_mes_delay_code),
-		.cmp_out_i		(skew_mes_cmp_out),
+		.m_cmp_out_i		(skew_mes_m_cmp_out),
+		.s_cmp_out_i		(skew_mes_s_cmp_out),
 		.run_i			(skew_mes_ctl_run),
 		.err_o			(skew_mes_ctl_err),
 		.rdy_o			(skew_mes_ctl_rdy),
@@ -168,10 +170,15 @@ module measure_unit #(
 		.stb_valid_i	(stb_valid)
 	);
 
-	assign delay1_code_o = (!skew_mes_ctl_master_ch_sel ? 0 : skew_mes_delay_code);
-	assign delay2_code_o = (skew_mes_ctl_master_ch_sel ? 0 : skew_mes_delay_code);
+	// assign delay1_code_o = (!skew_mes_ctl_master_ch_sel ? 0 : skew_mes_delay_code);
+	assign delay1_code_o = skew_mes_delay_code;
+	// assign delay2_code_o = (skew_mes_ctl_master_ch_sel ? 0 : skew_mes_delay_code);
+	assign delay2_code_o = skew_mes_delay_code;
 
-	assign skew_mes_cmp_out = (skew_mes_ctl_master_ch_sel ? cmp1_out_i : cmp2_out_i);
+	// assign skew_mes_s_cmp_out = (skew_mes_ctl_master_ch_sel ? cmp1_out_i : cmp2_out_i);
+	assign skew_mes_s_cmp_out = cmp1_out_i;
+	// assign skew_mes_m_cmp_out = (!skew_mes_ctl_master_ch_sel ? cmp1_out_i : cmp2_out_i);
+	assign skew_mes_m_cmp_out = cmp2_out_i;
 
 ///////////////////////////////////////////////////////////////////////////////////////
 // Wishbone logic	
