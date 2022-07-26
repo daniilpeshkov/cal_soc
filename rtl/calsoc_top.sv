@@ -70,15 +70,18 @@ module calsoc_top (
 	);
 
 	//DEBUG SIG GEN
-	logic [5:0] debug_sig_div;
+	logic [15:0] debug_sig_div;
 
-	always_ff @(posedge hclk) debug_sig_div <= debug_sig_div + 1;
+	always_ff @(posedge wb_clk_i) debug_sig_div <= debug_sig_div + 1;
 
-	always_ff @(posedge hclk) begin 
+	always_ff @(posedge wb_clk_i) begin 
 		if (debug_sig_div == 0) node_clk_i <= 1;
-		else if (debug_sig_div == 11) node_clk_i <= 0;
+		else if (debug_sig_div == 11) begin
+			node_clk_i <= 0;
+		end
 		else node_clk_i <= node_clk_i;
 	end
+
 
 
 	//
@@ -116,7 +119,6 @@ module calsoc_top (
 		.OB	(delay2_stb_n_o),
 		.I	(~delay2_stb)
 	);
-
 
 ////////////////////////////////////////
 	//picorv32_wb wb

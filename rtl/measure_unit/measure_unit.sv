@@ -109,7 +109,8 @@ module measure_unit #(
 	logic skew_mes_m_cmp_out;
 	logic skew_mes_s_cmp_out;
 	logic [9:0] skew_mes_delay_code;
-	logic skew_mes_ctl_err;
+	logic [9:0] skew_res_code;
+	logic [2:0] skew_mes_ctl_err;
 	logic skew_mes_ctl_rdy;
 
 	assign clk_sel_o = stb_gen_hclk_sel;
@@ -161,24 +162,21 @@ module measure_unit #(
 		.clk_i			(wb_clk_i),
 		.arstn_i		(~wb_rst_i),
 		.delay_code_o	(skew_mes_delay_code),
-		.m_cmp_out_i		(skew_mes_m_cmp_out),
-		.s_cmp_out_i		(skew_mes_s_cmp_out),
+		.m_cmp_out_i	(skew_mes_m_cmp_out),
+		.s_cmp_out_i	(skew_mes_s_cmp_out),
 		.run_i			(skew_mes_ctl_run),
 		.err_o			(skew_mes_ctl_err),
 		.rdy_o			(skew_mes_ctl_rdy),
 		.stb_req_o		(skew_mes_ctl_stb_req),
-		.stb_valid_i	(stb_valid)
+		.stb_valid_i	(stb_valid),
+		.res_o			(skew_res_code)
 	);
 
-	// assign delay1_code_o = (!skew_mes_ctl_master_ch_sel ? 0 : skew_mes_delay_code);
 	assign delay1_code_o = skew_mes_delay_code;
-	// assign delay2_code_o = (skew_mes_ctl_master_ch_sel ? 0 : skew_mes_delay_code);
 	assign delay2_code_o = skew_mes_delay_code;
 
 	assign skew_mes_s_cmp_out = (skew_mes_ctl_master_ch_sel ? cmp1_out_i : cmp2_out_i);
-	// assign skew_mes_s_cmp_out = cmp1_out_i;
-	assign skew_mes_m_cmp_out = (!skew_mes_ctl_master_ch_sel ? cmp1_out_i : cmp2_out_i);
-	// assign skew_mes_m_cmp_out = cmp2_out_i;
+	assign skew_mes_m_cmp_out = (skew_mes_ctl_master_ch_sel ? cmp2_out_i : cmp1_out_i);
 
 ///////////////////////////////////////////////////////////////////////////////////////
 // Wishbone logic	
@@ -257,7 +255,8 @@ module measure_unit #(
 			STB_GEN_CTL:		wb_dat_o <= {stb_gen_hclk_sel, stb_gen_cmp_sel, stb_gen_rdy};
 			W_THRESHOLD_REG:	wb_dat_o <= {dac2_rdy, dac1_rdy};
 			STB_GEN_PERIOD:		wb_dat_o <= stb_period;
-			MU_SKEW_MES_CTL:	wb_dat_o <= {skew_mes_delay_code, skew_mes_ctl_err, skew_mes_ctl_rdy, skew_mes_ctl_master_ch_sel, skew_mes_ctl_run};
+			MU_SKEW_MES_CTL:	wb_dat_o <= {skew_mes_delay_code, skew_res_code, skew_mes_ctl_err, skew_mes_ctl_rdy,
+												 skew_mes_ctl_master_ch_sel, skew_mes_ctl_run};
 			default: 			wb_dat_o <= 0;
 		endcase
 	end

@@ -19,7 +19,7 @@
 #define MUX_DAC2    (1<<1)
 
 #define SKEW_CTL_RDY (1<<2)
-#define SKEW_CTL_ERR (1<<3)
+#define SKEW_CTL_ERR (0x7<<3)
 
 
 

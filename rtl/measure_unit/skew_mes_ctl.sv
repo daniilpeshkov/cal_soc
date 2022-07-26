@@ -103,11 +103,13 @@ module skew_mes_ctl (
 	end
 
 	always_ff @(posedge clk_i) begin : res_o_ff
-		res_o <= delay_code_o - m_align_delay_code;
+		if (posedge_found) begin
+			res_o <= delay_code_o - m_align_delay_code;
+		end
 	end
 
 	always_ff @(posedge clk_i) begin : m_align_delay_code_ff
-		if (posedge_found && state == PROCESS_RES) begin
+		if (posedge_found && mes_state == MASTER_ALIGN) begin
 			m_align_delay_code <= delay_code_o;
 		end
 	end

@@ -2,7 +2,7 @@
 <GAO_CONFIG>
     <Version>3.0</Version>
     <Mode>Standard</Mode>
-    <AoCore index="0" sample_clock="wb_clk_i" trig_type="0" storage_depth="2048" window_num="1" capture_amount="2048" trigger_pos="2039">
+    <AoCore index="0" sample_clock="wb_clk_i" trig_type="0" storage_depth="1024" window_num="1" capture_amount="1024" trigger_pos="1015">
         <SignalList>
             <Bus name="measure_unit_inst/skew_mes_ctl_inst/delay_code_o[9:0]">
                 <Signal>measure_unit_inst/skew_mes_ctl_inst/delay_code_o[9]</Signal>
@@ -18,7 +18,6 @@
             </Bus>
             <Signal>measure_unit_inst/skew_mes_ctl_inst/stb_req_o</Signal>
             <Signal>measure_unit_inst/skew_mes_ctl_inst/stb_valid_i</Signal>
-            <Signal>measure_unit_inst/skew_mes_ctl_inst/err_o</Signal>
             <Bus name="measure_unit_inst/skew_mes_ctl_inst/state[9:0]">
                 <Signal>measure_unit_inst/skew_mes_ctl_inst/state[9]</Signal>
                 <Signal>measure_unit_inst/skew_mes_ctl_inst/state[8]</Signal>
@@ -58,6 +57,22 @@
             </Bus>
             <Signal>measure_unit_inst/skew_mes_ctl_inst/s_cmp_out_i</Signal>
             <Signal>measure_unit_inst/skew_mes_ctl_inst/m_cmp_out_i</Signal>
+            <Bus name="measure_unit_inst/skew_mes_ctl_inst/m_align_delay_code[9:0]">
+                <Signal>measure_unit_inst/skew_mes_ctl_inst/m_align_delay_code[9]</Signal>
+                <Signal>measure_unit_inst/skew_mes_ctl_inst/m_align_delay_code[8]</Signal>
+                <Signal>measure_unit_inst/skew_mes_ctl_inst/m_align_delay_code[7]</Signal>
+                <Signal>measure_unit_inst/skew_mes_ctl_inst/m_align_delay_code[6]</Signal>
+                <Signal>measure_unit_inst/skew_mes_ctl_inst/m_align_delay_code[5]</Signal>
+                <Signal>measure_unit_inst/skew_mes_ctl_inst/m_align_delay_code[4]</Signal>
+                <Signal>measure_unit_inst/skew_mes_ctl_inst/m_align_delay_code[3]</Signal>
+                <Signal>measure_unit_inst/skew_mes_ctl_inst/m_align_delay_code[2]</Signal>
+                <Signal>measure_unit_inst/skew_mes_ctl_inst/m_align_delay_code[1]</Signal>
+                <Signal>measure_unit_inst/skew_mes_ctl_inst/m_align_delay_code[0]</Signal>
+            </Bus>
+            <Bus name="measure_unit_inst/skew_mes_ctl_inst/mes_state[1:0]">
+                <Signal>measure_unit_inst/skew_mes_ctl_inst/mes_state[1]</Signal>
+                <Signal>measure_unit_inst/skew_mes_ctl_inst/mes_state[0]</Signal>
+            </Bus>
         </SignalList>
         <Triggers>
             <Trigger index="0">
@@ -67,7 +82,11 @@
             </Trigger>
             <Trigger index="1">
                 <SignalList>
-                    <Signal>measure_unit_inst/skew_mes_ctl_inst/err_o</Signal>
+                    <Bus restorename="measure_unit_inst/skew_mes_ctl_inst/err_o[2:0]">
+                        <Signal>measure_unit_inst/skew_mes_ctl_inst/err_o[2]</Signal>
+                        <Signal>measure_unit_inst/skew_mes_ctl_inst/err_o[1]</Signal>
+                        <Signal>measure_unit_inst/skew_mes_ctl_inst/err_o[0]</Signal>
+                    </Bus>
                 </SignalList>
             </Trigger>
             <Trigger index="2">
@@ -124,7 +143,7 @@
         </Triggers>
         <MatchUnits>
             <MatchUnit index="0" enabled="1" match_type="3" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="R" value1="0" trigger="0"/>
-            <MatchUnit index="1" enabled="1" match_type="3" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="R" value1="0" trigger="1"/>
+            <MatchUnit index="1" enabled="1" match_type="3" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="RRR" value1="000" trigger="1"/>
             <MatchUnit index="2" enabled="0" match_type="2" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="00000000000000000000000000000000" value1="00000000000000000000000000000000" trigger="2"/>
             <MatchUnit index="3" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
             <MatchUnit index="4" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
@@ -144,5 +163,5 @@
             <Expression>M0|M1</Expression>
         </Expressions>
     </AoCore>
-    <GAO_ID>0111010000010101</GAO_ID>
+    <GAO_ID>0110000000001101</GAO_ID>
 </GAO_CONFIG>
