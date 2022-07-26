@@ -175,10 +175,10 @@ module measure_unit #(
 	// assign delay2_code_o = (skew_mes_ctl_master_ch_sel ? 0 : skew_mes_delay_code);
 	assign delay2_code_o = skew_mes_delay_code;
 
-	// assign skew_mes_s_cmp_out = (skew_mes_ctl_master_ch_sel ? cmp1_out_i : cmp2_out_i);
-	assign skew_mes_s_cmp_out = cmp1_out_i;
-	// assign skew_mes_m_cmp_out = (!skew_mes_ctl_master_ch_sel ? cmp1_out_i : cmp2_out_i);
-	assign skew_mes_m_cmp_out = cmp2_out_i;
+	assign skew_mes_s_cmp_out = (skew_mes_ctl_master_ch_sel ? cmp1_out_i : cmp2_out_i);
+	// assign skew_mes_s_cmp_out = cmp1_out_i;
+	assign skew_mes_m_cmp_out = (!skew_mes_ctl_master_ch_sel ? cmp1_out_i : cmp2_out_i);
+	// assign skew_mes_m_cmp_out = cmp2_out_i;
 
 ///////////////////////////////////////////////////////////////////////////////////////
 // Wishbone logic	

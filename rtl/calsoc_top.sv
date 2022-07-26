@@ -173,10 +173,10 @@ module calsoc_top (
 		.i_sstall	({bootrom_wb_stall_o, ram_wb_stall_o, gpioa_wb_stall_o, uart1_wb_stall_o, prg_ram_wb_stall_o, mu_wb_stall_o})
 	);
 
-	// assign delay1_stb = int_stb;
-	assign delay1_stb = debug_stb;
-	// assign delay2_stb =	int_stb;
-	assign delay2_stb =	debug_stb;
+	assign delay1_stb = int_stb;
+	// assign delay1_stb = debug_stb;
+	assign delay2_stb =	int_stb;
+	// assign delay2_stb =	debug_stb;
 
 	logic debug_stb;
 	assign debug_uart_tx = debug_stb;
@@ -222,8 +222,7 @@ module calsoc_top (
 		.delay1_code_o	(delay1_code_o),
 		.delay2_code_o	(delay2_code_o),
 		.stb_o			(int_stb),
-		.cmp1_out_i		(node_clk_i),
-		// .cmp1_out_i		(cmp1_out),
+		.cmp1_out_i		(cmp1_out),
 		.cmp2_out_i		(cmp2_out),
 
 		.debug_stb_o	(debug_stb)
