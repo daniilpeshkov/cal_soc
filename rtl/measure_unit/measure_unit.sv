@@ -25,7 +25,6 @@ module measure_unit #(
 	output logic [9:0] delay1_code_o, delay2_code_o,
 	output logic 	   stb_o,
 
-	output logic 	   debug_stb_o,
 //CMP
 	input logic cmp1_out_i, cmp2_out_i
 );
@@ -88,6 +87,9 @@ module measure_unit #(
 //		run 	- while set to 1 runs measurement
 //
 ///////////////////////////////////////////////////////////////////////////////////////
+	localparam CONF_REG = 4;
+// TODO add resister description
+///////////////////////////////////////////////////////////////////////////////////////
 
 	logic [STB_GEN_CNT_WIDTH-1:0] stb_period; 	// measured period of signal
 	logic stb_gen_cmp_sel = 0;					// selects channel to sync strobes
@@ -96,6 +98,8 @@ module measure_unit #(
 	logic stb_gen_err;							// not used for now
 	logic stb_gen_rdy;							// indicates that stb_gen is ready to generate strobes
 	logic stb_valid;
+	logic stb_gen_debug_stb;
+	logic stb_gen_stb;
 
 	logic [DAC_CODE_WIDTH-1 : 0] wb_dac_code; // write from wb bus
 	logic wb_dac_wre;
@@ -112,6 +116,10 @@ module measure_unit #(
 	logic [9:0] skew_res_code;
 	logic [2:0] skew_mes_ctl_err;
 	logic skew_mes_ctl_rdy;
+
+	logic conf_reg_debug_mode = 0;
+	logic [9:0] conf_reg_ch_1_offset;
+	logic [9:0] conf_reg_ch_2_offset;
 
 	assign clk_sel_o = stb_gen_hclk_sel;
 
@@ -151,11 +159,11 @@ module measure_unit #(
 		.sig_i			(stb_gen_cmp_sel ? cmp2_out_i : cmp1_out_i),
    		.err_o			(stb_gen_err),
    		.rdy_o			(stb_gen_rdy),
-		.stb_o			(stb_o),
+		.stb_o			(stb_gen_stb),
 		.stb_req_i		(skew_mes_ctl_stb_req),
 		.stb_valid_o	(stb_valid),
 		.stb_period_o	(stb_period),
-		.debug_stb_o	(debug_stb_o)
+		.debug_stb_o	(stb_gen_debug_stb)
 	);
 
 	skew_mes_ctl skew_mes_ctl_inst (
@@ -172,8 +180,10 @@ module measure_unit #(
 		.res_o			(skew_res_code)
 	);
 
-	assign delay1_code_o = skew_mes_delay_code;
-	assign delay2_code_o = skew_mes_delay_code;
+	assign delay1_code_o = skew_mes_delay_code + conf_reg_ch_1_offset;
+	assign delay2_code_o = skew_mes_delay_code + conf_reg_ch_2_offset;
+
+	assign stb_o = (conf_reg_debug_mode ? stb_gen_debug_stb : stb_gen_stb);
 
 	assign skew_mes_s_cmp_out = (skew_mes_ctl_master_ch_sel ? cmp1_out_i : cmp2_out_i);
 	assign skew_mes_m_cmp_out = (skew_mes_ctl_master_ch_sel ? cmp2_out_i : cmp1_out_i);
@@ -194,6 +204,7 @@ module measure_unit #(
 			STB_GEN_CTL:		w_reg =	{clk_sel_o, stb_gen_run};
 			W_THRESHOLD_REG:	w_reg = wb_dac_code;
 			MU_SKEW_MES_CTL:	w_reg = {skew_mes_ctl_master_ch_sel, skew_mes_ctl_run};
+			CONF_REG:			w_reg = {conf_reg_ch_2_offset, conf_reg_ch_1_offset, conf_reg_debug_mode};
 			default: w_reg = 0;
 		endcase
 		w_data[7:0] = (wb_sel_i[0] ? wb_dat_i[7:0] : w_reg[7:0]);
@@ -217,8 +228,6 @@ module measure_unit #(
 				stb_gen_hclk_sel <= w_data[2];
 			end else begin
 				stb_gen_run <= 0;
-			// 	stb_gen_cmp_sel <= stb_gen_cmp_sel;
-			// 	clk_sel_o <= clk_sel_o;
 			end
 		end
 	end
@@ -231,10 +240,7 @@ module measure_unit #(
 			if (wb_we_i & wb_req & (addr == W_THRESHOLD_REG)) begin
 				wb_dac_code <= w_data;
 				wb_dac_wre <= 1;
-			end //else begin
-			// 	wb_dac_code <= 0;
-			// 	wb_dac_wre <= 0;
-			// end
+			end
 		end
 	end
 
@@ -250,6 +256,14 @@ module measure_unit #(
 		end
 	end
 
+	always_ff @(posedge wb_clk_i) begin : conf_reg_ff
+		if (wb_we_i & wb_req & (addr == CONF_REG)) begin
+			conf_reg_debug_mode <= w_data[0];
+			conf_reg_ch_1_offset <= w_data[10:1];
+			conf_reg_ch_2_offset <= w_data[20:11];
+		end
+	end
+
 	always_ff @(posedge wb_clk_i) begin : wb_dat_o_comb
 		case (addr)
 			STB_GEN_CTL:		wb_dat_o <= {stb_gen_hclk_sel, stb_gen_cmp_sel, stb_gen_rdy};
@@ -257,6 +271,7 @@ module measure_unit #(
 			STB_GEN_PERIOD:		wb_dat_o <= stb_period;
 			MU_SKEW_MES_CTL:	wb_dat_o <= {skew_mes_delay_code, skew_res_code, skew_mes_ctl_err, skew_mes_ctl_rdy,
 												 skew_mes_ctl_master_ch_sel, skew_mes_ctl_run};
+			CONF_REG:			wb_dat_o <= {conf_reg_ch_2_offset, conf_reg_ch_1_offset, conf_reg_debug_mode};
 			default: 			wb_dat_o <= 0;
 		endcase
 	end

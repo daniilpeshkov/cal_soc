@@ -1,4 +1,6 @@
 
+// BUG if master and slave channels set not properly there is no error signal
+
 module skew_mes_ctl (
 	input logic clk_i,
 	input logic arstn_i,

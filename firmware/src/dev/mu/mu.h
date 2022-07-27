@@ -32,6 +32,7 @@ typedef struct {
     volatile unsigned int threshold;
     volatile unsigned int stb_gen_period;
     volatile unsigned int skew_mes_ctl;
+    volatile unsigned int conf;
 } MU_TypeDef;
 
 int mu_run_freq_detection(MU_TypeDef *mu_base, char ch, char clk_sel, unsigned int threshold);

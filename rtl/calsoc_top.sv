@@ -70,13 +70,13 @@ module calsoc_top (
 	);
 
 	//DEBUG SIG GEN
-	logic [15:0] debug_sig_div;
+	logic [3:0] debug_sig_div;
 
 	always_ff @(posedge wb_clk_i) debug_sig_div <= debug_sig_div + 1;
 
 	always_ff @(posedge wb_clk_i) begin 
 		if (debug_sig_div == 0) node_clk_i <= 1;
-		else if (debug_sig_div == 11) begin
+		else if (debug_sig_div == 2) begin
 			node_clk_i <= 0;
 		end
 		else node_clk_i <= node_clk_i;
@@ -96,8 +96,8 @@ module calsoc_top (
 	);
 
 	TLVDS_IBUF cmp2_out_lvds_IBUF_inst (
-		.I	(cmp2_out_p_i),
-		.IB	(cmp2_out_n_i),
+		.I	(cmp2_out_n_i),
+		.IB	(cmp2_out_p_i),
 		.O	(cmp2_out)
 	);
 
@@ -111,12 +111,14 @@ module calsoc_top (
 	TLVDS_OBUF delay1_stb_lvds_OBUF_inst (
 		.O	(delay1_stb_n_o),
 		.OB	(delay1_stb_p_o),
+		// .I	(1)
 		.I	(~delay1_stb)
 	);
 
 	TLVDS_OBUF delay2_stb_lvds_OBUF_inst (
 		.O	(delay2_stb_p_o),
 		.OB	(delay2_stb_n_o),
+		// .I	(1)
 		.I	(~delay2_stb)
 	);
 
@@ -176,12 +178,7 @@ module calsoc_top (
 	);
 
 	assign delay1_stb = int_stb;
-	// assign delay1_stb = debug_stb;
 	assign delay2_stb =	int_stb;
-	// assign delay2_stb =	debug_stb;
-
-	logic debug_stb;
-	assign debug_uart_tx = debug_stb;
 
 	logic mu_hclk;
 	logic mu_hclk_sel;
@@ -225,9 +222,7 @@ module calsoc_top (
 		.delay2_code_o	(delay2_code_o),
 		.stb_o			(int_stb),
 		.cmp1_out_i		(cmp1_out),
-		.cmp2_out_i		(cmp2_out),
-
-		.debug_stb_o	(debug_stb)
+		.cmp2_out_i		(cmp2_out)
 	);
 
 	wb_ram #(
