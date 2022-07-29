@@ -29,23 +29,24 @@ module calsoc_top (
 	output	logic			dac1_sclk_o, dac2_sclk_o,
 	output	logic			dac1_sdi_o, dac2_sdi_o,
 //Delay Line
-	output logic [9:0] delay1_code_o, delay2_code_o,
-	output logic 	   delay1_stb_p_o, delay2_stb_p_o,
-	output logic 	   delay1_stb_n_o, delay2_stb_n_o,
+	output 	logic [9:0] 	delay1_code_o, delay2_code_o,
+	output 	logic 	   		delay1_stb_p_o, delay2_stb_p_o,
+	output 	logic 	   		delay1_stb_n_o, delay2_stb_n_o,
 
-	output logic		delay1_le_o,
-	output logic		delay2_le_o,
+	output 	logic			delay1_le_o,
+	output 	logic			delay2_le_o,
 //CMP
-	input logic cmp1_out_p_i,
-	input logic cmp1_out_n_i,
+	input 	logic 			cmp1_out_p_i,
+	input 	logic 			cmp1_out_n_i,
 
-	input logic cmp2_out_p_i,
-	input logic cmp2_out_n_i,
-	output logic debug_led
+	input 	logic 			cmp2_out_p_i,
+	input 	logic 			cmp2_out_n_i,
+	output 	logic 			debug_led
 );
+
 	assign delay1_le_o = 0;
 	assign delay2_le_o = 0;
-	assign debug_uart_rx = 0;
+	assign debug_led = node_clk_i;
 ////////////////////////////
 // CLOCK
 ////////////////////////////
@@ -54,7 +55,6 @@ module calsoc_top (
 	logic hclk;
 
 	assign wb_rst_i = rst_i;
-	assign debug_led = 0;
 
 	TLVDS_IBUF hclk_lvds_IBUF_inst (
 		.I	(clk_p_i),
@@ -62,14 +62,14 @@ module calsoc_top (
 		.O	(hclk)
 	);
 
-	// assign hclk = node_clk_i;
-
 	Gowin_rPLL hclk_rPLL_inst (
 		.clkout(wb_clk_i), //output clkout
 		.clkin(hclk) //input clkin
 	);
 
-	//DEBUG SIG GEN
+////////////////////////////
+// DEBUG SIG GEN
+////////////////////////////
 	logic [3:0] debug_sig_div;
 
 	always_ff @(posedge wb_clk_i) debug_sig_div <= debug_sig_div + 1;
@@ -82,10 +82,10 @@ module calsoc_top (
 		else node_clk_i <= node_clk_i;
 	end
 
-
-
-	//
 ////////////////////////////
+// comparator intput
+////////////////////////////
+
 	logic cmp1_out;
 	logic cmp2_out;
 
@@ -101,9 +101,8 @@ module calsoc_top (
 		.O	(cmp2_out)
 	);
 
-
 ////////////////////////////
-// DELAY LINE
+// strobe output
 ////////////////////////////
 
 	logic delay1_stb, delay2_stb;
@@ -111,14 +110,12 @@ module calsoc_top (
 	TLVDS_OBUF delay1_stb_lvds_OBUF_inst (
 		.O	(delay1_stb_n_o),
 		.OB	(delay1_stb_p_o),
-		// .I	(1)
 		.I	(~delay1_stb)
 	);
 
 	TLVDS_OBUF delay2_stb_lvds_OBUF_inst (
 		.O	(delay2_stb_p_o),
 		.OB	(delay2_stb_n_o),
-		// .I	(1)
 		.I	(~delay2_stb)
 	);
 

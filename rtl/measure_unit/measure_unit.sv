@@ -183,7 +183,8 @@ module measure_unit #(
 	assign delay1_code_o = skew_mes_delay_code + conf_reg_ch_1_offset;
 	assign delay2_code_o = skew_mes_delay_code + conf_reg_ch_2_offset;
 
-	assign stb_o = (conf_reg_debug_mode ? stb_gen_debug_stb : stb_gen_stb);
+	// assign stb_o = (conf_reg_debug_mode ? stb_gen_debug_stb : stb_gen_stb);
+	assign stb_o = stb_gen_stb;
 
 	assign skew_mes_s_cmp_out = (skew_mes_ctl_master_ch_sel ? cmp1_out_i : cmp2_out_i);
 	assign skew_mes_m_cmp_out = (skew_mes_ctl_master_ch_sel ? cmp2_out_i : cmp1_out_i);
